@@ -3,6 +3,16 @@
 
 #include <QMainWindow>
 
+class QVBoxLayout;
+
+namespace ExchangeInfo{
+class ExchangeInfo;
+}
+
+namespace Main {
+class ViewPort;
+}
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -17,5 +27,11 @@ public:
 
 private:
     Ui::MainWindow *ui;
+
+    ExchangeInfo::ExchangeInfo* mExchangeInfo;
+
+    Main::ViewPort* mViewPort;
+
+
 };
 #endif // MAINWINDOW_H
