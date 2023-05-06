@@ -33,7 +33,7 @@ OrderBookItem::OrderBookItem()
         qDebug() << "Socket Connectted";
     });
 
-    mSocket->open(QUrl("wss://fstream.binance.com/ws/iotxusdt@depth20@100ms"));
+    mSocket->open(QUrl("wss://fstream.binance.com/ws/btcusdt@depth20@100ms"));
 //    mSocket->open(QUrl("wss://fstream.binance.com/stream?streams=iotxusdt@depth"));
 
 }
