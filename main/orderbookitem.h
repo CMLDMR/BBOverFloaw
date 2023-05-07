@@ -16,7 +16,7 @@ class OrderBookItem : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 public:
-    OrderBookItem();
+    OrderBookItem(const QString &_mPair);
 
     // QGraphicsItem interface
 public:
@@ -28,6 +28,8 @@ private:
 
     Orders* mAskOrders;
     Orders* mBidOrders;
+
+    QString mPair;
 
 
 };
@@ -49,6 +51,8 @@ public:
 //    QString vol() const;
 
     double maxVol() const;
+
+
 
 };
 

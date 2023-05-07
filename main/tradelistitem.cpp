@@ -9,7 +9,8 @@
 
 namespace Main {
 
-TradeListItem::TradeListItem()
+TradeListItem::TradeListItem(const QString &_mPair)
+    :mPair(_mPair)
 {
 
     mSocket = new QWebSocket();
@@ -17,6 +18,8 @@ TradeListItem::TradeListItem()
 
     QObject::connect(mSocket,&QWebSocket::textMessageReceived,[=](const QString &msg){
         TradeItem item = QJsonDocument::fromJson(msg.toUtf8()).object();
+        emit ticker(item,mAverage1000Ticker);
+
         mItemList.push_front(item);
 
         mMaxDollar = item.volDollar() > mMaxDollar ? item.volDollar() : mMaxDollar;
@@ -31,7 +34,7 @@ TradeListItem::TradeListItem()
         qDebug() << "Socket Connectted";
     });
 
-    mSocket->open(QUrl("wss://fstream.binance.com/ws/btcusdt@aggTrade"));
+    mSocket->open(QUrl("wss://fstream.binance.com/ws/" + mPair.toLower() + "@aggTrade"));
 
 }
 
@@ -83,7 +86,8 @@ void Main::TradeListItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
     }
 
     if( maxSell > 0 && maxBuy > 0 ){
-        painter->drawText(0,13,"Last 1000 Trade Distrubution: "+QString::number(mItemList.size()));
+        mAverage1000Ticker = (maxSell+maxBuy)/1000.0;
+        painter->drawText(0,13,"Last " + QString::number(mItemList.size()) + " Trade Distrubution: "+ QString::number(mAverage1000Ticker));
         painter->fillRect(QRectF(0,15,boundingRect().width()*maxSell/(maxBuy+maxSell),15),QColor(250,100,100));
         painter->fillRect(QRectF(0,30,boundingRect().width()*maxBuy/(maxBuy+maxSell),15),QColor(100,250,100));
         painter->drawText(0,28,QString("%1").arg(maxSell/(maxBuy+maxSell)*100.0));

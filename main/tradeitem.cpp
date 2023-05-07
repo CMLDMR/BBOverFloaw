@@ -23,9 +23,19 @@ QString TradeItem::priceStr() const
     return value("p").toString();
 }
 
+double TradeItem::price() const
+{
+    return value("p").toVariant().toDouble();
+}
+
 QString TradeItem::qtyStr() const
 {
     return value("q").toString();
+}
+
+double TradeItem::qty() const
+{
+    return value("q").toVariant().toDouble();
 }
 
 bool TradeItem::isSell() const
