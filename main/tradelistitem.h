@@ -16,7 +16,10 @@ class TradeListItem : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 public:
-    TradeListItem();
+    TradeListItem(const QString &_mPair);
+
+signals:
+    void ticker( const TradeItem & , const double &);
 
     // QGraphicsItem interface
 public:
@@ -29,6 +32,12 @@ private:
     QStack<TradeItem> mItemList;
 
     double mMaxDollar{0};
+
+    double mAverage1000Ticker{0};
+
+    QString mPair;
+
+
 
 };
 

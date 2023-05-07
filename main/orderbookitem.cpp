@@ -14,7 +14,8 @@ namespace Main {
 QMutex mutex;
 
 
-OrderBookItem::OrderBookItem()
+OrderBookItem::OrderBookItem(const QString &_mPair)
+    :mPair(_mPair)
 {
 
     mSocket = new QWebSocket();
@@ -33,7 +34,7 @@ OrderBookItem::OrderBookItem()
         qDebug() << "Socket Connectted";
     });
 
-    mSocket->open(QUrl("wss://fstream.binance.com/ws/btcusdt@depth20@100ms"));
+    mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@depth20@100ms"));
 //    mSocket->open(QUrl("wss://fstream.binance.com/stream?streams=iotxusdt@depth"));
 
 }

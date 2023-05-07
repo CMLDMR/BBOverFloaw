@@ -12,7 +12,10 @@ public:
     TradeItem( const QJsonObject &other );
 
     QString priceStr() const;
+    double price() const;
     QString qtyStr() const;
+    double qty() const;
+
     bool isSell() const;
     QString volDollarStr() const;
     double volDollar() const;
