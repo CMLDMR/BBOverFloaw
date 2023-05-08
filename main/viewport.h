@@ -20,6 +20,8 @@ public:
 private:
     ViewScene* mScene;
 
+    void addItem( const QString &pairName );
+
 
 };
 
