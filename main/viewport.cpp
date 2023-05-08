@@ -67,6 +67,7 @@ ViewPort::ViewPort()
     addItem("ALGOUSDT");
     addItem("BNBUSDT");
     addItem("ADAUSDT");
+    addItem("IOTXUSDT");
 
 }
 

@@ -24,11 +24,12 @@ PairTableItem::PairTableItem(const QString &pair)
     mBollingerIntervalList.append("1h");    // 4x
     mBollingerIntervalList.append("2h");    // 8x
     mBollingerIntervalList.append("4h");    // 16x
-    mBollingerIntervalList.append("6h");
-    mBollingerIntervalList.append("8h");
-    mBollingerIntervalList.append("12h");
+    mBollingerIntervalList.append("6h");    // 24x
+    mBollingerIntervalList.append("8h");    // 32x
+    mBollingerIntervalList.append("12h");   // 48x
     mBollingerIntervalList.append("1d");    // 96x
-    mBollingerIntervalList.append("3d");
+    mBollingerIntervalList.append("3d");    // 288x
+    mBollingerIntervalList.append("1w");    // 672x
 
     for( const auto &item : mBollingerIntervalList ){
         mValueList[item] = std::make_tuple(0,0,0);
@@ -64,7 +65,7 @@ PairTableItem::PairTableItem(const QString &pair)
 
 QRectF PairTableItem::boundingRect() const
 {
-    return QRectF(-1,-1,720,60);
+    return QRectF(-1,-1,800,60);
 }
 
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -94,60 +95,83 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     int i = 1;
     double upperPercent = 0;
     double downPercent = 0;
-    for( const auto &[interval,tup] : mValueList ){
 
-        auto &[upper,down,close] = tup;
+    for( const auto &StaticInterval : mBollingerIntervalList ){
+
+        for( const auto &[interval,tup] : mValueList ){
+
+            if( interval == StaticInterval ){
+                auto &[upper,down,close] = tup;
 
 
-        QRectF bolliger1m(i*51+70,0,50,15);
-        if( interval == mLastInterval ){
-            painter->fillRect(bolliger1m,QColor(255,190,190));
-        }else{
-            painter->fillRect(bolliger1m,QColor(190,190,190));
+                QRectF bolliger1m(i*51+70,0,50,15);
+                if( interval == mLastInterval ){
+                    painter->fillRect(bolliger1m,QColor(255,190,190));
+                }else{
+                    painter->fillRect(bolliger1m,QColor(190,190,190));
+                }
+
+                painter->drawText(bolliger1m,interval);
+
+                auto _upper = (close - upper)/upper*100;
+                QRectF bolligerUpper(i*51+70,20,50,15);
+                painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerUpper,QString::number(_upper));
+
+                auto _down = (down - close)/down*100;
+                QRectF bolligerDown(i*51+70,40,50,15);
+                painter->fillRect(bolligerDown,_down> 0 ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerDown,QString::number(_down));
+                i++;
+
+                if( interval == "15m" ){
+                    upperPercent += _upper;
+                    downPercent += _down;
+                }else if( interval == "30m" ){
+                    upperPercent += _upper*2;
+                    downPercent += _down*2;
+                }else if( interval == "1h" ){
+                    upperPercent += _upper*4;
+                    downPercent += _down*4;
+                }else if( interval == "2h" ){
+                    upperPercent += _upper*8;
+                    downPercent += _down*8;
+                }else if( interval == "4h" ){
+                    upperPercent += _upper*16;
+                    downPercent += _down*16;
+                }else if( interval == "6h" ){
+                    upperPercent += _upper*24;
+                    downPercent += _down*24;
+                }else if( interval == "8h" ){
+                    upperPercent += _upper*32;
+                    downPercent += _down*32;
+                }else if( interval == "12h" ){
+                    upperPercent += _upper*48;
+                    downPercent += _down*48;
+                }else if( interval == "1d" ){
+                    upperPercent += _upper*96;
+                    downPercent += _down*96;
+                }else if( interval == "3d" ){
+                    upperPercent += _upper*288;
+                    downPercent += _down*288;
+                }else if( interval == "1w" ){
+                    upperPercent += _upper*672;
+                    downPercent += _down*672;
+                }
+            }
+
+
         }
-
-        painter->drawText(bolliger1m,interval);
-
-        auto _upper = (close - upper)/upper*100;
-        QRectF bolligerUpper(i*51+70,20,50,15);
-        painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,150,150));
-        painter->drawText(bolligerUpper,QString::number(_upper));
-
-        auto _down = (down - close)/down*100;
-        QRectF bolligerDown(i*51+70,40,50,15);
-        painter->fillRect(bolligerDown,_down> 0 ? QColor(150,255,150) : QColor(255,150,150));
-        painter->drawText(bolligerDown,QString::number(_down));
-        i++;
-
-        if( interval == "15m" ){
-            upperPercent += _upper;
-            downPercent += _down;
-        }else if( interval == "30m" ){
-            upperPercent += _upper*2;
-            downPercent += _down*2;
-        }else if( interval == "1h" ){
-            upperPercent += _upper*4;
-            downPercent += _down*4;
-        }else if( interval == "2h" ){
-            upperPercent += _upper*8;
-            downPercent += _down*8;
-        }else if( interval == "4h" ){
-            upperPercent += _upper*16;
-            downPercent += _down*16;
-        }else if( interval == "1d" ){
-            upperPercent += _upper*96;
-            downPercent += _down*96;
-        }
-
     }
+
 
     QRectF bolligerUpper(i*51+70,20,50,15);
     painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerUpper,QString::number(upperPercent));
+    painter->drawText(bolligerUpper,QString::number(upperPercent/20));
 
     QRectF bolligerDown(i*51+70,40,50,15);
     painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerDown,QString::number(downPercent));
+    painter->drawText(bolligerDown,QString::number(downPercent/20));
     i++;
 
     QRectF upperRect(i*51+70,20,fontMetric.boundingRect(mPair).width(),fontMetric.boundingRect("Upper").height());
