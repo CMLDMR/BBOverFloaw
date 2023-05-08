@@ -5,6 +5,7 @@
 #include "orderbookitem.h"
 #include "tradelistitem.h"
 #include "rangevolume.h"
+#include "pairtableitem.h"
 
 namespace Main {
 
@@ -18,6 +19,7 @@ ViewPort::ViewPort()
     auto orderBook = new Main::OrderBookItem(pair);
     auto tradeListItem = new Main::TradeListItem(pair);
     auto rangeVolumeItem = new Main::RangeVolume();
+    auto pairTableItem = new Main::PairTableItem();
 
     QObject::connect(tradeListItem,&TradeListItem::ticker,rangeVolumeItem,&RangeVolume::addTicker);
 
@@ -25,9 +27,11 @@ ViewPort::ViewPort()
     mScene->addItem(orderBook);
     mScene->addItem(tradeListItem);
     mScene->addItem(rangeVolumeItem);
+    mScene->addItem(pairTableItem);
 
     tradeListItem->setPos(550,0);
     rangeVolumeItem->setPos(1000,0);
+    pairTableItem->setPos(0,-600);
 
 
 }
