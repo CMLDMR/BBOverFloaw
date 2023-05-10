@@ -50,9 +50,9 @@ void ViewPort::addItem(const QString &pairName)
 
     auto btcTableItem = new Main::PairTableItem(pairName);
     mScene->addItem(btcTableItem);
-    btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+5),mAddedInternal*62);
+    btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+5),mAddedInternal*(btcTableItem->boundingRect().height()+5));
     mAddedInternal++;
-    if( mAddedInternal >= 20 ){
+    if( mAddedInternal >= 9 ){
         rowCount++;
         mAddedInternal = 0;
     }

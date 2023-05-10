@@ -5,7 +5,7 @@
 
 #include <QVector>
 #include <QJsonObject>
-
+#include <QSortFilterProxyModel>
 
 
 class QNetworkAccessManager;
@@ -26,6 +26,7 @@ public:
 
     QString getPair() const;
     QString getMarginAsset() const;
+
 
 };
 
@@ -55,7 +56,14 @@ private:
 
     QVector<Symbol> mList;
 
+    QSortFilterProxyModel* mModel;
 
+
+
+    // QAbstractItemModel interface
+public:
+    virtual void sort(int column, Qt::SortOrder order) override;
+    QSortFilterProxyModel *model() const;
 };
 
 } // namespace ExchangeInfo
