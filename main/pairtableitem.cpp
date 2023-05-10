@@ -73,7 +73,7 @@ PairTableItem::PairTableItem(const QString &pair)
 
 QRectF PairTableItem::boundingRect() const
 {
-    return QRectF(-1,-1,350,60);
+    return QRectF(-1,-1,350,100);
 }
 
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -139,8 +139,20 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
                 auto _down = (down - close)/down*100;
                 QRectF bolligerDown(i*(width+2)+offset,40,width,15);
-                painter->fillRect(bolligerDown,_down> 0 ? QColor(150,255,150) : QColor(255,150,150));
+                painter->fillRect(bolligerDown,_down > 0 ? QColor(150,255,150) : QColor(255,150,150));
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
+
+
+                QRectF bolligerUpperPrice(i*(width+2)+offset,60,width,15);
+                painter->fillRect(bolligerUpperPrice,upper > close ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerUpperPrice,getFixedPrecision(upper,4));
+
+
+                QRectF bolligerDownPrice(i*(width+2)+offset,80,width,15);
+                painter->fillRect(bolligerDownPrice,down < close ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerDownPrice,getFixedPrecision(down,4));
+
+
 
 
                 if( interval == "15m" ){

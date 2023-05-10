@@ -18,7 +18,7 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
 
     mModel = new ExchangeModel();
 
-    ui->tableView->setModel(mModel);
+    ui->tableView->setModel(mModel->model());
 
     mTableViewDelegate = new TableViewDelegateWritable(ui->tableView);
 
@@ -26,7 +26,6 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
     QObject::connect(ui->tableView,&QTableView::doubleClicked,[=]( const QModelIndex &index){
         emit selectedPair(index.data(Qt::DisplayRole).toString());
         mTableViewDelegate->append(index.data().toString());
-//        ui->tableView->update();
     });
 
 

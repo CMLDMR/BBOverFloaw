@@ -16,6 +16,10 @@ ExchangeModel::ExchangeModel(QObject *parent)
     : QAbstractTableModel(parent)
 {
 
+    mModel = new QSortFilterProxyModel();
+    mModel->setSourceModel(this);
+
+
     mManager = new QNetworkAccessManager(parent);
 
     QObject::connect(mManager,&QNetworkAccessManager::finished,[=](QNetworkReply* reply ){
@@ -92,6 +96,16 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
 
 
     return QVariant();
+}
+
+QSortFilterProxyModel *ExchangeModel::model() const
+{
+    return mModel;
+}
+
+void ExchangeModel::sort(int column, Qt::SortOrder order)
+{
+    qDebug() << "Sorting" << column << order;
 }
 
 
