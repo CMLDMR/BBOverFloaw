@@ -19,6 +19,8 @@ file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB_RECURSE UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
 
 
+include_directories("${CMAKE_SOURCE_DIR}")
+
 set(PROJECT_SOURCES
         ${HEADERS}
         ${SOURCES}

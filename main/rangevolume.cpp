@@ -65,7 +65,7 @@ double RangeItem::lastQty() const
 
 QRectF Main::RangeVolume::boundingRect() const
 {
-    return QRectF(0,0,500,10000);
+    return QRectF(0,0,500,750);
 }
 
 void Main::RangeVolume::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

@@ -89,8 +89,11 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
 
 
 
+
+
     return QVariant();
 }
+
 
 QString Symbol::getPair() const
 {
