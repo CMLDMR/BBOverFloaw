@@ -47,12 +47,14 @@ public:
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
+
 private:
 
 
     QNetworkAccessManager* mManager;
 
     QVector<Symbol> mList;
+
 
 };
 

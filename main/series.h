@@ -7,6 +7,9 @@
 #include <QJsonArray>
 #include <QJsonValue>
 #include <QVector>
+#include <QWebSocket>
+
+#include <unordered_map>
 
 
 #include <QNetworkReply>
@@ -15,6 +18,11 @@
 
 
 #include "candleitem.h"
+
+
+namespace Indicator{
+class Bollinger;
+}
 
 namespace Main {
 
@@ -35,6 +43,10 @@ public:
 
     void update( const QString &pair , const QString &interval );
 
+    Indicator::Bollinger *bollinger() const;
+
+    std::unordered_map<QString, std::tuple<double, double, double> > valueList() const;
+
 signals:
     void ready();
 
@@ -44,6 +56,18 @@ private:
     QString mPair;
 
     QVector<CandleItem> mSeries;
+
+    QWebSocket* mSocket;
+    Indicator::Bollinger* mBollinger;
+
+    std::unordered_map<QString,std::tuple<double,double,double>> mValueList;
+
+
+
+private slots:
+
+    void replaceLastCandle( const QString &msg );
+
 
 };
 

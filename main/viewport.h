@@ -16,11 +16,16 @@ class ViewPort : public QGraphicsView
 public:
     ViewPort();
 
+    void addItem( const QString &pairName );
 
 private:
     ViewScene* mScene;
 
-    void addItem( const QString &pairName );
+
+    int mAddedInternal{0};
+    int rowCount{0};
+
+    QStringList pairList;
 
 
 };

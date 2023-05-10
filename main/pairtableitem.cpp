@@ -9,6 +9,8 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QUrl>
+#include <QTimer>
+#include <QRandomGenerator>
 
 namespace Main {
 
@@ -16,47 +18,53 @@ PairTableItem::PairTableItem(const QString &pair)
     :mPair(pair)
 {
 
-//    mBollingerIntervalList.append("1m");
-//    mBollingerIntervalList.append("3m");
-//    mBollingerIntervalList.append("5m");
+    //    mBollingerIntervalList.append("1m");
+    //    mBollingerIntervalList.append("3m");
+    mBollingerIntervalList.append("5m");
     mBollingerIntervalList.append("15m");   // 1x
-    mBollingerIntervalList.append("30m");   // 2x
+    //    mBollingerIntervalList.append("30m");   // 2x
     mBollingerIntervalList.append("1h");    // 4x
-    mBollingerIntervalList.append("2h");    // 8x
+    //    mBollingerIntervalList.append("2h");    // 8x
     mBollingerIntervalList.append("4h");    // 16x
-    mBollingerIntervalList.append("6h");    // 24x
-    mBollingerIntervalList.append("8h");    // 32x
-    mBollingerIntervalList.append("12h");   // 48x
+    //    mBollingerIntervalList.append("6h");    // 24x
+    //    mBollingerIntervalList.append("8h");    // 32x
+    //    mBollingerIntervalList.append("12h");   // 48x
     mBollingerIntervalList.append("1d");    // 96x
-    mBollingerIntervalList.append("3d");    // 288x
+    //    mBollingerIntervalList.append("3d");    // 288x
     mBollingerIntervalList.append("1w");    // 672x
 
     for( const auto &item : mBollingerIntervalList ){
         mValueList[item] = std::make_tuple(0,0,0);
     }
 
-    mSeris = new Series(mPair,"15m");
+
+    mCurrentInterval = Interval::_5m;
 
 
-    mBollinger = new Indicator::Bollinger(mSeris);
+    mBollinger5m = new Indicator::Bollinger(mSeries5m);
 
 
-    QObject::connect(mSeris,&Series::ready,[=](){
-        if( !canRequst ){
-            if( mSeris->getSeries().size() ){
-                auto [upper,mid,down] = mBollinger->getLast();
-                auto close = mSeris->lastCandle().close();
-                mValueList[mSeris->timeInterval()] = std::make_tuple(upper,down,close);
-                this->update();
-            }
-            canRequst = true;
-        }
-    });
+
+    mCurrentInterval = Interval::_5m;
+
+    mSeries5m = new Series(mPair,"5m");
+    mLastSeries = mSeries5m;
+
+    mSeriesList.push_back(mSeries5m);
+
+//    mSeries15m = new Series(mPair,"15m");
+    mSeriesList.push_back(new Series(mPair,"15m"));
+    mSeriesList.push_back(new Series(mPair,"1h"));
+    mSeriesList.push_back(new Series(mPair,"4h"));
+    mSeriesList.push_back(new Series(mPair,"1d"));
+    mSeriesList.push_back(new Series(mPair,"1w"));
 
 
-    canRequst = true;
+    canRequst = false;
 
-    this->startTimer(500);
+    this->startTimer(250);
+
+
 
 }
 
@@ -65,12 +73,14 @@ PairTableItem::PairTableItem(const QString &pair)
 
 QRectF PairTableItem::boundingRect() const
 {
-    return QRectF(-1,-1,800,60);
+    return QRectF(-1,-1,350,60);
 }
 
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->drawRect(boundingRect());
+
+    if( mLastSeries == nullptr ) return;
 
     painter->setPen(QPen(Qt::black));
 
@@ -80,12 +90,12 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->fillRect(symbolRect,QColor(190,190,190));
     painter->drawText(symbolRect,mPair);
 
-    if( mSeris->getSeries().size() ){
+    if( mLastSeries->getSeries().size() ){
         auto pen = painter->font();
-        painter->setFont(QFont("Tahoma",18));
-//        QRectF bolligerDown(0,0,50,15);
-//        painter->fillRect(bolligerDown,QColor(190,190,190));
-        painter->drawText(0,50,mSeris->lastCandle().closeStr());
+        painter->setFont(QFont("Tahoma",12));
+        //        QRectF bolligerDown(0,0,50,15);
+        //        painter->fillRect(bolligerDown,QColor(190,190,190));
+        painter->drawText(0,50,mLastSeries->lastCandle().closeStr());
         painter->setFont(pen);
     }
 
@@ -96,33 +106,42 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     double upperPercent = 0;
     double downPercent = 0;
 
-    for( const auto &StaticInterval : mBollingerIntervalList ){
+    int width = 35;
+    int offset = 50;
 
-        for( const auto &[interval,tup] : mValueList ){
+    for( const auto &series : mSeriesList ){
+        auto StaticInterval = series->timeInterval();
+
+        for( const auto &[interval,tup] : series->valueList() ){
 
             if( interval == StaticInterval ){
                 auto &[upper,down,close] = tup;
 
+                if( down == 0 || upper == 0 ) return;
 
-                QRectF bolliger1m(i*51+70,0,50,15);
+                QRectF bolliger1m(i*(width+2)+offset,0,width,15);
                 if( interval == mLastInterval ){
-                    painter->fillRect(bolliger1m,QColor(255,190,190));
+                    painter->fillRect(bolliger1m,QColor(25,25,25));
                 }else{
                     painter->fillRect(bolliger1m,QColor(190,190,190));
                 }
 
+                auto pen = painter->pen();
+
+                painter->setPen(QPen(Qt::white));
                 painter->drawText(bolliger1m,interval);
+                painter->setPen(pen);
 
                 auto _upper = (close - upper)/upper*100;
-                QRectF bolligerUpper(i*51+70,20,50,15);
+                QRectF bolligerUpper(i*(width+2)+offset,20,width,15);
                 painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,150,150));
-                painter->drawText(bolligerUpper,QString::number(_upper));
+                painter->drawText(bolligerUpper,getFixedPrecision(_upper));
 
                 auto _down = (down - close)/down*100;
-                QRectF bolligerDown(i*51+70,40,50,15);
+                QRectF bolligerDown(i*(width+2)+offset,40,width,15);
                 painter->fillRect(bolligerDown,_down> 0 ? QColor(150,255,150) : QColor(255,150,150));
-                painter->drawText(bolligerDown,QString::number(_down));
-                i++;
+                painter->drawText(bolligerDown,getFixedPrecision(_down));
+
 
                 if( interval == "15m" ){
                     upperPercent += _upper;
@@ -160,28 +179,37 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 }
             }
 
-
+            i++;
         }
     }
 
 
-    QRectF bolligerUpper(i*51+70,20,50,15);
+    QRectF bolligerUpper(i*(width+2)+offset,20,width,15);
     painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerUpper,QString::number(upperPercent/20));
+    painter->drawText(bolligerUpper,getFixedPrecision(upperPercent/20,0));
 
-    QRectF bolligerDown(i*51+70,40,50,15);
+    QRectF bolligerDown(i*(width+2)+offset,40,width,15);
     painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerDown,QString::number(downPercent/20));
+    painter->drawText(bolligerDown,getFixedPrecision(downPercent/20,0));
     i++;
+}
 
-    QRectF upperRect(i*51+70,20,fontMetric.boundingRect(mPair).width(),fontMetric.boundingRect("Upper").height());
-    painter->fillRect(upperRect,QColor(190,190,190));
-    painter->drawText(upperRect,"Upper");
+QString PairTableItem::getFixedPrecision(const double &value, const int &precision )
+{
+    int pre = precision;
+    if( precision == 0 || precision > 50 ){
+        return QString::number(static_cast<int>(value));
+    }
 
-    QRectF downRect(i*51+70,40,fontMetric.boundingRect(mPair).width(),fontMetric.boundingRect("Down").height());
-    painter->fillRect(downRect,QColor(190,190,190));
-    painter->drawText(downRect,"Down");
+    if( precision > 10 ){
+        pre = 1;
+    }
 
+    std::ostringstream streamObj3;
+    streamObj3 << std::fixed;
+    streamObj3 << std::setprecision(pre);
+    streamObj3 << value;
+    return QString::fromStdString(streamObj3.str());
 }
 
 
@@ -192,11 +220,30 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
 void Main::PairTableItem::timerEvent(QTimerEvent *event)
 {
-    if( canRequst ){
-        canRequst = false;
-        requestIntervalIndex = requestIntervalIndex % mBollingerIntervalList.size();
-        mLastInterval = mBollingerIntervalList.at(requestIntervalIndex);
-        mSeris->update(mPair,mLastInterval);
-        requestIntervalIndex++;
+    switch (mCurrentInterval) {
+    case Interval::_5m:
+        mCurrentInterval = Interval::_15m;
+
+        break;
+    case Interval::_15m:
+        mCurrentInterval = Interval::_1h;
+        break;
+    case Interval::_1h:
+        mCurrentInterval = Interval::_4h;
+        break;
+    case Interval::_4h:
+        mCurrentInterval = Interval::_1d;
+        break;
+    case Interval::_1d:
+        mCurrentInterval = Interval::_1w;
+        break;
+    case Interval::_1w:
+        mCurrentInterval = Interval::_5m;
+//        mLastSeries = mSeries5m;
+        break;
+    default:
+        break;
     }
+
+    this->update();
 }
