@@ -97,7 +97,7 @@ void Series::replaceLastCandle(const QString &msg)
 
     if( kLineObj["x"].toBool() ){
         mSeries.removeFirst();
-        qDebug() << "New Candle " << mPair << mTimeInterval;
+//        qDebug() << "New Candle " << mPair << mTimeInterval;
     }else{
         mSeries.removeLast();
     }

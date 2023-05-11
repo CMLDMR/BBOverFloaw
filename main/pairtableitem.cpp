@@ -49,8 +49,11 @@ PairTableItem::PairTableItem(const QString &pair)
 
     mCurrentInterval = Interval::_5m;
 
+
     mSeries5m = new Series(mPair,"5m");
     mLastSeries = mSeries5m;
+
+    mSeriesList.push_back(new Series(mPair,"1m"));
 
     mSeriesList.push_back(mSeries5m);
 
@@ -83,7 +86,7 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 {
     painter->drawRect(boundingRect());
 
-    qDebug() << mWidth << mHeight;
+//    qDebug() << mWidth << mHeight;
 
     if( mLastSeries == nullptr ) return;
 
@@ -143,21 +146,26 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 painter->setPen(pen);
 
                 auto _upper = (close - upper)/upper*100;
-                QRectF bolligerUpper(i*(width+2)+offset,20,width,15);
+                QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
                 painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,150,150));
                 painter->drawText(bolligerUpper,getFixedPrecision(_upper));
 
+
+
                 auto _down = (down - close)/down*100;
-                QRectF bolligerDown(i*(width+2)+offset,40,width,15);
+                QRectF bolligerDown(i*(width+2)+offset,34,width,15);
                 painter->fillRect(bolligerDown,_down > 0 ? QColor(150,255,150) : QColor(255,150,150));
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
 
 
-                auto lastCandle = series->getSeries().last();
-                auto percent = (lastCandle.close() - lastCandle.open())/lastCandle.open()*100;
-                QRectF bolligerUpperPrice(i*(width+2)+offset,60,width,15);
-                painter->fillRect(bolligerUpperPrice,lastCandle.close() > lastCandle.open() ? QColor(150,255,150) : QColor(255,150,150));
-                painter->drawText(bolligerUpperPrice,"%"+getFixedPrecision(percent,2));
+
+                QRectF bolligerUpperPrice(i*(width+2)+offset,51,width,15);
+                painter->fillRect(bolligerUpperPrice,upper < close ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerUpperPrice,getFixedPrecision(upper,0));
+
+                QRectF bolligerDownPrice(i*(width+2)+offset,68,width,15);
+                painter->fillRect(bolligerDownPrice,down > close ? QColor(150,255,150) : QColor(255,150,150));
+                painter->drawText(bolligerDownPrice,getFixedPrecision(down,0));
 
                 if( interval == "15m" ){
                     upperPercent += _upper;
@@ -200,16 +208,16 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     }
 
 
-    QRectF bolligerUpper(i*(width+2)+offset,20,width,15);
+    QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
     painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
     painter->drawText(bolligerUpper,getFixedPrecision(upperPercent/20,0));
 
-    QRectF bolligerDown(i*(width+2)+offset,40,width,15);
+    QRectF bolligerDown(i*(width+2)+offset,34,width,15);
     painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
     painter->drawText(bolligerDown,getFixedPrecision(downPercent/20,0));
 
     mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
-    mHeight = 60+15+5;
+    mHeight = 68+15+5;
     i++;
 }
 

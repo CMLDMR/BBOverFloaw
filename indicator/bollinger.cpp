@@ -24,10 +24,13 @@ double Bollinger::getDerivation(const int &index)
 
     double standardDeviation{0};
 
+    int counter = 0;
     for( int i = index-21 ; i < index ; i++ ){
+        counter++;
         auto item = mSeries->getSeries()[i];
         auto val = (item.close()+item.high()+item.low())/3.;
         standardDeviation += std::pow(val-mean,2);
+        qDebug() << "Standart Deviation: " << counter;
     }
 
     return std::sqrt(standardDeviation / 21);
