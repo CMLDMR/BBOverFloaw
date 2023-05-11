@@ -11,6 +11,8 @@
 #include <QUrl>
 #include <QTimer>
 #include <QRandomGenerator>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 namespace Main {
 
@@ -56,6 +58,7 @@ PairTableItem::PairTableItem(const QString &pair)
     mSeriesList.push_back(new Series(mPair,"15m"));
     mSeriesList.push_back(new Series(mPair,"1h"));
     mSeriesList.push_back(new Series(mPair,"4h"));
+    mSeriesList.push_back(new Series(mPair,"12h"));
     mSeriesList.push_back(new Series(mPair,"1d"));
     mSeriesList.push_back(new Series(mPair,"1w"));
 
@@ -239,7 +242,6 @@ void Main::PairTableItem::timerEvent(QTimerEvent *event)
     switch (mCurrentInterval) {
     case Interval::_5m:
         mCurrentInterval = Interval::_15m;
-
         break;
     case Interval::_15m:
         mCurrentInterval = Interval::_1h;
@@ -255,11 +257,20 @@ void Main::PairTableItem::timerEvent(QTimerEvent *event)
         break;
     case Interval::_1w:
         mCurrentInterval = Interval::_5m;
-//        mLastSeries = mSeries5m;
         break;
     default:
         break;
     }
 
     this->update();
+}
+
+
+void Main::PairTableItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+{
+    QMenu menu;
+    menu.addAction("Open Candle Stick");
+    menu.addAction("Delete Pair");
+    menu.exec(event->screenPos());
+    QGraphicsItem::mouseDoubleClickEvent(event);
 }
