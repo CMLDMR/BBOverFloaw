@@ -69,6 +69,8 @@ private:
 
     QString getFixedPrecision(const double &value , const int &precision = 2);
 
+    qreal mWidth = 389, mHeight = 80;
+
 
     // QObject interface
 protected:

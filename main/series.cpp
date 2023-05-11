@@ -93,6 +93,8 @@ void Series::replaceLastCandle(const QString &msg)
     Candle.replace(3,kLineObj["l"]);
     Candle.replace(4,kLineObj["c"]);
 
+    mLastCloseTimeEpoch = obj["E"].toVariant().toLongLong();
+
     if( kLineObj["x"].toBool() ){
         mSeries.removeFirst();
         qDebug() << "New Candle " << mPair << mTimeInterval;
@@ -108,6 +110,11 @@ void Series::replaceLastCandle(const QString &msg)
         mValueList[this->timeInterval()] = std::make_tuple(upper,down,close);
         emit ready();
     }
+}
+
+qulonglong Series::lastCloseTimeEpoch() const
+{
+    return mLastCloseTimeEpoch;
 }
 
 

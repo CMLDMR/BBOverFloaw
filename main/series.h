@@ -47,6 +47,8 @@ public:
 
     std::unordered_map<QString, std::tuple<double, double, double> > valueList() const;
 
+    qulonglong lastCloseTimeEpoch() const;
+
 signals:
     void ready();
 
@@ -62,11 +64,13 @@ private:
 
     std::unordered_map<QString,std::tuple<double,double,double>> mValueList;
 
+    qulonglong mLastCloseTimeEpoch;
 
 
 private slots:
 
     void replaceLastCandle( const QString &msg );
+
 
 
 };
