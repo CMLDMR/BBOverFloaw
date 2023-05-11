@@ -69,7 +69,7 @@ private:
 
     QString getFixedPrecision(const double &value , const int &precision = 2);
 
-    qreal mWidth = 389, mHeight = 80;
+    qreal mWidth = 431, mHeight = 54;
 
 
     // QObject interface
