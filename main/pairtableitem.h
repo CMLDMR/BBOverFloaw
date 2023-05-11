@@ -75,6 +75,10 @@ private:
     // QObject interface
 protected:
     virtual void timerEvent(QTimerEvent *event) override;
+
+    // QGraphicsItem interface
+protected:
+    virtual void mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 } // namespace Main
