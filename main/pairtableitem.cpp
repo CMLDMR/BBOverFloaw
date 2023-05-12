@@ -11,8 +11,7 @@
 #include <QUrl>
 #include <QTimer>
 #include <QRandomGenerator>
-#include <QGraphicsSceneMouseEvent>
-#include <QMenu>
+
 
 namespace Main {
 
@@ -84,14 +83,18 @@ QRectF PairTableItem::boundingRect() const
 
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    painter->drawRect(boundingRect());
+    if( selectedItem() ){
+        painter->fillRect(boundingRect(),QColor(225,225,225));
+    }else{
+        painter->fillRect(boundingRect(),Qt::white);
+    }
+    painter->setPen(QPen(Qt::gray));
 
-//    qDebug() << mWidth << mHeight;
+    painter->drawRect(boundingRect());
 
     if( mLastSeries == nullptr ) return;
 
     painter->setPen(QPen(Qt::black));
-
 
     auto fontMetric = painter->fontMetrics();
     QRectF symbolRect(0,0,fontMetric.boundingRect(mPair).width(),fontMetric.boundingRect(mPair).height());
@@ -106,9 +109,6 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
         painter->drawText(0,50,mLastSeries->lastCandle().closeStr());
         painter->setFont(pen);
     }
-
-
-
 
     int i = 1;
     double upperPercent = 0;
@@ -219,6 +219,8 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
     mHeight = 34+15+5;
+
+    AbtractItem::paint(painter,option,widget);
 }
 
 QString PairTableItem::getFixedPrecision(const double &value, const int &precision )
@@ -275,14 +277,3 @@ void Main::PairTableItem::timerEvent(QTimerEvent *event)
 
 
 
-void Main::PairTableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    if( event->button() == Qt::RightButton ){
-        QMenu menu;
-        menu.addAction("Open Candle Stick");
-        menu.addAction("Delete Pair");
-        menu.exec(event->screenPos());
-    }
-
-    QGraphicsItem::mousePressEvent(event);
-}
