@@ -6,30 +6,14 @@
 #include <QVector>
 #include <QJsonObject>
 #include <QSortFilterProxyModel>
+#include "symbol.h"
+#include "ticker.h"
+#include "ticker24h.h"
 
 
 class QNetworkAccessManager;
 
 namespace ExchangeInfo {
-
-
-class Symbol : public QJsonObject
-{
-public:
-    Symbol(){}
-
-    Symbol( const QJsonObject &other ){
-        for( const auto &key : other.keys() ){
-            this->insert(key,other[key]);
-        }
-    }
-
-    QString getPair() const;
-    QString getMarginAsset() const;
-
-
-};
-
 
 
 class ExchangeModel : public QAbstractTableModel
@@ -38,6 +22,25 @@ class ExchangeModel : public QAbstractTableModel
 
 public:
     explicit ExchangeModel(QObject *parent = nullptr);
+
+    static ExchangeModel* instance() ;
+
+    enum Role{
+        displayRole = Qt::DisplayRole,
+        baseAsset = Qt::UserRole+1,
+        pair,
+        marginAsset,
+        quoteAsset,
+        symbol,
+        status,
+        SYMBOL
+    };
+
+    enum RequestType{
+        exchangeInfo,
+        price,
+        percent
+    };
 
     // Header:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
@@ -49,14 +52,29 @@ public:
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
 
+    void updateInfo();
+
+    void updatePricetoPercent();
 private:
+
+    static ExchangeModel* mExchangeModel;
 
 
     QNetworkAccessManager* mManager;
 
     QVector<Symbol> mList;
+    QVector<Symbol> mFullList;
+    QVector<Ticker24H> mPriceList;
+    QVector<Symbol> mPercentList;
+
+    QString mQuotaFilterKey{"ALL"};
+    bool mHideNONTRADING{false};
+    bool saveList();
+    bool loadList();
 
     QSortFilterProxyModel* mModel;
+
+    RequestType mRequestType{exchangeInfo};
 
 
 
@@ -64,7 +82,9 @@ private:
 public:
     virtual void sort(int column, Qt::SortOrder order) override;
     QSortFilterProxyModel *model() const;
-    void setFilter( const QString &filter );
+    void setFilter(const QString &filter );
+    void setQuotaFilterKey(const QString &newQuotaFilterKey);
+    void setHideNONTRADING(bool newHideNONTRADING);
 };
 
 } // namespace ExchangeInfo
