@@ -274,11 +274,15 @@ void Main::PairTableItem::timerEvent(QTimerEvent *event)
 }
 
 
-void Main::PairTableItem::mouseDoubleClickEvent(QGraphicsSceneMouseEvent *event)
+
+void Main::PairTableItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
-    QMenu menu;
-    menu.addAction("Open Candle Stick");
-    menu.addAction("Delete Pair");
-    menu.exec(event->screenPos());
-    QGraphicsItem::mouseDoubleClickEvent(event);
+    if( event->button() == Qt::RightButton ){
+        QMenu menu;
+        menu.addAction("Open Candle Stick");
+        menu.addAction("Delete Pair");
+        menu.exec(event->screenPos());
+    }
+
+    QGraphicsItem::mousePressEvent(event);
 }
