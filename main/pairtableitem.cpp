@@ -217,7 +217,7 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
     painter->drawText(bolligerDown,getFixedPrecision(downPercent/20,0));
 
-    mWidth = i*(width+2)+offset+width +5;
+    mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
     mHeight = 34+15+5;
 }
 
