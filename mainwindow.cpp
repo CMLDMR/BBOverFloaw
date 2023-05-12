@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->exchangeVLayout->addWidget(mExchangeInfo);
 
     mViewPort = new Main::ViewPort();
+    mViewPort->setDragMode(QGraphicsView::ScrollHandDrag);
 
     ui->verticalGraphLayout->addWidget(mViewPort);
 

@@ -88,5 +88,10 @@ QString CandleItem::buyAssetVolumeStr() const
     return this->at(10).toString();
 }
 
+void CandleItem::setOpenTime(const qulonglong &time)
+{
+
+}
+
 
 } // namespace Main

@@ -25,13 +25,13 @@ Series::Series(const QString pair, const QString &interval)
         for( const auto &item : array ){
             CandleItem _item = item.toArray();
             mSeries.push_back(_item);
+
         }
         emit ready();
 
         QTimer::singleShot(1000,[=](){
             mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_"+mTimeInterval));
         });
-
     });
 
     mSocket = new QWebSocket();
