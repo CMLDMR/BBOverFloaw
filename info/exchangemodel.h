@@ -64,6 +64,7 @@ private:
 public:
     virtual void sort(int column, Qt::SortOrder order) override;
     QSortFilterProxyModel *model() const;
+    void setFilter( const QString &filter );
 };
 
 } // namespace ExchangeInfo

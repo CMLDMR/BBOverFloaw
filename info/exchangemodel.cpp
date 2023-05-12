@@ -17,6 +17,7 @@ ExchangeModel::ExchangeModel(QObject *parent)
 {
 
     mModel = new QSortFilterProxyModel();
+    mModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
     mModel->setSourceModel(this);
 
 
@@ -101,6 +102,11 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
 QSortFilterProxyModel *ExchangeModel::model() const
 {
     return mModel;
+}
+
+void ExchangeModel::setFilter(const QString &filter)
+{
+    mModel->setFilterFixedString(filter);
 }
 
 void ExchangeModel::sort(int column, Qt::SortOrder order)

@@ -19,6 +19,7 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
     mModel = new ExchangeModel();
 
     ui->tableView->setModel(mModel->model());
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
 
     mTableViewDelegate = new TableViewDelegateWritable(ui->tableView);
 
@@ -26,6 +27,10 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
     QObject::connect(ui->tableView,&QTableView::doubleClicked,[=]( const QModelIndex &index){
         emit selectedPair(index.data(Qt::DisplayRole).toString());
         mTableViewDelegate->append(index.data().toString());
+    });
+
+    QObject::connect(ui->lineEdit_filter,&QLineEdit::textChanged,[=](const QString &text){
+        mModel->setFilter(text);
     });
 
 
