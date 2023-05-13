@@ -31,7 +31,12 @@ class Series : public QObject
     Q_OBJECT
 public:
     Series(const QString pair, const QString &interval);
-
+    virtual ~Series(){
+        qDebug() << "Delete Series";
+        mSocket->close();
+        delete mSocket;
+        mSocket = nullptr;
+    }
 
 
 

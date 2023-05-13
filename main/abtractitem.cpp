@@ -7,6 +7,7 @@
 #include <QPainter>
 
 
+
 namespace Main {
 
 AbtractItem::AbtractItem(QObject *parent)
@@ -51,11 +52,15 @@ void AbtractItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             });
         }
         menu.addSeparator();
-        menu.addAction("Open Candle Stick");
-        menu.addAction("Delete Pair");
+        menu.addAction("Open Candle Stick",[=](){
+            emit openCandled(event->screenPos());
+        });
+        menu.addAction("Delete Pair",[=](){
+            emit deleteClicked();
+        });
         menu.exec(event->screenPos());
     }
-    QGraphicsItem::mousePressEvent(event);
+//    QGraphicsItem::mousePressEvent(event);
 }
 
 void AbtractItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

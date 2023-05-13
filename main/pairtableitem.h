@@ -29,6 +29,13 @@ class PairTableItem : public AbtractItem
 {
 public:
     PairTableItem(const QString &pair);
+    virtual ~PairTableItem(){
+        qDebug() << "Delete PairTableItem";
+        for( auto &item : mSeriesList ){
+            delete item;
+        }
+        mSeriesList.clear();
+    }
 
     enum class Interval{
         _5m = 0,
@@ -51,6 +58,10 @@ public:
     Series* mSeries5m;
     Series* mSeries15m;
     Indicator::Bollinger* mBollinger5m;
+
+    QString pair() const;
+
+    QVector<Series *> *seriesList();
 
 private:
 

@@ -15,7 +15,11 @@ class AbtractItem : public QObject, public QGraphicsItem
 public:
     explicit AbtractItem(QObject *parent = nullptr);
 
+
+
 signals:
+    void deleteClicked();
+    void openCandled(const QPoint&);
 
 private:
     enum class MouseState{

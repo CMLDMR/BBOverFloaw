@@ -5,6 +5,10 @@
 #include <QObject>
 
 class QGraphicsScene;
+namespace Screen{
+class CandleStickWindow;
+}
+
 
 namespace Main {
 
@@ -26,6 +30,8 @@ private:
     int rowCount{0};
 
     QStringList pairList;
+
+    QVector<Screen::CandleStickWindow*> mWindowList;
 
 
 };

@@ -67,7 +67,7 @@ PairTableItem::PairTableItem(const QString &pair)
 
     canRequst = false;
 
-    this->startTimer(250);
+    this->startTimer(1000);
 
 
 
@@ -221,6 +221,16 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     mHeight = 34+15+5;
 
     AbtractItem::paint(painter,option,widget);
+}
+
+QString PairTableItem::pair() const
+{
+    return mPair;
+}
+
+QVector<Series *> *PairTableItem::seriesList()
+{
+    return &mSeriesList;
 }
 
 QString PairTableItem::getFixedPrecision(const double &value, const int &precision )
