@@ -8,6 +8,8 @@
 #include "pairtableitem.h"
 #include "widget/candlestickwindow.h"
 
+#include "session/sessionmanager.h"
+
 #include <QScreen>
 #include <QMouseEvent>
 
@@ -43,26 +45,28 @@ ViewPort::ViewPort()
 void ViewPort::addItem(const QString &pairName)
 {
 
-    if( pairList.contains(pairName) ){
+    if( Session::SessionManager::instance()->pairContains(pairName) ){
         return;
     }
 
-    pairList.push_back(pairName);
+    Session::SessionManager::instance()->addPair(pairName);
 
+    this->setPairItem(pairName);
+}
+
+void ViewPort::setPairItem(const QString &pairName)
+{
     auto btcTableItem = new Main::PairTableItem(pairName);
     mScene->addItem(btcTableItem);
     btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+5),mAddedInternal*(btcTableItem->boundingRect().height()+5));
-    itemList.push_back(btcTableItem);
+
     //TODO:  remove Item Crashed
     QObject::connect(btcTableItem,&Main::AbtractItem::deleteClicked,[=](){
         btcTableItem->setWillRemove(true);
-        for( int i = 0 ; i < pairList.size() ; i++ ){
-            if( pairList.at(i) == btcTableItem->pair() ){
-                pairList.removeAt(i);
-                break;
-            }
-        }
 
+        if( !Session::SessionManager::instance()->removePair(btcTableItem->pair()) ){
+            qDebug() << "did not remove or pair exist!";
+        }
         mScene->removeItem(btcTableItem);
 
     });
@@ -100,6 +104,8 @@ void ViewPort::addItem(const QString &pairName)
         mAddedInternal = 0;
     }
 }
+
+
 
 } // namespace Main
 
