@@ -22,6 +22,7 @@ public:
     double lowPrice() const;
     double volume() const;
     double quoteVolume() const;
+
     qulonglong openTime() const;
     qulonglong closeTime() const;
     qulonglong firstId() const;

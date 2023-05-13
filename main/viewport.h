@@ -13,6 +13,7 @@ class CandleStickWindow;
 namespace Main {
 
 class ViewScene;
+class PairTableItem;
 
 class ViewPort : public QGraphicsView
 {
@@ -33,7 +34,13 @@ private:
 
     QVector<Screen::CandleStickWindow*> mWindowList;
 
+    QVector<Main::PairTableItem*> itemList;
 
+
+
+    // QWidget interface
+protected:
+    virtual void mousePressEvent(QMouseEvent *event) override;
 };
 
 } // namespace Main

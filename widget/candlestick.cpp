@@ -72,11 +72,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
             auto xFactor = boundingRect().height() / ( mMax - mMin);
 
-            auto font = painter->font();
-            painter->setFont(QFont("Tahoma",16));
-            painter->drawText(0,20,QString("Interval %1").arg(mSeries->timeInterval()));
-            painter->setFont(font);
-
             // Draw Candle Stick
             for( int i = 0 ; i < mSeries->getSeries().size() ; i++ ){
 
@@ -189,7 +184,14 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                 }
             }
         }
+
+        auto font = painter->font();
+        painter->setFont(QFont("Tahoma",16));
+        painter->drawText(0,20,QString("Interval %1").arg(mSeries->timeInterval()));
+        painter->setFont(font);
     }
+
+
 }
 
 } // namespace Screen

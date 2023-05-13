@@ -48,6 +48,16 @@ Series::Series(const QString pair, const QString &interval)
 
 }
 
+Series::~Series()
+{
+    qDebug() << "Delete Series";
+    mSocket->close(QWebSocketProtocol::CloseCode::CloseCodeNormal);
+    delete mSocket;
+    mSocket = nullptr;
+    delete mBollinger;
+    delete mAccessManager;
+}
+
 const QVector<CandleItem> &Series::getSeries() const
 {
     return mSeries;

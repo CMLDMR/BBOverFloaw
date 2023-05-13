@@ -19,35 +19,7 @@ PairTableItem::PairTableItem(const QString &pair)
     :mPair(pair)
 {
 
-    //    mBollingerIntervalList.append("1m");
-    //    mBollingerIntervalList.append("3m");
-    mBollingerIntervalList.append("5m");
-    mBollingerIntervalList.append("15m");   // 1x
-    //    mBollingerIntervalList.append("30m");   // 2x
-    mBollingerIntervalList.append("1h");    // 4x
-    //    mBollingerIntervalList.append("2h");    // 8x
-    mBollingerIntervalList.append("4h");    // 16x
-    //    mBollingerIntervalList.append("6h");    // 24x
-    //    mBollingerIntervalList.append("8h");    // 32x
-    //    mBollingerIntervalList.append("12h");   // 48x
-    mBollingerIntervalList.append("1d");    // 96x
-    //    mBollingerIntervalList.append("3d");    // 288x
-    mBollingerIntervalList.append("1w");    // 672x
-
-//    for( const auto &item : mBollingerIntervalList ){
-//        mValueList[item] = std::make_tuple(0,0,0);
-//    }
-
-
-    mCurrentInterval = Interval::_5m;
-
-
     mBollinger5m = new Indicator::Bollinger(mSeries5m);
-
-
-
-    mCurrentInterval = Interval::_5m;
-
 
     mSeries5m = new Series(mPair,"5m");
     mLastSeries = mSeries5m;
@@ -60,16 +32,13 @@ PairTableItem::PairTableItem(const QString &pair)
     mSeriesList.push_back(new Series(mPair,"15m"));
     mSeriesList.push_back(new Series(mPair,"1h"));
     mSeriesList.push_back(new Series(mPair,"4h"));
-//    mSeriesList.push_back(new Series(mPair,"12h"));
+    mSeriesList.push_back(new Series(mPair,"12h"));
     mSeriesList.push_back(new Series(mPair,"1d"));
     mSeriesList.push_back(new Series(mPair,"1w"));
 
-
     canRequst = false;
 
-    this->startTimer(1000);
-
-
+    mTimerId = this->startTimer(1000);
 
 }
 
@@ -83,6 +52,8 @@ QRectF PairTableItem::boundingRect() const
 
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
+
+    if( mWillRemove ) return;
     if( selectedItem() ){
         painter->fillRect(boundingRect(),QColor(225,225,225));
     }else{
@@ -104,8 +75,6 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     if( mLastSeries->getSeries().size() ){
         auto pen = painter->font();
         painter->setFont(QFont("Tahoma",12));
-        //        QRectF bolligerDown(0,0,50,15);
-        //        painter->fillRect(bolligerDown,QColor(190,190,190));
         painter->drawText(0,50,mLastSeries->lastCandle().closeStr());
         painter->setFont(pen);
     }
@@ -159,15 +128,6 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
 
 
-
-//                QRectF bolligerUpperPrice(i*(width+2)+offset,51,width,15);
-//                painter->fillRect(bolligerUpperPrice,upper < close ? QColor(150,255,150) : QColor(255,150,150));
-//                painter->drawText(bolligerUpperPrice,getFixedPrecision(upper,0));
-
-//                QRectF bolligerDownPrice(i*(width+2)+offset,68,width,15);
-//                painter->fillRect(bolligerDownPrice,down > close ? QColor(150,255,150) : QColor(255,150,150));
-//                painter->drawText(bolligerDownPrice,getFixedPrecision(down,0));
-
                 if( interval == "5m" ){
                     upperPercent += _upper;
                     downPercent += _down;
@@ -193,17 +153,17 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //                    upperPercent += _upper*32;
 //                    downPercent += _down*32;
                 }else if( interval == "12h" ){
-//                    upperPercent += _upper*48;
-//                    downPercent += _down*48;
-                }else if( interval == "1d" ){
                     upperPercent += _upper*16;
                     downPercent += _down*16;
+                }else if( interval == "1d" ){
+                    upperPercent += _upper*32;
+                    downPercent += _down*32;
                 }else if( interval == "3d" ){
 //                    upperPercent += _upper*288;
 //                    downPercent += _down*288;
                 }else if( interval == "1w" ){
-                    upperPercent += _upper*32;
-                    downPercent += _down*32;
+                    upperPercent += _upper*64;
+                    downPercent += _down*64;
                 }
             }
 
@@ -254,6 +214,11 @@ QString PairTableItem::getFixedPrecision(const double &value, const int &precisi
     return QString::fromStdString(streamObj3.str());
 }
 
+void PairTableItem::setWillRemove(bool newWillRemove)
+{
+    mWillRemove = newWillRemove;
+}
+
 
 } // namespace Main
 
@@ -262,29 +227,6 @@ QString PairTableItem::getFixedPrecision(const double &value, const int &precisi
 
 void Main::PairTableItem::timerEvent(QTimerEvent *event)
 {
-    switch (mCurrentInterval) {
-    case Interval::_5m:
-        mCurrentInterval = Interval::_15m;
-        break;
-    case Interval::_15m:
-        mCurrentInterval = Interval::_1h;
-        break;
-    case Interval::_1h:
-        mCurrentInterval = Interval::_4h;
-        break;
-    case Interval::_4h:
-        mCurrentInterval = Interval::_1d;
-        break;
-    case Interval::_1d:
-        mCurrentInterval = Interval::_1w;
-        break;
-    case Interval::_1w:
-        mCurrentInterval = Interval::_5m;
-        break;
-    default:
-        break;
-    }
-
     this->update();
 }
 

@@ -9,6 +9,7 @@
 #include "widget/candlestickwindow.h"
 
 #include <QScreen>
+#include <QMouseEvent>
 
 namespace Main {
 
@@ -51,13 +52,19 @@ void ViewPort::addItem(const QString &pairName)
     auto btcTableItem = new Main::PairTableItem(pairName);
     mScene->addItem(btcTableItem);
     btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+5),mAddedInternal*(btcTableItem->boundingRect().height()+5));
-
+    itemList.push_back(btcTableItem);
     //TODO:  remove Item Crashed
     QObject::connect(btcTableItem,&Main::AbtractItem::deleteClicked,[=](){
-        Main::PairTableItem *item = qgraphicsitem_cast<Main::PairTableItem *>(btcTableItem);
-        mScene->removeItem(item);
-        this->update();
-        qDebug() << mScene->items().size();
+        btcTableItem->setWillRemove(true);
+        for( int i = 0 ; i < pairList.size() ; i++ ){
+            if( pairList.at(i) == btcTableItem->pair() ){
+                pairList.removeAt(i);
+                break;
+            }
+        }
+
+        mScene->removeItem(btcTableItem);
+
     });
 
 
@@ -95,3 +102,19 @@ void ViewPort::addItem(const QString &pairName)
 }
 
 } // namespace Main
+
+
+void Main::ViewPort::mousePressEvent(QMouseEvent *event)
+{
+
+
+    for( const auto &item : mScene->items() ){
+
+        qDebug() << item->boundingRect() << item->pos() << item->scenePos() << event->pos();
+
+    }
+
+
+
+    QGraphicsView::mousePressEvent(event);
+}
