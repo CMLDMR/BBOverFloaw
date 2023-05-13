@@ -30,23 +30,23 @@ class PairTableItem : public AbtractItem
 public:
     PairTableItem(const QString &pair);
     virtual ~PairTableItem(){
+
+        mWillRemove = true;
+
         qDebug() << "Delete PairTableItem";
         for( auto &item : mSeriesList ){
             delete item;
         }
         mSeriesList.clear();
+
+        killTimer(mTimerId);
+
+
+
+
     }
 
-    enum class Interval{
-        _5m = 0,
-        _15m,
-        _1h,
-        _4h,
-        _1d,
-        _1w
-    };
 
-    Interval mCurrentInterval;
 
     // QGraphicsItem interface
 public:
@@ -63,12 +63,13 @@ public:
 
     QVector<Series *> *seriesList();
 
+    void setWillRemove(bool newWillRemove);
+
 private:
 
 
     QVector<Series*> mSeriesList;
-    QVector<QString> mBollingerIntervalList;
-//    std::unordered_map<QString,std::tuple<double,double,double>> mValueList;
+//    QVector<QString> mBollingerIntervalList;
 
 
     bool canRequst{true};
@@ -79,8 +80,9 @@ private:
 
     QString getFixedPrecision(const double &value , const int &precision = 2);
 
-    qreal mWidth = 431, mHeight = 54;
-
+    qreal mWidth = 475, mHeight = 54;
+    int mTimerId;
+    bool mWillRemove{false};
 
     // QObject interface
 protected:

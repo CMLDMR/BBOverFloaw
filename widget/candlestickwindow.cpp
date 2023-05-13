@@ -43,7 +43,7 @@ void CandleStickWindow::setSeries(QVector<Main::Series *> *newSeries)
             for( auto &item : *mSeries ){
                 auto seriItem = new CandleStickItem();
                 seriItem->setSeries(item);
-                seriItem->setPos(i*(seriItem->boundingRect().width()+10),j*(seriItem->boundingRect().height()+10));
+                seriItem->setPos(i*(seriItem->boundingRect().width()+15),j*(seriItem->boundingRect().height()+15));
 
                 this->mScene->addItem(seriItem);
 //                mScene->sendEvent(seriItem,mScene->e)

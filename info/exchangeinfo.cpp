@@ -26,16 +26,6 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
 
 
     QObject::connect(ui->tableView,&QTableView::doubleClicked,[=]( const QModelIndex &index){
-
-        for( int i = index.row() ; i < mModel->list().size() ; i++ ){
-            auto item  = mModel->list().at(i);
-            if( item.getStatus() == "TRADING" ){
-                if( i > index.row()+21 ) break;
-                    emit selectedPair(item.getPair());
-                    mTableViewDelegate->append(item.getPair());
-            }
-        }
-
         if( index.data(ExchangeModel::status).toString() == "TRADING" ){
             emit selectedPair(index.data(Qt::DisplayRole).toString());
             mTableViewDelegate->append(index.data().toString());
