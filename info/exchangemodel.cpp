@@ -105,7 +105,6 @@ int ExchangeModel::rowCount(const QModelIndex &parent) const
 
     return mList.size();
 
-    // FIXME: Implement me!
 }
 
 int ExchangeModel::columnCount(const QModelIndex &parent) const
@@ -114,7 +113,6 @@ int ExchangeModel::columnCount(const QModelIndex &parent) const
         return 0;
 
     return 3;
-    // FIXME: Implement me!
 }
 
 QVariant ExchangeModel::data(const QModelIndex &index, int role) const
@@ -122,7 +120,6 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    // FIXME: Implement me!
     switch (role) {
     case Qt::DisplayRole:
         if( index.column() == 0 ){

@@ -6,6 +6,8 @@
 
 #include "info/exchangemodel.h"
 
+#include "session/sessionmanager.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -28,6 +30,19 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
         qDebug() << ui->actionSound_Test->text();
+    });
+
+    QObject::connect(ui->actionSave_As,&QAction::triggered,[=]( const bool &val){
+        Session::SessionManager::instance()->saveDialog();
+    });
+
+    QObject::connect(ui->actionLoad,&QAction::triggered,[=]( const bool &val){
+        if( Session::SessionManager::instance()->openSessionDialog() ){
+            for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
+                mViewPort->setPairItem(Session::SessionManager::instance()->pairName(i));
+            }
+        }
+
     });
 
 

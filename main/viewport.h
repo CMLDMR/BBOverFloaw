@@ -22,6 +22,8 @@ public:
     ViewPort();
 
     void addItem( const QString &pairName );
+    void setPairItem( const QString &pairName );
+
 
 private:
     ViewScene* mScene;
@@ -30,11 +32,11 @@ private:
     int mAddedInternal{0};
     int rowCount{0};
 
-    QStringList pairList;
+//    QStringList mPairList;
 
     QVector<Screen::CandleStickWindow*> mWindowList;
 
-    QVector<Main::PairTableItem*> itemList;
+
 
 
 
