@@ -185,6 +185,11 @@ void ExchangeModel::updatePricetoPercent()
     mManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/ticker/24hr")));
 }
 
+QVector<Symbol> ExchangeModel::list() const
+{
+    return mList;
+}
+
 void ExchangeModel::setHideNONTRADING(bool newHideNONTRADING)
 {
     mHideNONTRADING = newHideNONTRADING;

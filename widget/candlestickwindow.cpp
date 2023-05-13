@@ -4,6 +4,7 @@
 #include "main/series.h"
 #include "main/candleitem.h"
 
+#include <QMouseEvent>
 
 namespace Screen {
 
@@ -13,27 +14,21 @@ CandleStickWindow::CandleStickWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
-    mGraphicView = new QGraphicsView();
+//    this->setMouseTracking(true);
+    mGraphicView = new GraphicView();
     ui->mMainLayout->addWidget(mGraphicView);
 
-
-    mScene = new QGraphicsScene();
+    mScene = new Scene();
     mGraphicView->setScene(mScene);
+//    this->activateWindow();
 
-
-    this->setWindowFlags(Qt::WindowStaysOnTopHint);
-
-
-//    mScene->addItem(new CandleStickItem());
-
-    mGraphicView->setViewportUpdateMode(QGraphicsView::FullViewportUpdate);
-
-
+//    this->setWindowFlags(Qt::WindowStaysOnTopHint);
 }
 
 CandleStickWindow::~CandleStickWindow()
 {
+    mGraphicView->deleteLater();
+    mScene->deleteLater();
     delete ui;
 }
 
@@ -42,36 +37,34 @@ void CandleStickWindow::setSeries(QVector<Main::Series *> *newSeries)
     mSeries = newSeries;
 
     if( mSeries ){
-        //        qDebug() << "Bar size: " << item->getSeries().size();
-
         if( !mScene->items().size() ){
             int i = 0;
+            int j = 0;
             for( auto &item : *mSeries ){
-                auto seri = new CandleStickItem();
-                seri->setSeries(item);
-                seri->setPos(0,i*(seri->boundingRect().height()+10));
-                this->mScene->addItem(seri);
-                i++;
+                auto seriItem = new CandleStickItem();
+                seriItem->setSeries(item);
+                seriItem->setPos(i*(seriItem->boundingRect().width()+10),j*(seriItem->boundingRect().height()+10));
+
+                this->mScene->addItem(seriItem);
+//                mScene->sendEvent(seriItem,mScene->e)
+                j++;
+                if( j >= 4 ){
+                    i++;
+                    j = 0;
+                }
             }
         }
-
-
-
     }
-
-//    for( const auto &item : *mSeries ){
-
-
-
-////        for( const auto &bar : item->getSeries() ){
-////            qDebug() << bar;
-////        }
-//    }
 }
 
 void CandleStickWindow::timerEvent(QTimerEvent *event)
 {
-
 }
 
 } // namespace Screen
+
+
+void Screen::CandleStickWindow::mouseMoveEvent(QMouseEvent *event)
+{
+    QWidget::mouseMoveEvent(event);
+}

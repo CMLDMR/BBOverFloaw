@@ -85,6 +85,7 @@ public:
     void setFilter(const QString &filter );
     void setQuotaFilterKey(const QString &newQuotaFilterKey);
     void setHideNONTRADING(bool newHideNONTRADING);
+    QVector<Symbol> list() const;
 };
 
 } // namespace ExchangeInfo

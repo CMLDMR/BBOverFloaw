@@ -8,14 +8,12 @@
 #include "pairtableitem.h"
 #include "widget/candlestickwindow.h"
 
+#include <QScreen>
 
 namespace Main {
 
 ViewPort::ViewPort()
 {
-
-    const QString pair("btcusdt");
-
     mScene = new ViewScene();
     setScene(mScene);
     //    auto orderBook = new Main::OrderBookItem(pair);
@@ -56,29 +54,26 @@ void ViewPort::addItem(const QString &pairName)
 
     //TODO:  remove Item Crashed
     QObject::connect(btcTableItem,&Main::AbtractItem::deleteClicked,[=](){
-
-        qDebug() << "Before: "<<mScene->items().size();
-
         Main::PairTableItem *item = qgraphicsitem_cast<Main::PairTableItem *>(btcTableItem);
-
-//        int index = pairList.indexOf(item->pair());
-
-
-
-
-
         mScene->removeItem(item);
         this->update();
         qDebug() << mScene->items().size();
-
     });
 
 
     QObject::connect(btcTableItem,&Main::AbtractItem::openCandled,[=](const QPoint &point){
+
+        if( mWindowList.size() ){
+            for( auto &item : mWindowList ){
+                delete item;
+            }
+            mWindowList.clear();
+        }
+
         Screen::CandleStickWindow* mWidget = new Screen::CandleStickWindow();
 
-        mWidget->setGeometry(point.x()-mWidget->width()/2,
-                             point.y()-mWidget->height()/2,
+        mWidget->setGeometry(this->screen()->geometry().width()/2-mWidget->width()/2,
+                             this->screen()->geometry().height()/2-mWidget->height()/2,
                              mWidget->width(),
                              mWidget->height());
 
@@ -86,6 +81,7 @@ void ViewPort::addItem(const QString &pairName)
 
         mWidget->setSeries(btcTableItem->seriesList());
 
+        mWidget->setFocus();
         mWidget->show();
 
         mWindowList.push_back(mWidget);

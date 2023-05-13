@@ -39,7 +39,7 @@ Series::Series(const QString pair, const QString &interval)
     QObject::connect(mSocket,&QWebSocket::textMessageReceived,this,&Series::replaceLastCandle);
 
     QObject::connect(mSocket,&QWebSocket::connected,[=](){
-        qDebug() << "Socket Connected" << mPair << mTimeInterval;
+//        qDebug() << "Socket Connected" << mPair << mTimeInterval;
     });
 
 
