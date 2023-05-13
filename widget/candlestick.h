@@ -5,6 +5,7 @@
 #include <QGraphicsItem>
 #include <QVector>
 
+
 namespace Main{
 class Series;
 }
@@ -28,6 +29,9 @@ private:
 
     Main::Series* mSeries{nullptr};
 
+    bool mTrackMousePos{false};
+    QPointF mMousePoistion;
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
@@ -43,12 +47,15 @@ public:
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
-    virtual void mouseMoveEvent(QGraphicsSceneMouseEvent *event) override;
     virtual void wheelEvent(QGraphicsSceneWheelEvent *event) override;
 
     // QObject interface
 protected:
     virtual void timerEvent(QTimerEvent *event) override;
+
+    // QGraphicsItem interface
+protected:
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
 };
 
 } // namespace Screen

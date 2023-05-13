@@ -92,8 +92,32 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuTest">
+    <property name="title">
+     <string>Test</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menuTest_2">
+    <property name="title">
+     <string>Test</string>
+    </property>
+   </widget>
+   <widget class="QMenu" name="menutest">
+    <property name="title">
+     <string>test</string>
+    </property>
+    <addaction name="actionSound_Test"/>
+   </widget>
+   <addaction name="menuTest"/>
+   <addaction name="menuTest_2"/>
+   <addaction name="menutest"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionSound_Test">
+   <property name="text">
+    <string>Sound Test</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections/>

@@ -168,39 +168,42 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //                painter->fillRect(bolligerDownPrice,down > close ? QColor(150,255,150) : QColor(255,150,150));
 //                painter->drawText(bolligerDownPrice,getFixedPrecision(down,0));
 
-                if( interval == "15m" ){
+                if( interval == "5m" ){
                     upperPercent += _upper;
                     downPercent += _down;
-                }else if( interval == "30m" ){
+                }else if( interval == "15m" ){
                     upperPercent += _upper*2;
                     downPercent += _down*2;
+                }else if( interval == "30m" ){
+//                    upperPercent += _upper*2;
+//                    downPercent += _down*2;
                 }else if( interval == "1h" ){
                     upperPercent += _upper*4;
                     downPercent += _down*4;
                 }else if( interval == "2h" ){
+//                    upperPercent += _upper*8;
+//                    downPercent += _down*8;
+                }else if( interval == "4h" ){
                     upperPercent += _upper*8;
                     downPercent += _down*8;
-                }else if( interval == "4h" ){
+                }else if( interval == "6h" ){
+//                    upperPercent += _upper*24;
+//                    downPercent += _down*24;
+                }else if( interval == "8h" ){
+//                    upperPercent += _upper*32;
+//                    downPercent += _down*32;
+                }else if( interval == "12h" ){
+//                    upperPercent += _upper*48;
+//                    downPercent += _down*48;
+                }else if( interval == "1d" ){
                     upperPercent += _upper*16;
                     downPercent += _down*16;
-                }else if( interval == "6h" ){
-                    upperPercent += _upper*24;
-                    downPercent += _down*24;
-                }else if( interval == "8h" ){
+                }else if( interval == "3d" ){
+//                    upperPercent += _upper*288;
+//                    downPercent += _down*288;
+                }else if( interval == "1w" ){
                     upperPercent += _upper*32;
                     downPercent += _down*32;
-                }else if( interval == "12h" ){
-                    upperPercent += _upper*48;
-                    downPercent += _down*48;
-                }else if( interval == "1d" ){
-                    upperPercent += _upper*96;
-                    downPercent += _down*96;
-                }else if( interval == "3d" ){
-                    upperPercent += _upper*288;
-                    downPercent += _down*288;
-                }else if( interval == "1w" ){
-                    upperPercent += _upper*672;
-                    downPercent += _down*672;
                 }
             }
 

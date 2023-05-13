@@ -9,6 +9,9 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 
+#include "graphicview.h"
+#include "scene.h"
+
 namespace Main{
 class Series;
 }
@@ -34,13 +37,18 @@ private:
 
     QVector<Main::Series*> *mSeries;
 
-    QGraphicsView* mGraphicView;
-    QGraphicsScene* mScene;
+    GraphicView* mGraphicView;
+    Scene* mScene;
 
 
     // QObject interface
 protected:
     virtual void timerEvent(QTimerEvent *event) override;
+
+
+    // QWidget interface
+protected:
+    virtual void mouseMoveEvent(QMouseEvent *event) override;
 };
 
 

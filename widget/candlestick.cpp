@@ -4,6 +4,7 @@
 #include <QGraphicsSceneWheelEvent>
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
+#include <QApplication>
 
 #include "main/series.h"
 #include "indicator/bollinger.h"
@@ -15,9 +16,11 @@ CandleStickItem::CandleStickItem(QObject *parent)
     : QObject{parent}
 {
 
+    setAcceptedMouseButtons(Qt::AllButtons);
 
+    this->setAcceptHoverEvents(true);
 
-    this->startTimer(250);
+    this->startTimer(1000);
 }
 
 void CandleStickItem::setSeries(Main::Series *newSeries)
@@ -27,13 +30,25 @@ void CandleStickItem::setSeries(Main::Series *newSeries)
 
 QRectF CandleStickItem::boundingRect() const
 {
-    return QRectF(0.,0.,1500.,250.);
+    return QRectF(0.,0.,700.,250.);
 }
 
 void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->drawRect(boundingRect());
 
+    if( mTrackMousePos ){
+        auto pen = painter->pen();
+        QPen tempPen;
+        tempPen.setColor(Qt::gray);
+        tempPen.setStyle(Qt::DotLine);
+        painter->setPen(tempPen);
+
+        painter->drawLine(mMousePoistion.x(),0,mMousePoistion.x(),boundingRect().height());
+        painter->drawLine(0,mMousePoistion.y(),boundingRect().width(),mMousePoistion.y());
+
+        painter->setPen(pen);
+    }
 
     if( mSeries ){
 
@@ -44,7 +59,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
             for( const auto &item : mSeries->getSeries() ){
                 mMax = mMax < item.high() ? item.high() : mMax;
                 mMin = mMin > item.low() ? item.low() : mMin;
-
 
                 const auto &[upper,mid,lower] = mSeries->bollinger()->getBollinger(index++);
 
@@ -58,9 +72,10 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
             auto xFactor = boundingRect().height() / ( mMax - mMin);
 
-            painter->drawText(700,20,QString("xFactor %1  %2-%3=%4").arg(xFactor).arg(mMax).arg(mMin));
-            painter->drawText(700,40,QString("Interval %1").arg(mSeries->timeInterval()));
-
+            auto font = painter->font();
+            painter->setFont(QFont("Tahoma",16));
+            painter->drawText(0,20,QString("Interval %1").arg(mSeries->timeInterval()));
+            painter->setFont(font);
 
             // Draw Candle Stick
             for( int i = 0 ; i < mSeries->getSeries().size() ; i++ ){
@@ -73,7 +88,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                 auto close = item.close();
 
                 auto RectHeight = boundingRect().height();
-
 
                 if( item.close() > item.open() ){
 
@@ -93,11 +107,9 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                         painter->drawLine(wick);
                     }
 
-
                     QRectF body(xPos,RectHeight-yPos-height,width,height);
 
                     painter->drawRect(body);
-
 
                 }else{
 
@@ -124,7 +136,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                 }
             }
 
-
             //Draw Bollinger
 
             double lastUpper = 0;
@@ -132,7 +143,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
             double lastlower = 0;
 
             auto RectHeight = boundingRect().height();
-
 
             for( int i = 0 ; i < mSeries->getSeries().size() ; i++ ){
 
@@ -156,7 +166,6 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                     lastUpper = upper;
                 }
 
-
                 xPos = (i-1)*13.0;
                 {
                     auto wickyPos = (mid-mMin)*xFactor;
@@ -178,17 +187,9 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
                     lastlower = lower;
                 }
-
             }
         }
-
-
-
-
-
     }
-
-
 }
 
 } // namespace Screen
@@ -196,36 +197,41 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 void Screen::CandleStickItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
-
+    mTrackMousePos = true;
+    QApplication::setOverrideCursor(QCursor(Qt::CursorShape::CrossCursor));
     QGraphicsItem::hoverEnterEvent(event);
 }
 
 void Screen::CandleStickItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    mTrackMousePos = false;
+    QApplication::restoreOverrideCursor();
+
     QGraphicsItem::hoverLeaveEvent(event);
 }
 
-void Screen::CandleStickItem::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
-{
-    QGraphicsItem::mouseMoveEvent(event);
-}
 
 void Screen::CandleStickItem::wheelEvent(QGraphicsSceneWheelEvent *event)
 {
-
     if( event->delta() > 0 ){
-
 
     }else{
 
     }
-
     QGraphicsItem::wheelEvent(event);
 }
 
 
 void Screen::CandleStickItem::timerEvent(QTimerEvent *event)
 {
-
     this->update();
 }
+
+
+void Screen::CandleStickItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    mMousePoistion = event->pos();
+    update();
+    QGraphicsItem::hoverMoveEvent(event);
+}
+

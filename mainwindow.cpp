@@ -24,14 +24,13 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(mExchangeInfo,&ExchangeInfo::ExchangeInfo::selectedPair,[=](const QString mPairName){
                 mViewPort->addItem(mPairName);
-
-
-//        for( int i = 0 ; i < mExchangeInfo->model()->rowCount() ; i++ ){
-//            if( i >= 50 ) break;
-//            mViewPort->addItem(mExchangeInfo->model()->index(i,0).data().toString());
-//        }
-
     });
+
+    QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
+        qDebug() << ui->actionSound_Test->text();
+    });
+
+
 
 }
 
