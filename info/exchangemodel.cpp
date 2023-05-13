@@ -154,6 +154,8 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
         break;
     case Role::SYMBOL:
         return mList[index.row()];
+    case Role::pair:
+        return mList[index.row()].getPair();
         break;
     default:
         break;

@@ -27,7 +27,7 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
 
     QObject::connect(ui->tableView,&QTableView::doubleClicked,[=]( const QModelIndex &index){
         if( index.data(ExchangeModel::status).toString() == "TRADING" ){
-            emit selectedPair(index.data(Qt::DisplayRole).toString());
+            emit selectedPair(index.data(ExchangeModel::pair).toString());
             mTableViewDelegate->append(index.data().toString());
         }
     });
