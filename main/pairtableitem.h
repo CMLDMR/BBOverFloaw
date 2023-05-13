@@ -18,18 +18,24 @@
 
 #include "series.h"
 #include "indicator/bollinger.h"
+#include "abtractitem.h"
 
 
 namespace Main {
 
 class CandleItem;
 
-class PairTableItem : public QObject, public QGraphicsItem
+class PairTableItem : public AbtractItem
 {
-    Q_OBJECT
-    Q_INTERFACES(QGraphicsItem)
 public:
     PairTableItem(const QString &pair);
+    virtual ~PairTableItem(){
+        qDebug() << "Delete PairTableItem";
+        for( auto &item : mSeriesList ){
+            delete item;
+        }
+        mSeriesList.clear();
+    }
 
     enum class Interval{
         _5m = 0,
@@ -52,6 +58,10 @@ public:
     Series* mSeries5m;
     Series* mSeries15m;
     Indicator::Bollinger* mBollinger5m;
+
+    QString pair() const;
+
+    QVector<Series *> *seriesList();
 
 private:
 
@@ -76,10 +86,6 @@ private:
 protected:
     virtual void timerEvent(QTimerEvent *event) override;
 
-
-    // QGraphicsItem interface
-protected:
-    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 } // namespace Main
