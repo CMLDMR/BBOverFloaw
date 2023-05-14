@@ -60,6 +60,10 @@ protected:
     // QGraphicsItem interface
 protected:
     virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+
+    // QGraphicsItem interface
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
 };
 
 } // namespace Screen
