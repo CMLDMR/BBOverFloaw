@@ -51,6 +51,14 @@ void AbtractItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
                 mSelectedItem = true;
             });
         }
+        menu.addAction("Open Custom Url",[=](){
+            emit openUrlCliked();
+        });
+
+        menu.addAction("Open in TradingView",[=](){
+            emit openInTradingView();
+        });
+
         menu.addSeparator();
         menu.addAction("Open Candle Stick",[=](){
             emit openCandled(event->screenPos());

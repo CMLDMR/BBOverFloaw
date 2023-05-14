@@ -20,6 +20,8 @@ public:
 signals:
     void deleteClicked();
     void openCandled(const QPoint&);
+    void openUrlCliked();
+    void openInTradingView();
 
 private:
     enum class MouseState{

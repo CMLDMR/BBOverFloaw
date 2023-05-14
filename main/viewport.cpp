@@ -12,6 +12,7 @@
 
 #include <QScreen>
 #include <QMouseEvent>
+#include <QDesktopServices>
 
 namespace Main {
 
@@ -71,7 +72,13 @@ void ViewPort::setPairItem(const QString &pairName)
 
     });
 
+    QObject::connect(btcTableItem,&Main::AbtractItem::openUrlCliked,[=](){
 
+    QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+btcTableItem->pair()));
+    });
+    QObject::connect(btcTableItem,&Main::AbtractItem::openInTradingView,[=](){
+        QDesktopServices::openUrl(QUrl("https://www.tradingview.com/chart/BIQancrH/?symbol=BINANCE:"+btcTableItem->pair()+".P"));
+    });
     QObject::connect(btcTableItem,&Main::AbtractItem::openCandled,[=](const QPoint &point){
 
         if( mWindowList.size() ){
