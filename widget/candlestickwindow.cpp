@@ -46,11 +46,10 @@ void CandleStickWindow::setSeries(QVector<Main::Series *> *newSeries)
                 seriItem->setPos(i*(seriItem->boundingRect().width()+15),j*(seriItem->boundingRect().height()+15));
 
                 this->mScene->addItem(seriItem);
-//                mScene->sendEvent(seriItem,mScene->e)
-                j++;
-                if( j >= 4 ){
-                    i++;
-                    j = 0;
+                i++;
+                if( i >= 2 ){
+                    i = 0;
+                    j++;
                 }
             }
         }
