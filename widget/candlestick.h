@@ -32,6 +32,10 @@ private:
     bool mTrackMousePos{false};
     QPointF mMousePoistion;
 
+    double mLowestPrice{0};
+    double mHighesPrice{0};
+
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;

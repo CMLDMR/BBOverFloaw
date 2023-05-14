@@ -47,6 +47,16 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->drawLine(mMousePoistion.x(),0,mMousePoistion.x(),boundingRect().height());
         painter->drawLine(0,mMousePoistion.y(),boundingRect().width(),mMousePoistion.y());
 
+        tempPen.setColor(Qt::black);
+        painter->setPen(tempPen);
+
+        double mPrice =(mHighesPrice - mLowestPrice)*(boundingRect().height()-mMousePoistion.y() ) / boundingRect().height() + mLowestPrice;
+
+        auto fontMetric = painter->fontMetrics();
+
+        painter->drawText(boundingRect().width()-fontMetric.boundingRect(QString("%1$").arg(mPrice)).width()-2,mMousePoistion.y()-2,QString("%1$").arg(mPrice));
+
+
         painter->setPen(pen);
     }
 
@@ -67,6 +77,9 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                     mMin = lower < mMin ? lower : mMin;
                 }
             }
+
+            mHighesPrice = mMax;
+            mLowestPrice = mMin;
 
             painter->setBrush(QBrush(Qt::green));
 
@@ -186,8 +199,9 @@ void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         }
 
         auto font = painter->font();
-        painter->setFont(QFont("Tahoma",16));
-        painter->drawText(0,20,QString("Interval %1").arg(mSeries->timeInterval()));
+        painter->setFont(QFont("Tahoma",14));
+        painter->setPen(QPen(Qt::gray));
+        painter->drawText(0,20,QString("Interval %1 %2").arg(mSeries->timeInterval()).arg(mSeries->getSeries().last().close()));
         painter->setFont(font);
     }
 
