@@ -49,6 +49,8 @@ public:
 
     qulonglong lastCloseTimeEpoch() const;
 
+    QString pair() const;
+
 signals:
     void ready();
 

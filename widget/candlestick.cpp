@@ -5,6 +5,8 @@
 #include <QGraphicsSceneHoverEvent>
 #include <QGraphicsSceneMouseEvent>
 #include <QApplication>
+#include <QMenu>
+#include <QDesktopServices>
 
 #include "main/series.h"
 #include "indicator/bollinger.h"
@@ -251,3 +253,29 @@ void Screen::CandleStickItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
     QGraphicsItem::hoverMoveEvent(event);
 }
 
+
+
+void Screen::CandleStickItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+
+    if( event->button() == Qt::RightButton ){
+
+        if( mSeries ){
+            QMenu menu;
+
+            menu.addAction("Open Custom Url",[=](){
+                QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+mSeries->pair()));
+            });
+
+            menu.addAction("Open in TradingView",[=](){
+                QDesktopServices::openUrl(QUrl("https://www.tradingview.com/chart/BIQancrH/?symbol=BINANCE:"+mSeries->pair()+".P"));
+            });
+            menu.exec(event->screenPos());
+        }
+
+
+
+
+    }
+
+}

@@ -127,6 +127,11 @@ qulonglong Series::lastCloseTimeEpoch() const
     return mLastCloseTimeEpoch;
 }
 
+QString Series::pair() const
+{
+    return mPair;
+}
+
 
 
 } // namespace Main
