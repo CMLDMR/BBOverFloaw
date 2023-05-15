@@ -7,6 +7,7 @@
 #include "info/exchangemodel.h"
 
 #include "session/sessionmanager.h"
+#include <QUrl>
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -43,6 +44,13 @@ MainWindow::MainWindow(QWidget *parent)
             }
         }
 
+    });
+
+    QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
+        mPlaySound.setLoopCount(1);
+        mPlaySound.setVolume(1.0);
+        mPlaySound.setSource(QUrl::fromLocalFile(QString("info.wav")));
+        mPlaySound.play();
     });
 
 
