@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
-    Binance::Public::Future::RestAPI::instance()->exchangeInfo();
+//    Binance::Public::Future::RestAPI::instance()->exchangeInfo();
 
 }
 
