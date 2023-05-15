@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QSoundEffect>
 
 class QVBoxLayout;
 
@@ -31,6 +32,8 @@ private:
     ExchangeInfo::ExchangeInfo* mExchangeInfo;
 
     Main::ViewPort* mViewPort;
+
+    QSoundEffect mPlaySound;
 
 
 };
