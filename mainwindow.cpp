@@ -7,7 +7,7 @@
 #include "info/exchangemodel.h"
 
 #include "session/sessionmanager.h"
-#include "binance/restapi/restapi.h"
+//#include "binance/restapi/restapi.h"
 #include <QUrl>
 
 
@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
 
-    Binance::Public::Future::RestAPI::instance()->exchangeInfo();
+//    Binance::Public::Future::RestAPI::instance()->exchangeInfo();
 
 }
 
