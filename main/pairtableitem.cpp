@@ -25,14 +25,16 @@ PairTableItem::PairTableItem(const QString &pair)
     mLastSeries = mSeries5m;
 
     mSeriesList.push_back(new Series(mPair,"1m"));
+    mSeriesList.push_back(new Series(mPair,"3m"));
 
     mSeriesList.push_back(mSeries5m);
 
 //    mSeries15m = new Series(mPair,"15m");
     mSeriesList.push_back(new Series(mPair,"15m"));
+    mSeriesList.push_back(new Series(mPair,"30m"));
     mSeriesList.push_back(new Series(mPair,"1h"));
     mSeriesList.push_back(new Series(mPair,"4h"));
-    mSeriesList.push_back(new Series(mPair,"12h"));
+//    mSeriesList.push_back(new Series(mPair,"12h"));
     mSeriesList.push_back(new Series(mPair,"1d"));
     mSeriesList.push_back(new Series(mPair,"1w"));
 
@@ -128,24 +130,27 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
 
 
-                if( interval == "5m" ){
+                if( interval == "3m" ){
+                    upperPercent += _upper;
+                    downPercent += _down;
+                }if( interval == "5m" ){
                     upperPercent += _upper;
                     downPercent += _down;
                 }else if( interval == "15m" ){
-                    upperPercent += _upper*2;
-                    downPercent += _down*2;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "30m" ){
-//                    upperPercent += _upper*2;
-//                    downPercent += _down*2;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "1h" ){
-                    upperPercent += _upper*4;
-                    downPercent += _down*4;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "2h" ){
 //                    upperPercent += _upper*8;
 //                    downPercent += _down*8;
                 }else if( interval == "4h" ){
-                    upperPercent += _upper*8;
-                    downPercent += _down*8;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "6h" ){
 //                    upperPercent += _upper*24;
 //                    downPercent += _down*24;
@@ -153,17 +158,17 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //                    upperPercent += _upper*32;
 //                    downPercent += _down*32;
                 }else if( interval == "12h" ){
-                    upperPercent += _upper*16;
-                    downPercent += _down*16;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "1d" ){
-                    upperPercent += _upper*32;
-                    downPercent += _down*32;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }else if( interval == "3d" ){
 //                    upperPercent += _upper*288;
 //                    downPercent += _down*288;
                 }else if( interval == "1w" ){
-                    upperPercent += _upper*64;
-                    downPercent += _down*64;
+                    upperPercent += _upper;
+                    downPercent += _down;
                 }
             }
 

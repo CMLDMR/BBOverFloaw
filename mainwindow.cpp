@@ -42,7 +42,9 @@ MainWindow::MainWindow(QWidget *parent)
         if( Session::SessionManager::instance()->openSessionDialog() ){
             for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
                 mViewPort->setPairItem(Session::SessionManager::instance()->pairName(i));
+                mExchangeInfo->append(Session::SessionManager::instance()->pairName(i));
             }
+            mExchangeInfo->update();
         }
 
     });
