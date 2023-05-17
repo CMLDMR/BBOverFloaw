@@ -70,6 +70,11 @@ ExchangeModel *ExchangeInfo::model() const
     return mModel;
 }
 
+void ExchangeInfo::append(const QString &selectedCoin)
+{
+    mTableViewDelegate->append(selectedCoin);
+}
+
 
 }
 

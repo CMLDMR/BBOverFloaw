@@ -26,6 +26,7 @@ public:
 
     ExchangeModel *model() const;
 
+    void append( const QString &selectedCoin );
 
 
 signals:
