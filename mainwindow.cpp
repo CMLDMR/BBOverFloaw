@@ -10,6 +10,8 @@
 #include "binance/restapi/restapi.h"
 #include <QUrl>
 
+#include "global/alarmwidget.h"
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -50,11 +52,11 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
-        mPlaySound.setLoopCount(1);
-        mPlaySound.setVolume(1.0);
-        mPlaySound.setSource(QUrl::fromLocalFile(QString("info.wav")));
-        mPlaySound.play();
+
+        Global::Alarm::AlarmWidget::instance()->popUpMessage("Test");
+
     });
+
 
 
 //    Binance::Public::Future::RestAPI::instance()->exchangeInfo();

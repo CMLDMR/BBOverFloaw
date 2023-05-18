@@ -11,6 +11,7 @@
 #include <QUrl>
 #include <QTimer>
 #include <QRandomGenerator>
+#include "global/alarmwidget.h"
 
 
 namespace Main {
@@ -133,6 +134,9 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 if( interval == "3m" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    if( _upper > 0 ){
+                        Global::Alarm::AlarmWidget::instance()->popUpMessage(this->pair()+" "+interval);
+                    }
                 }if( interval == "5m" ){
                     upperPercent += _upper;
                     downPercent += _down;
@@ -179,11 +183,11 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
     painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerUpper,getFixedPrecision(upperPercent/20,0));
+    painter->drawText(bolligerUpper,getFixedPrecision(upperPercent,0));
 
     QRectF bolligerDown(i*(width+2)+offset,34,width,15);
     painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerDown,getFixedPrecision(downPercent/20,0));
+    painter->drawText(bolligerDown,getFixedPrecision(downPercent,0));
 
     mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
     mHeight = 34+15+5;
