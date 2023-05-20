@@ -39,7 +39,7 @@ public:
         }
         mSeriesList.clear();
 
-        killTimer(mTimerId);
+//        killTimer(mTimerId);
 
 
 
@@ -69,8 +69,9 @@ private:
 
 
     QVector<Series*> mSeriesList;
-//    QVector<QString> mBollingerIntervalList;
-
+    bool m1_up{false},m3_up{false},m5_up{false},m15_up{false},m30_up{false},m1h_up{false},m4h_up{false},m1d_up{false},m1w_up{false};
+    bool m1_down{false},m3_down{false},m5_down{false},m15_down{false},m30_down{false},m1h_down{false},m4h_down{false},m1d_down{false},m1w_down{false};
+    double m1wUpperValue{0.0},m1wDownValue{0.0};
 
     bool canRequst{true};
     int requestIntervalIndex{0};
@@ -83,10 +84,7 @@ private:
     qreal mWidth = 511, mHeight = 54;
     int mTimerId;
     bool mWillRemove{false};
-
-    // QObject interface
-protected:
-    virtual void timerEvent(QTimerEvent *event) override;
+    QTimer* mTimer;
 
 };
 

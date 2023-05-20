@@ -32,6 +32,7 @@ public:
 signals:
     void selectedPair( const QString &pairName );
 
+
 private:
     Ui::ExchangeInfo *ui;
     ExchangeModel* mModel;

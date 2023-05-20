@@ -8,6 +8,7 @@
 #include <QJsonValue>
 #include <QVector>
 #include <QWebSocket>
+#include <QThread>
 
 #include <unordered_map>
 
@@ -68,10 +69,14 @@ private:
 
     qulonglong mLastCloseTimeEpoch;
 
+    QThread* mThread;
+
 
 private slots:
 
     void replaceLastCandle( const QString &msg );
+
+    void startSocket();
 
 
 
