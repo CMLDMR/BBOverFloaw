@@ -76,5 +76,6 @@ void ExchangeInfo::append(const QString &selectedCoin)
 }
 
 
+
 }
 

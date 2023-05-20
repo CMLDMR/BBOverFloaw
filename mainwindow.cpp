@@ -9,6 +9,7 @@
 #include "session/sessionmanager.h"
 #include "binance/restapi/restapi.h"
 #include <QUrl>
+#include <QThread>
 
 #include "global/alarmwidget.h"
 
@@ -42,10 +43,30 @@ MainWindow::MainWindow(QWidget *parent)
 
     QObject::connect(ui->actionLoad,&QAction::triggered,[=]( const bool &val){
         if( Session::SessionManager::instance()->openSessionDialog() ){
-            for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
-                mViewPort->setPairItem(Session::SessionManager::instance()->pairName(i));
-                mExchangeInfo->append(Session::SessionManager::instance()->pairName(i));
-            }
+
+            QTimer* mTimer = new QTimer();
+            int count = 0;
+            QObject::connect(mTimer,&QTimer::timeout,[=]()mutable{
+                if( count < Session::SessionManager::instance()->pairListSize() ){
+                    mViewPort->setPairItem(Session::SessionManager::instance()->pairName(count));
+                    mExchangeInfo->append(Session::SessionManager::instance()->pairName(count++));
+                    if( count >= Session::SessionManager::instance()->pairListSize() ){
+                        mTimer->stop();
+                    }
+                }else{
+                    mTimer->stop();
+                    mTimer->deleteLater();
+                }
+
+            });
+
+            mTimer->start(500);
+
+//            for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
+//                QThread::currentThread()->wait(500);
+//                mViewPort->setPairItem(Session::SessionManager::instance()->pairName(i));
+//                mExchangeInfo->append(Session::SessionManager::instance()->pairName(i));
+//            }
             mExchangeInfo->update();
         }
 

@@ -41,7 +41,14 @@ PairTableItem::PairTableItem(const QString &pair)
 
     canRequst = false;
 
-    mTimerId = this->startTimer(1000);
+//    mTimerId = this->startTimer(1000);
+
+    mTimer = new QTimer();
+    QObject::connect(mTimer,&QTimer::timeout,[=](){
+        this->update();
+    });
+
+    mTimer->start(1000);
 
 }
 
@@ -58,7 +65,7 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
     if( mWillRemove ) return;
     if( selectedItem() ){
-        painter->fillRect(boundingRect(),QColor(225,225,225));
+        painter->fillRect(boundingRect(),QColor(175,175,175));
     }else{
         painter->fillRect(boundingRect(),Qt::white);
     }
@@ -120,41 +127,55 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 
                 auto _upper = (close - upper)/upper*100;
                 QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
-                painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,150,150));
+                painter->fillRect(bolligerUpper,_upper> 0 ? QColor(150,255,150) : QColor(255,255,255));
                 painter->drawText(bolligerUpper,getFixedPrecision(_upper));
 
 
 
                 auto _down = (down - close)/down*100;
                 QRectF bolligerDown(i*(width+2)+offset,34,width,15);
-                painter->fillRect(bolligerDown,_down > 0 ? QColor(150,255,150) : QColor(255,150,150));
+                painter->fillRect(bolligerDown,_down > 0 ? QColor(150,255,150) : QColor(255,255,255));
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
 
 
-                if( interval == "3m" ){
+                if( interval == "1m" ){
                     upperPercent += _upper;
                     downPercent += _down;
-                    if( _upper > 0 ){
-                        Global::Alarm::AlarmWidget::instance()->popUpMessage(this->pair()+" "+interval);
-                    }
+                    m1_down = _down > 0 ? true : false;
+                    m1_up = _upper > 0 ? true : false;
+                }if( interval == "3m" ){
+                    upperPercent += _upper;
+                    downPercent += _down;
+                    m3_down = _down > 0 ? true : false;
+                    m3_up = _upper > 0 ? true : false;
                 }if( interval == "5m" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m5_down = _down > 0 ? true : false;
+                    m5_up = _upper > 0 ? true : false;
                 }else if( interval == "15m" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m15_down = _down > 0 ? true : false;
+                    m15_up = _upper > 0 ? true : false;
                 }else if( interval == "30m" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m30_down = _down > 0 ? true : false;
+                    m30_up = _upper > 0 ? true : false;
                 }else if( interval == "1h" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m1h_down = _down > 0 ? true : false;
+                    m1h_up = _upper > 0 ? true : false;
                 }else if( interval == "2h" ){
 //                    upperPercent += _upper*8;
 //                    downPercent += _down*8;
                 }else if( interval == "4h" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m4h_down = _down > 0 ? true : false;
+                    m4h_up = _upper > 0 ? true : false;
                 }else if( interval == "6h" ){
 //                    upperPercent += _upper*24;
 //                    downPercent += _down*24;
@@ -162,17 +183,37 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //                    upperPercent += _upper*32;
 //                    downPercent += _down*32;
                 }else if( interval == "12h" ){
-                    upperPercent += _upper;
-                    downPercent += _down;
+//                    upperPercent += _upper;
+//                    downPercent += _down;
                 }else if( interval == "1d" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m1d_down = _down > 0 ? true : false;
+                    m1d_up = _upper > 0 ? true : false;
                 }else if( interval == "3d" ){
 //                    upperPercent += _upper*288;
 //                    downPercent += _down*288;
                 }else if( interval == "1w" ){
                     upperPercent += _upper;
                     downPercent += _down;
+                    m1wUpperValue = _upper;
+                    m1wDownValue = _down;
+
+                    m1w_down = _down > 0 ? true : false;
+                    m1w_up = _upper > 0 ? true : false;
+                }
+
+                if( m1_up && m3_up && m5_up && m15_up && m30_up && m1h_up && m4h_up){
+                    if( m1wUpperValue != 0.0 ){
+                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wUpperValue))));
+                    }
+
+                }
+                if( m1_down && m3_down && m5_down && m15_down && m30_down && m1h_down && m4h_down){
+                    if( m1wDownValue != 0.0 ){
+                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " LONG " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wDownValue))));
+                    }
+
                 }
             }
 
@@ -234,10 +275,7 @@ void PairTableItem::setWillRemove(bool newWillRemove)
 
 
 
-void Main::PairTableItem::timerEvent(QTimerEvent *event)
-{
-    this->update();
-}
+
 
 
 

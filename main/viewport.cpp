@@ -77,7 +77,7 @@ void ViewPort::setPairItem(const QString &pairName)
     QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+btcTableItem->pair()));
     });
     QObject::connect(btcTableItem,&Main::AbtractItem::openInTradingView,[=](){
-        QDesktopServices::openUrl(QUrl("https://www.tradingview.com/chart/BIQancrH/?symbol=BINANCE:"+btcTableItem->pair()+".P"));
+        QDesktopServices::openUrl(QUrl("https://www.tradingview.com/chart/?symbol=BINANCE:"+btcTableItem->pair()+".P"));
     });
     QObject::connect(btcTableItem,&Main::AbtractItem::openCandled,[=](const QPoint &point){
 
@@ -119,15 +119,5 @@ void ViewPort::setPairItem(const QString &pairName)
 
 void Main::ViewPort::mousePressEvent(QMouseEvent *event)
 {
-
-
-    for( const auto &item : mScene->items() ){
-
-        qDebug() << item->boundingRect() << item->pos() << item->scenePos() << event->pos();
-
-    }
-
-
-
     QGraphicsView::mousePressEvent(event);
 }

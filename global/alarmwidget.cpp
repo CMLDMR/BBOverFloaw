@@ -35,7 +35,6 @@ void AlarmWidget::popUpMessage(const QString &msg)
 
     this->setGeometry(width-mWidth,height-mHeight-40,mWidth,mHeight);
     this->show();
-    qDebug() << this->geometry();
     this->mTimer->start(200);
 
 
@@ -59,6 +58,7 @@ AlarmWidget::AlarmWidget(QWidget *parent)
             }
             if( counterToClose > 10*5 ){
                 counterToClose = 0;
+                this->mTimer->stop();
             }
         }
     });

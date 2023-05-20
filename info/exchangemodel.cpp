@@ -34,7 +34,9 @@ ExchangeModel::ExchangeModel(QObject *parent)
             auto asset = obj.value("symbols").toArray();
 
             for( const auto &item : asset ){
-                mFullList.append(item.toObject());
+                if( !mFullList.contains(item) ){
+                    mFullList.append(item.toObject());
+                }
             }
             saveList();
             updatePricetoPercent();

@@ -30,21 +30,21 @@ Series::Series(const QString pair, const QString &interval)
         emit ready();
 
         QTimer::singleShot(1000,[=](){
-            mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_"+mTimeInterval));
+//            mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_"+mTimeInterval));
+            mThread->start();
         });
     });
 
-    mSocket = new QWebSocket();
 
-    QObject::connect(mSocket,&QWebSocket::textMessageReceived,this,&Series::replaceLastCandle);
 
-    QObject::connect(mSocket,&QWebSocket::connected,[=](){
-//        qDebug() << "Socket Connected" << mPair << mTimeInterval;
-    });
+
+
+    mThread = new QThread();
+    QObject::connect(mThread,&QThread::started,this,&Series::startSocket);
+
 
 
     mAccessManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit=50")));
-
 
 }
 
@@ -56,6 +56,7 @@ Series::~Series()
     mSocket = nullptr;
     delete mBollinger;
     delete mAccessManager;
+    mThread->deleteLater();
 }
 
 const QVector<CandleItem> &Series::getSeries() const
@@ -120,6 +121,22 @@ void Series::replaceLastCandle(const QString &msg)
         mValueList[this->timeInterval()] = std::make_tuple(upper,down,close);
         emit ready();
     }
+}
+
+void Series::startSocket()
+{
+
+    mSocket = new QWebSocket();
+
+    QObject::connect(mSocket,&QWebSocket::textMessageReceived,this,&Series::replaceLastCandle);
+
+    QObject::connect(mSocket,&QWebSocket::connected,[=](){
+        //        qDebug() << "Socket Connected" << mPair << mTimeInterval;
+    });
+
+    mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_"+mTimeInterval));
+
+
 }
 
 qulonglong Series::lastCloseTimeEpoch() const
