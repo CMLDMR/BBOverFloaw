@@ -2,11 +2,24 @@
 #define BINANCE_PUBLIC_RESTAPI_H
 
 #include <QObject>
+#include "symbol.h"
+#include "kline.h"
+
+#include <thread>
+#include <mutex>
+#include <condition_variable>
+#include <future>
+
+#include <QFuture>
+#include <QFutureWatcher>
+#include <QtConcurrent>
+
 
 class QNetworkAccessManager;
 
 namespace Binance {
 namespace Public {
+namespace RestAPI{
 
 class RestAPI : public QObject
 {
@@ -14,14 +27,23 @@ class RestAPI : public QObject
 public:
     static RestAPI* instance();
 
-    void exchangeInfo();
+    void updateInfo();
 
+    QVector<Symbol> symbolList() const;
 
+    const KLineContainer getCandles(const QString &pair, const QString &interval , const int &size );
 
 signals:
 
 
 private:
+
+    enum class Command{
+        getSymbol,
+        getKline
+    };
+
+    Command mCurrentCommand;
 
     explicit RestAPI(QObject *parent = nullptr);
 
@@ -29,7 +51,17 @@ private:
 
     QNetworkAccessManager* mManager;
 
+    QVector<Symbol> mSymbolList;
+
+    bool saveList();
+
+    bool loadList();
+
 };
+}
+
+
+
 
 } // namespace Public
 } // namespace Binance

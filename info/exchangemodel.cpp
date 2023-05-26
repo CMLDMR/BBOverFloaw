@@ -13,6 +13,9 @@
 
 #include <mutex>
 
+#include "binance/restapi/restapi.h"
+
+
 namespace ExchangeInfo {
 
 ExchangeModel::ExchangeModel(QObject *parent)
@@ -29,17 +32,7 @@ ExchangeModel::ExchangeModel(QObject *parent)
     QObject::connect(mManager,&QNetworkAccessManager::finished,[=](QNetworkReply* reply ){
 
         if( mRequestType == exchangeInfo ){
-            auto obj = QJsonDocument::fromJson(reply->readAll()).object();
 
-            auto asset = obj.value("symbols").toArray();
-
-            for( const auto &item : asset ){
-                if( !mFullList.contains(item) ){
-                    mFullList.append(item.toObject());
-                }
-            }
-            saveList();
-            updatePricetoPercent();
         }else if( mRequestType == price ){
             auto array = QJsonDocument::fromJson(reply->readAll()).array();
 
@@ -55,13 +48,15 @@ ExchangeModel::ExchangeModel(QObject *parent)
         setQuotaFilterKey("USDT");
     });
 
-
-    if( !loadList() ){
-        mManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/exchangeInfo")));
-    }else{
-        setQuotaFilterKey("USDT");
-        updatePricetoPercent();
+    for( const auto &item : Binance::Public::RestAPI::RestAPI::instance()->symbolList() ){
+        if( !mFullList.contains(item) ){
+            mFullList.append(item);
+        }
     }
+
+
+    setQuotaFilterKey("USDT");
+    updatePricetoPercent();
 }
 
 std::once_flag mExchangeModelFlags;

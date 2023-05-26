@@ -7,11 +7,14 @@
 #include "info/exchangemodel.h"
 
 #include "session/sessionmanager.h"
-#include "binance/restapi/restapi.h"
 #include <QUrl>
 #include <QThread>
 
+#include "binance/restapi/restapi.h"
+
 #include "global/alarmwidget.h"
+#include "binance/restapi/kline.h"
+#include "series/seri.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -20,6 +23,17 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    Binance::Public::RestAPI::RestAPI::instance();
+
+//    qDebug() << "Size:: "<<Binance::Public::RestAPI::RestAPI::instance()->symbolList().size();
+//    auto symbol = Binance::Public::RestAPI::RestAPI::instance()->symbolList().first();
+
+//    qDebug() << symbol << "";
+//    auto list = Binance::Public::RestAPI::RestAPI::instance()->getCandles("BTCUSDT","1d",50);
+//    qDebug() << "Thread Worked" << list.size();
+
+
+    ///////////////////////////
     mExchangeInfo = new ExchangeInfo::ExchangeInfo();
 
     ui->exchangeVLayout->addWidget(mExchangeInfo);
