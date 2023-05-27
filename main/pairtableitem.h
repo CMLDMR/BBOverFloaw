@@ -54,21 +54,21 @@ public:
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
 
-    Series* mLastSeries{nullptr};
-    Series* mSeries5m;
-    Series* mSeries15m;
+    Series_Legacy* mLastSeries{nullptr};
+    Series_Legacy* mSeries5m;
+    Series_Legacy* mSeries15m;
     Indicator::Bollinger* mBollinger5m;
 
     QString pair() const;
 
-    QVector<Series *> *seriesList();
+    QVector<Series_Legacy *> *seriesList();
 
     void setWillRemove(bool newWillRemove);
 
 private:
 
 
-    QVector<Series*> mSeriesList;
+    QVector<Series_Legacy*> mSeriesList;
     bool m1_up{false},m3_up{false},m5_up{false},m15_up{false},m30_up{false},m1h_up{false},m4h_up{false},m1d_up{false},m1w_up{false};
     bool m1_down{false},m3_down{false},m5_down{false},m15_down{false},m30_down{false},m1h_down{false},m4h_down{false},m1d_down{false},m1w_down{false};
     double m1wUpperValue{0.0},m1wDownValue{0.0};

@@ -25,7 +25,7 @@ CandleStickItem::CandleStickItem(QObject *parent)
     this->startTimer(1000);
 }
 
-void CandleStickItem::setSeries(Main::Series *newSeries)
+void CandleStickItem::setSeries(Main::Series_Legacy *newSeries)
 {
     mSeries = newSeries;
 }

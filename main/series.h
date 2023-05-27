@@ -27,12 +27,12 @@ class Bollinger;
 
 namespace Main {
 
-class Series : public QObject
+class Series_Legacy : public QObject
 {
     Q_OBJECT
 public:
-    Series(const QString pair, const QString &interval);
-    virtual ~Series();
+    Series_Legacy(const QString pair, const QString &interval);
+    virtual ~Series_Legacy();
 
 
 

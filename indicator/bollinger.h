@@ -10,7 +10,7 @@ class Bollinger : public QObject
 {
     Q_OBJECT
 public:
-    explicit Bollinger(Main::Series *series , QObject *parent = nullptr);
+    explicit Bollinger(Main::Series_Legacy *series , QObject *parent = nullptr);
 
 
 
@@ -19,13 +19,13 @@ public:
     std::tuple<double,double,double> getLast();
 
 
-    void setSeries(Main::Series *newSeries);
+    void setSeries(Main::Series_Legacy *newSeries);
 
 signals:
 
 
 private:
-    Main::Series *mSeries;
+    Main::Series_Legacy *mSeries;
 
     double getDerivation(const int &index);
 

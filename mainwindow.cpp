@@ -13,7 +13,7 @@
 #include "binance/restapi/restapi.h"
 
 #include "global/alarmwidget.h"
-#include "binance/restapi/kline.h"
+#include "binance/kline.h"
 #include "series/seri.h"
 
 

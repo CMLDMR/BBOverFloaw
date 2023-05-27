@@ -13,7 +13,7 @@
 #include "scene.h"
 
 namespace Main{
-class Series;
+class Series_Legacy;
 }
 
 namespace Screen {
@@ -30,12 +30,12 @@ public:
     explicit CandleStickWindow(QWidget *parent = nullptr);
     ~CandleStickWindow();
 
-    void setSeries(QVector<Main::Series *> *newSeries);
+    void setSeries(QVector<Main::Series_Legacy *> *newSeries);
 
 private:
     Ui::CandleStickWindow *ui;
 
-    QVector<Main::Series*> *mSeries;
+    QVector<Main::Series_Legacy*> *mSeries;
 
     GraphicView* mGraphicView;
     Scene* mScene;

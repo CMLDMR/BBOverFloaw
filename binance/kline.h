@@ -5,40 +5,48 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QJsonValue>
+#include <QDebug>
 
 namespace Binance {
 namespace Public {
-namespace RestAPI {
 
-class KLine : public QJsonArray
+class KLine : public QJsonObject
 {
 public:
     KLine();
-    KLine( const QJsonArray &other );
+    KLine( const QJsonArray &other ); //From Get Method
+    KLine( const QJsonObject &object ); // From Websocket
 
-    qulonglong openTime() const;
+    qint64 eventTime() const;
+    qint64 openTime() const;
     QString openPrice() const;
     QString highPrice() const;
     QString lowPrice() const;
     QString closePrice() const;
     QString volume() const;
-    qulonglong closeTime() const;
+    qint64 closeTime() const;
     QString quoteAssetVolume() const;
-    qulonglong numberOfTrades() const;
+    qint64 numberOfTrades() const;
     QString takerBuyBaseAssetVolume() const;
     QString takerBuyQuoteAssetVolume() const;
+    bool Is_this_kline_closed() const;
 
-};
+    qint64 OpenCloseDuration();
 
-class KLineContainer{
-public:
-    KLineContainer( const QByteArray &array );
 
-    int size() const;
+    KLine& operator=(const Binance::Public::KLine &other );
 
 private:
-    QVector<KLine> mKCandles;
+
+    friend QDebug operator<<(QDebug debug,const KLine &line ){
+        debug << "T:"+QDateTime::fromMSecsSinceEpoch(line.closeTime()).time().toString("hh:mm:ss")
+              << "O:"+line.openPrice() << "H:"+line.highPrice() << "L:"+line.lowPrice() << "C:"+line.closePrice()<<"\n";
+        return debug;
+    }
+
 };
+
+
 
 
 //    1499040000000,      0 // Kline open time
@@ -58,7 +66,6 @@ private:
 
 
 
-} // namespace RestAPI
 } // namespace Public
 } // namespace Binance
 

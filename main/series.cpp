@@ -9,7 +9,7 @@
 
 namespace Main {
 
-Series::Series(const QString pair, const QString &interval)
+Series_Legacy::Series_Legacy(const QString pair, const QString &interval)
     :mTimeInterval(interval),
     mPair(pair)
 {
@@ -40,7 +40,7 @@ Series::Series(const QString pair, const QString &interval)
 
 
     mThread = new QThread();
-    QObject::connect(mThread,&QThread::started,this,&Series::startSocket);
+    QObject::connect(mThread,&QThread::started,this,&Series_Legacy::startSocket);
 
 
 
@@ -48,7 +48,7 @@ Series::Series(const QString pair, const QString &interval)
 
 }
 
-Series::~Series()
+Series_Legacy::~Series_Legacy()
 {
     qDebug() << "Delete Series";
     mSocket->close(QWebSocketProtocol::CloseCode::CloseCodeNormal);
@@ -59,39 +59,39 @@ Series::~Series()
     mThread->deleteLater();
 }
 
-const QVector<CandleItem> &Series::getSeries() const
+const QVector<CandleItem> &Series_Legacy::getSeries() const
 {
     return mSeries;
 }
 
-QString Series::timeInterval() const
+QString Series_Legacy::timeInterval() const
 {
     return mTimeInterval;
 }
 
-const CandleItem &Series::lastCandle() const
+const CandleItem &Series_Legacy::lastCandle() const
 {
     return mSeries.last();
 }
 
-void Series::update(const QString &pair, const QString &interval)
+void Series_Legacy::update(const QString &pair, const QString &interval)
 {
     //    mTimeInterval = interval;
 //    mAccessManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit=50")));
 
 }
 
-Indicator::Bollinger *Series::bollinger() const
+Indicator::Bollinger *Series_Legacy::bollinger() const
 {
     return mBollinger;
 }
 
-std::unordered_map<QString, std::tuple<double, double, double> > Series::valueList() const
+std::unordered_map<QString, std::tuple<double, double, double> > Series_Legacy::valueList() const
 {
     return mValueList;
 }
 
-void Series::replaceLastCandle(const QString &msg)
+void Series_Legacy::replaceLastCandle(const QString &msg)
 {
     auto obj = QJsonDocument::fromJson(msg.toLatin1()).object();
     auto kLineObj = obj["k"].toObject();
@@ -123,12 +123,12 @@ void Series::replaceLastCandle(const QString &msg)
     }
 }
 
-void Series::startSocket()
+void Series_Legacy::startSocket()
 {
 
     mSocket = new QWebSocket();
 
-    QObject::connect(mSocket,&QWebSocket::textMessageReceived,this,&Series::replaceLastCandle);
+    QObject::connect(mSocket,&QWebSocket::textMessageReceived,this,&Series_Legacy::replaceLastCandle);
 
     QObject::connect(mSocket,&QWebSocket::connected,[=](){
         //        qDebug() << "Socket Connected" << mPair << mTimeInterval;
@@ -139,12 +139,12 @@ void Series::startSocket()
 
 }
 
-qulonglong Series::lastCloseTimeEpoch() const
+qulonglong Series_Legacy::lastCloseTimeEpoch() const
 {
     return mLastCloseTimeEpoch;
 }
 
-QString Series::pair() const
+QString Series_Legacy::pair() const
 {
     return mPair;
 }

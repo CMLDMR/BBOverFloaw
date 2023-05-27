@@ -2,7 +2,7 @@
 
 namespace Indicator {
 
-Bollinger::Bollinger(Main::Series *series, QObject *parent)
+Bollinger::Bollinger(Main::Series_Legacy *series, QObject *parent)
     : QObject{parent},mSeries(series)
 {
 
@@ -57,7 +57,7 @@ std::tuple<double, double, double> Bollinger::getLast()
     return getBollinger(mSeries->getSeries().size()-1);
 }
 
-void Bollinger::setSeries(Main::Series *newSeries)
+void Bollinger::setSeries(Main::Series_Legacy *newSeries)
 {
     mSeries = newSeries;
 }

@@ -32,7 +32,7 @@ CandleStickWindow::~CandleStickWindow()
     delete ui;
 }
 
-void CandleStickWindow::setSeries(QVector<Main::Series *> *newSeries)
+void CandleStickWindow::setSeries(QVector<Main::Series_Legacy *> *newSeries)
 {
     mSeries = newSeries;
 
