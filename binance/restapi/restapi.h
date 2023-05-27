@@ -3,7 +3,7 @@
 
 #include <QObject>
 #include "symbol.h"
-#include "kline.h"
+#include "binance/kline.h"
 
 #include <thread>
 #include <mutex>
@@ -31,7 +31,7 @@ public:
 
     QVector<Symbol> symbolList() const;
 
-    const KLineContainer getCandles(const QString &pair, const QString &interval , const int &size );
+    const QVector<Binance::Public::KLine> getCandles(const QString &pair, const QString &interval , const int &size );
 
 signals:
 

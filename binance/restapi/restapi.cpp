@@ -120,7 +120,7 @@ QVector<Symbol> RestAPI::symbolList() const
 }
 
 
-const KLineContainer RestAPI::getCandles(const QString &pair, const QString &interval, const int &size)
+const QVector<Binance::Public::KLine> RestAPI::getCandles(const QString &pair, const QString &interval, const int &size)
 {
     auto manager = new QNetworkAccessManager();
 
@@ -130,12 +130,19 @@ const KLineContainer RestAPI::getCandles(const QString &pair, const QString &int
     QAbstractSocket::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
 
-    auto ar = reply->readAll();
+    auto ar = QJsonDocument::fromJson(reply->readAll()).array();
 
     reply->deleteLater();
     manager->deleteLater();
+    QVector<Binance::Public::KLine> kList{};
 
-    KLineContainer kList(ar);
+    for( const auto &item : ar ){
+        auto _ar = item.toArray();
+        Binance::Public::KLine kLine(_ar);
+        kList.append(kLine);
+    }
+
+
 
     return kList;
 }

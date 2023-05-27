@@ -22,22 +22,22 @@ PairTableItem::PairTableItem(const QString &pair)
 
     mBollinger5m = new Indicator::Bollinger(mSeries5m);
 
-    mSeries5m = new Series(mPair,"5m");
+    mSeries5m = new Series_Legacy(mPair,"5m");
     mLastSeries = mSeries5m;
 
-    mSeriesList.push_back(new Series(mPair,"1m"));
-    mSeriesList.push_back(new Series(mPair,"3m"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"1m"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"3m"));
 
     mSeriesList.push_back(mSeries5m);
 
 //    mSeries15m = new Series(mPair,"15m");
-    mSeriesList.push_back(new Series(mPair,"15m"));
-    mSeriesList.push_back(new Series(mPair,"30m"));
-    mSeriesList.push_back(new Series(mPair,"1h"));
-    mSeriesList.push_back(new Series(mPair,"4h"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"15m"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"30m"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"1h"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"4h"));
 //    mSeriesList.push_back(new Series(mPair,"12h"));
-    mSeriesList.push_back(new Series(mPair,"1d"));
-    mSeriesList.push_back(new Series(mPair,"1w"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"1d"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"1w"));
 
     canRequst = false;
 
@@ -241,7 +241,7 @@ QString PairTableItem::pair() const
     return mPair;
 }
 
-QVector<Series *> *PairTableItem::seriesList()
+QVector<Series_Legacy *> *PairTableItem::seriesList()
 {
     return &mSeriesList;
 }

@@ -48,6 +48,8 @@ ExchangeModel::ExchangeModel(QObject *parent)
         setQuotaFilterKey("USDT");
     });
 
+
+
     for( const auto &item : Binance::Public::RestAPI::RestAPI::instance()->symbolList() ){
         if( !mFullList.contains(item) ){
             mFullList.append(item);
@@ -120,12 +122,12 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
     switch (role) {
     case Qt::DisplayRole:
         if( index.column() == 0 ){
-            return mList[index.row()].getPair();
+            return mList[index.row()].pair();
         }
         if( index.column() == 1 ){
             double price = 0;
             for( const auto &item : mPriceList ){
-                if( item.symbol() == mList[index.row()].getPair() ){
+                if( item.symbol() == mList[index.row()].pair() ){
                     price = item.lastPrice();
                     break;
                 }
@@ -135,7 +137,7 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
         if( index.column() == 2 ){
             double priceChangePercent = 0;
             for( const auto &item : mPriceList ){
-                if( item.symbol() == mList[index.row()].getPair() ){
+                if( item.symbol() == mList[index.row()].pair() ){
                     priceChangePercent = item.priceChangePercent();
                     break;
                 }
@@ -144,15 +146,15 @@ QVariant ExchangeModel::data(const QModelIndex &index, int role) const
         }
         break;
     case Role::quoteAsset:
-        return mList[index.row()].getQuotaAsset();
+        return mList[index.row()].quoteAsset();
         break;
     case Role::status:
-        return mList[index.row()].getStatus();
+        return mList[index.row()].status();
         break;
     case Role::SYMBOL:
         return mList[index.row()];
     case Role::pair:
-        return mList[index.row()].getPair();
+        return mList[index.row()].pair();
         break;
     default:
         break;
@@ -181,7 +183,7 @@ void ExchangeModel::updatePricetoPercent()
     mManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/ticker/24hr")));
 }
 
-QVector<Symbol> ExchangeModel::list() const
+QVector<Binance::Public::RestAPI::Symbol> ExchangeModel::list() const
 {
     return mList;
 }
@@ -200,17 +202,17 @@ void ExchangeModel::setQuotaFilterKey(const QString &newQuotaFilterKey)
     mList.clear();
     for( const auto &item : mFullList ){
         if( mHideNONTRADING ){
-            if( item.getStatus() == "TRADING" ){
+            if( item.status() == "TRADING" ){
                 if( mQuotaFilterKey == "ALL" ){
                     mList.append(item);
-                }else if( mQuotaFilterKey == item.getQuotaAsset() ){
+                }else if( mQuotaFilterKey == item.quoteAsset() ){
                     mList.append(item);
                 }
             }
         }else{
             if( mQuotaFilterKey == "ALL" ){
                 mList.append(item);
-            }else if( mQuotaFilterKey == item.getQuotaAsset() ){
+            }else if( mQuotaFilterKey == item.quoteAsset() ){
                 mList.append(item);
             }
         }
@@ -255,7 +257,7 @@ bool ExchangeModel::loadList()
         qDebug() << "Size" <<size;
 
         for( int i = 0 ; i < size ; i++ ){
-            Symbol symbol;
+            Binance::Public::RestAPI::Symbol symbol;
             in >> symbol;
             mFullList.append(symbol);
         }

@@ -14,6 +14,8 @@
 #include <QMouseEvent>
 #include <QDesktopServices>
 
+#include "graphicsItem/pairitem.h"
+
 namespace Main {
 
 ViewPort::ViewPort()
@@ -41,6 +43,11 @@ ViewPort::ViewPort()
     //    addItem("TOMOUSDT");
 
 
+    auto pairItem = new Graphic::PairItem();
+    mScene->addItem(pairItem);
+
+
+
 }
 
 void ViewPort::addItem(const QString &pairName)
@@ -53,6 +60,8 @@ void ViewPort::addItem(const QString &pairName)
     Session::SessionManager::instance()->addPair(pairName);
 
     this->setPairItem(pairName);
+
+
 }
 
 void ViewPort::setPairItem(const QString &pairName)

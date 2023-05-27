@@ -6,7 +6,7 @@
 #include <QVector>
 #include <QJsonObject>
 #include <QSortFilterProxyModel>
-#include "symbol.h"
+#include "binance/restapi/symbol.h"
 #include "ticker.h"
 #include "ticker24h.h"
 
@@ -62,10 +62,10 @@ private:
 
     QNetworkAccessManager* mManager;
 
-    QVector<Symbol> mList;
-    QVector<Symbol> mFullList;
+    QVector<Binance::Public::RestAPI::Symbol> mList;
+    QVector<Binance::Public::RestAPI::Symbol> mFullList;
     QVector<Ticker24H> mPriceList;
-    QVector<Symbol> mPercentList;
+    QVector<Binance::Public::RestAPI::Symbol> mPercentList;
 
     QString mQuotaFilterKey{"ALL"};
     bool mHideNONTRADING{false};
@@ -85,7 +85,7 @@ public:
     void setFilter(const QString &filter );
     void setQuotaFilterKey(const QString &newQuotaFilterKey);
     void setHideNONTRADING(bool newHideNONTRADING);
-    QVector<Symbol> list() const;
+    QVector<Binance::Public::RestAPI::Symbol> list() const;
 };
 
 } // namespace ExchangeInfo

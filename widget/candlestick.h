@@ -1,13 +1,14 @@
 #ifndef SCREEN_CANDLESTICK_H
 #define SCREEN_CANDLESTICK_H
 
+#include "main/series.h"
 #include <QObject>
 #include <QGraphicsItem>
 #include <QVector>
 
 
 namespace Main{
-class Series;
+class Series_Legacy;
 }
 
 namespace Screen {
@@ -27,7 +28,7 @@ signals:
 
 private:
 
-    Main::Series* mSeries{nullptr};
+    Main::Series_Legacy* mSeries{nullptr};
 
     bool mTrackMousePos{false};
     QPointF mMousePoistion;
@@ -46,7 +47,7 @@ public:
 
 
     // QGraphicsItem interface
-    void setSeries(Main::Series *newSeries);
+    void setSeries(Main::Series_Legacy *newSeries);
 
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
