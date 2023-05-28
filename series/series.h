@@ -16,6 +16,12 @@ public:
 
     QVector<Seri *> seriList() const;
 
+    const double &close() const;
+
+    QString timeStr() const;
+
+    QString pair() const;
+
 signals:
     void dataUpdated();
 
@@ -27,6 +33,10 @@ private:
 
     QThread* mThread;
     void SocketWorker();
+
+    double mClose;
+    QString mTimeStr;
+
 };
 
 } // namespace Series
