@@ -30,16 +30,9 @@ QRectF Graphic::PairItem::boundingRect() const
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
     painter->fillRect(boundingRect(),Qt::green);
-
-    if( mSeries->seriList().size() ){
-
-        int i = 0;
-        for( const auto &seri : mSeries->seriList() ){
-            painter->drawText(0, i*20+20 ,seri->interval() + " : " + seri->kLineContainer().last().closePrice());
-            i++;
-        }
+    int i = 0;
+    for( auto &item : mSeries->seriList() ){
+        painter->drawText(0, i*20+20 ,item->interval() + " : " + item->kLineContainer().last().closePrice());
+        i++;
     }
-
-
-
 }

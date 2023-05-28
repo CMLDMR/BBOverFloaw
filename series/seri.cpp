@@ -20,9 +20,35 @@ QVector<Binance::Public::KLine> &Seri::kLineContainer()
     return mKLineContainer;
 }
 
-QString Seri::interval() const
+const QString Seri::interval() const
 {
     return mInterval;
+}
+
+Seri::iterator Seri::begin()
+{
+    return iterator(mKLineContainer.begin());
+}
+
+Seri::iterator Seri::end()
+{
+    return iterator(mKLineContainer.end());
+}
+
+Binance::Public::KLine &Seri::iterator::operator*() const
+{
+    return *current;
+}
+
+Seri::iterator &Seri::iterator::operator++()
+{
+    ++current;
+    return *this;
+}
+
+bool Seri::iterator::operator!=(const iterator &other)
+{
+    return current != other.current;
 }
 
 
