@@ -31,9 +31,15 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 {
     painter->fillRect(boundingRect(),Qt::green);
 
-    if( mSeries->seriList().first()->kLineContainer().size() ){
-        painter->drawText(0, 20+20 , mSeries->seriList().first()->kLineContainer().last().closePrice());
+    if( mSeries->seriList().size() ){
+
+        int i = 0;
+        for( const auto &seri : mSeries->seriList() ){
+            painter->drawText(0, i*20+20 ,seri->interval() + " : " + seri->kLineContainer().last().closePrice());
+            i++;
+        }
     }
+
 
 
 }
