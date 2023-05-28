@@ -18,7 +18,21 @@ public:
 
     QVector<Binance::Public::KLine> &kLineContainer();
 
-    QString interval() const;
+    const QString interval() const;
+
+
+    class iterator{
+    public:
+        iterator(QVector<Binance::Public::KLine>::iterator iter):current(iter){}
+        Binance::Public::KLine &operator*() const;
+        iterator &operator++();
+        bool operator!=(const iterator &other );
+    private:
+        QVector<Binance::Public::KLine>::iterator current;
+    };
+
+    iterator begin();
+    iterator end();
 
 signals:
     void updated();
