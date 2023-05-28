@@ -10,22 +10,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     mThread = new QThread();
     this->moveToThread(mThread);
     QObject::connect(mThread,&QThread::started,this,&Series::SocketWorker);
-
-    qDebug() << "Start Series";
-    mSeriList.append(new Seri(_mPair,"1m"));
-    mSeriList.append(new Seri(_mPair,"3m"));
-    mSeriList.append(new Seri(_mPair,"5m"));
-    mSeriList.append(new Seri(_mPair,"15m"));
-    mSeriList.append(new Seri(_mPair,"30m"));
-    mSeriList.append(new Seri(_mPair,"1h"));
-    mSeriList.append(new Seri(_mPair,"4h"));
-    mSeriList.append(new Seri(_mPair,"1d"));
-    mSeriList.append(new Seri(_mPair,"1w"));
-
-    qDebug() << "All Get Completed";
-
     mThread->start(QThread::LowPriority);
-
 }
 
 
@@ -37,6 +22,28 @@ QVector<Seri *> Series::seriList() const
 
 void Series::SocketWorker()
 {
+    qDebug() << "Start Series";
+
+    mSeriList.append(new Seri(mPair,"1m"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"3m"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"5m"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"15m"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"30m"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"1h"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"4h"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"1d"));
+    emit dataUpdated();
+    mSeriList.append(new Seri(mPair,"1w"));
+
+
+
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
 
     QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedKLine,[=](const Binance::Public::KLine &kLine ){
@@ -62,17 +69,6 @@ void Series::SocketWorker()
                 item->kLineContainer().append(_kline);
             }
         }
-
-
-//        qDebug() << QDateTime::fromMSecsSinceEpoch(kLine.closeTime()).time().toString("hh:mm:ss")
-//                 << QDateTime::fromMSecsSinceEpoch(kLine.eventTime()).time().toString("hh:mm:ss");
-
-//        for( int i = 0 ; i < mSeriList.size() ; i++ ){
-//            auto item = mSeriList[i];
-//            qDebug()  << item->pair()<< item->interval() <<
-//                QDateTime::fromMSecsSinceEpoch(item->kLineContainer().last().closeTime()).time().toString("hh:mm:ss") <<
-//                item->kLineContainer().last().closeTime();
-//        }
         emit dataUpdated();
     });
 
