@@ -20,6 +20,11 @@ QVector<Seri *> Series::seriList() const
     return mSeriList;
 }
 
+const double &Series::close() const
+{
+    return mClose;
+}
+
 void Series::SocketWorker()
 {
     qDebug() << "Start Series";
@@ -47,6 +52,8 @@ void Series::SocketWorker()
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
 
     QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedKLine,[=](const Binance::Public::KLine &kLine ){
+        mClose = kLine.closePrice().toDouble();
+        mTimeStr = QDateTime::fromMSecsSinceEpoch(kLine.eventTime()).time().toString("hh:mm:ss");
 
         for( auto &item : mSeriList ){
             if( kLine.eventTime() >= item->kLineContainer().last().closeTime() ){
@@ -75,5 +82,14 @@ void Series::SocketWorker()
     mSocket->startAggregateStream();
 }
 
+QString Series::timeStr() const
+{
+    return mTimeStr;
+}
+
+QString Series::pair() const
+{
+    return mPair;
+}
 
 } // namespace Series
