@@ -7,7 +7,7 @@ namespace Graphic {
 PairItem::PairItem(QObject *parent)
     : QObject{parent}
 {
-    mSeries = new Series::Series("BTCUSDT");
+    mSeries = new Series::Series("LINAUSDT");
 
 
     QObject::connect(mSeries,&Series::Series::dataUpdated,[=](){
@@ -24,12 +24,12 @@ PairItem::PairItem(QObject *parent)
 
 QRectF Graphic::PairItem::boundingRect() const
 {
-    return QRectF(0,0,1000,40);
+    return QRectF(0,0,1000,60);
 }
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-    painter->fillRect(boundingRect(),Qt::gray);
+//    painter->fillRect(boundingRect(),Qt::gray);
     painter->drawRect(boundingRect());
     auto fontMetric = painter->fontMetrics();
 
@@ -43,14 +43,14 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         painter->drawText(60, rect.height() ,QString::number(mSeries->close()));
     }
 
-    /// TODO: Price Does not Seen
-    qDebug() << "Seri Size: " << mSeries->seriList().size();
     {// intervals
-        int xPos = 100;
+        int xPos = 150;
         for( const auto &seri : mSeries->seriList() ){
-            qDebug() << xPos << seri->kLineContainer().last().closePrice();
             auto rect = fontMetric.boundingRect(seri->kLineContainer().constLast().closePrice());
-            painter->drawText(xPos*rect.width(), rect.height() ,seri->kLineContainer().constLast().closePrice()+"00xx");
+            painter->drawText(xPos, rect.height() ,seri->interval());
+            painter->drawText(xPos, rect.height()+15 ,seri->kLineContainer().last().openPrice());
+            painter->drawText(xPos, rect.height()+30 ,seri->kLineContainer().last().closePrice());
+
             xPos += rect.width()+10;
         }
     }
