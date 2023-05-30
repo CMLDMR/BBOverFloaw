@@ -57,7 +57,7 @@ public:
     Series_Legacy* mLastSeries{nullptr};
     Series_Legacy* mSeries5m;
     Series_Legacy* mSeries15m;
-    Indicator::Bollinger* mBollinger5m;
+    Indicator_legacy::Bollinger* mBollinger5m;
 
     QString pair() const;
 

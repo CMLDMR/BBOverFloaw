@@ -1,6 +1,6 @@
 #include "bollinger.h"
 
-namespace Indicator {
+namespace Indicator_legacy {
 
 Bollinger::Bollinger(Main::Series_Legacy *series, QObject *parent)
     : QObject{parent},mSeries(series)
@@ -62,4 +62,4 @@ void Bollinger::setSeries(Main::Series_Legacy *newSeries)
     mSeries = newSeries;
 }
 
-} // namespace Indicator
+} // namespace Indicator_legacy

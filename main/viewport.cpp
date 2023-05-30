@@ -15,6 +15,7 @@
 #include <QDesktopServices>
 
 #include "graphicsItem/pairitem.h"
+#include "chart/chartwidget.h"
 
 namespace Main {
 
@@ -43,9 +44,16 @@ ViewPort::ViewPort()
     //    addItem("TOMOUSDT");
 
 
-    auto pairItem = new Graphic::PairItem();
-    mScene->addItem(pairItem);
+//    auto pairItem = new Graphic::PairItem("LINAUSDT");
+//    mScene->addItem(pairItem);
+//    QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
+//        QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
+//    });
 
+//    QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
+//        Chart::ChartWidget* mWidget = new Chart::ChartWidget();
+//        mWidget->show();
+//    });
 
 
 }

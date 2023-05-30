@@ -20,7 +20,7 @@ PairTableItem::PairTableItem(const QString &pair)
     :mPair(pair)
 {
 
-    mBollinger5m = new Indicator::Bollinger(mSeries5m);
+    mBollinger5m = new Indicator_legacy::Bollinger(mSeries5m);
 
     mSeries5m = new Series_Legacy(mPair,"5m");
     mLastSeries = mSeries5m;
