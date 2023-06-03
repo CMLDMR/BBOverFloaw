@@ -29,6 +29,8 @@ private:
 
     double getDerivation(const int &index);
 
+    const int mLength{21};
+
 };
 
 } // namespace Indicator_legacy

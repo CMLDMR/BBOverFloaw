@@ -26,18 +26,18 @@ PairTableItem::PairTableItem(const QString &pair)
     mLastSeries = mSeries5m;
 
     mSeriesList.push_back(new Series_Legacy(mPair,"1m"));
-    mSeriesList.push_back(new Series_Legacy(mPair,"3m"));
+//    mSeriesList.push_back(new Series_Legacy(mPair,"3m"));
 
     mSeriesList.push_back(mSeries5m);
 
 //    mSeries15m = new Series(mPair,"15m");
     mSeriesList.push_back(new Series_Legacy(mPair,"15m"));
-    mSeriesList.push_back(new Series_Legacy(mPair,"30m"));
+//    mSeriesList.push_back(new Series_Legacy(mPair,"30m"));
     mSeriesList.push_back(new Series_Legacy(mPair,"1h"));
-    mSeriesList.push_back(new Series_Legacy(mPair,"4h"));
+//    mSeriesList.push_back(new Series_Legacy(mPair,"4h"));
 //    mSeriesList.push_back(new Series(mPair,"12h"));
-    mSeriesList.push_back(new Series_Legacy(mPair,"1d"));
-    mSeriesList.push_back(new Series_Legacy(mPair,"1w"));
+//    mSeriesList.push_back(new Series_Legacy(mPair,"1d"));
+//    mSeriesList.push_back(new Series_Legacy(mPair,"1w"));
 
     canRequst = false;
 
@@ -45,10 +45,20 @@ PairTableItem::PairTableItem(const QString &pair)
 
     mTimer = new QTimer();
     QObject::connect(mTimer,&QTimer::timeout,[=](){
+
+        if( mAlarmActivated ){
+            colorGradient += 10;
+            if( colorGradient >= 255 ){
+                colorGradient = 0;
+                mAlarmActivated = false;
+            }
+
+        }
+
         this->update();
     });
 
-    mTimer->start(1000);
+    mTimer->start(100);
 
 }
 
@@ -63,12 +73,19 @@ QRectF PairTableItem::boundingRect() const
 void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
+
+
     if( mWillRemove ) return;
     if( selectedItem() ){
         painter->fillRect(boundingRect(),QColor(175,175,175));
     }else{
         painter->fillRect(boundingRect(),Qt::white);
     }
+
+    if( mAlarmActivated ){
+        painter->fillRect(boundingRect(),QColor(255,colorGradient,colorGradient));
+    }
+
     painter->setPen(QPen(Qt::gray));
 
     painter->drawRect(boundingRect());
@@ -137,6 +154,10 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                 painter->fillRect(bolligerDown,_down > 0 ? QColor(150,255,150) : QColor(255,255,255));
                 painter->drawText(bolligerDown,getFixedPrecision(_down));
 
+                auto bollingerPercent = (upper - down)/down*100;
+                QRectF bollingerPercentRect(i*(width+2)+offset,51,width,15);
+                painter->drawText(bollingerPercentRect,getFixedPrecision(bollingerPercent));
+
 
                 if( interval == "1m" ){
                     upperPercent += _upper;
@@ -203,16 +224,40 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                     m1w_up = _upper > 0 ? true : false;
                 }
 
-                if( m1_up && m3_up && m5_up && m15_up && m30_up && m1h_up && m4h_up){
-                    if( m1wUpperValue != 0.0 ){
-                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wUpperValue))));
+                if( m1_up && m5_up && m15_up && m1h_up){
+
+                    if( interval == "1m" ){
+                        if( _upper > 0.25 && bollingerPercent > 1.5 ){
+                            Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT POS " + QString("%1 $").arg(_upper));
+                            mAlarmActivated = true;
+                        }
+                        if( _down > 0.25 && bollingerPercent > 1.5 ){
+                            Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " LONG POS " + QString("%1 $").arg(_down));
+                            mAlarmActivated = true;
+                        }
                     }
 
+//                    if( m1wUpperValue != 0.0 ){
+//                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wUpperValue))));
+//                    }
+
                 }
-                if( m1_down && m3_down && m5_down && m15_down && m30_down && m1h_down && m4h_down){
-                    if( m1wDownValue != 0.0 ){
-                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " LONG " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wDownValue))));
+                if( m1_down && m5_down && m15_down && m1h_down ){
+
+                    if( interval == "1m" ){
+                        if( _upper > 0.25 && bollingerPercent > 1.5 ){
+                            Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT POS " + QString("%1 $").arg(_upper));
+                            mAlarmActivated = true;
+                        }
+                        if( _down > 0.25 && bollingerPercent > 1.5 ){
+                            Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " LONG POS " + QString("%1 $").arg(_down));
+                            mAlarmActivated = true;
+                        }
                     }
+
+//                    if( m1wDownValue != 0.0 ){
+//                        Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " LONG " + QString("%1X").arg(static_cast<int>(100/std::abs(m1wDownValue))));
+//                    }
 
                 }
             }
@@ -222,16 +267,16 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
     }
 
 
-    QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
-    painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerUpper,getFixedPrecision(upperPercent,0));
+//    QRectF bolligerUpper(i*(width+2)+offset,17,width,15);
+//    painter->fillRect(bolligerUpper,upperPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
+//    painter->drawText(bolligerUpper,getFixedPrecision(upperPercent,0));
 
-    QRectF bolligerDown(i*(width+2)+offset,34,width,15);
-    painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
-    painter->drawText(bolligerDown,getFixedPrecision(downPercent,0));
+//    QRectF bolligerDown(i*(width+2)+offset,34,width,15);
+//    painter->fillRect(bolligerDown,downPercent > 0 ? QColor(150,255,150) : QColor(255,150,150));
+//    painter->drawText(bolligerDown,getFixedPrecision(downPercent,0));
 
-    mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
-    mHeight = 34+15+5;
+//    mWidth = mWidth < i*(width+2)+offset+width +5 ? i*(width+2)+offset+width +5 : mWidth;
+//    mHeight = 34+15+5;
 
     AbtractItem::paint(painter,option,widget);
 }

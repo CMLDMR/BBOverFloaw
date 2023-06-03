@@ -76,7 +76,7 @@ void ViewPort::setPairItem(const QString &pairName)
 {
     auto btcTableItem = new Main::PairTableItem(pairName);
     mScene->addItem(btcTableItem);
-    btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+5),mAddedInternal*(btcTableItem->boundingRect().height()+5));
+    btcTableItem->setPos(rowCount*(btcTableItem->boundingRect().width()+2),mAddedInternal*(btcTableItem->boundingRect().height()+5));
 
     //TODO:  remove Item Crashed
     QObject::connect(btcTableItem,&Main::AbtractItem::deleteClicked,[=](){
@@ -123,7 +123,7 @@ void ViewPort::setPairItem(const QString &pairName)
 
     });
     mAddedInternal++;
-    if( mAddedInternal >= 15 ){
+    if( mAddedInternal >= 12 ){
         rowCount++;
         mAddedInternal = 0;
     }
