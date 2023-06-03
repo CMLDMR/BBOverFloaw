@@ -57,7 +57,7 @@ public:
     Series_Legacy* mLastSeries{nullptr};
     Series_Legacy* mSeries5m;
     Series_Legacy* mSeries15m;
-    Indicator::Bollinger* mBollinger5m;
+    Indicator_legacy::Bollinger* mBollinger5m;
 
     QString pair() const;
 
@@ -81,11 +81,13 @@ private:
 
     QString getFixedPrecision(const double &value , const int &precision = 2);
 
-    qreal mWidth = 511, mHeight = 54;
+    qreal mWidth = 261, mHeight = 70;
     int mTimerId;
     bool mWillRemove{false};
     QTimer* mTimer;
 
+    int colorGradient{0};
+    bool mAlarmActivated{false};
 };
 
 } // namespace Main

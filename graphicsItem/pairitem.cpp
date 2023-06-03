@@ -1,19 +1,37 @@
 #include "pairitem.h"
 
 #include <QPainter>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
+#include <QAction>
+#include <QApplication>
+
 
 namespace Graphic {
 
-PairItem::PairItem(QObject *parent)
-    : QObject{parent}
+QString PairItem::pair() const
 {
-    mSeries = new Series::Series("LINAUSDT");
+    return mPair;
+}
+
+Series::Series *PairItem::series() const
+{
+    return mSeries;
+}
+
+
+
+PairItem::PairItem(const QString &_pair, QObject *parent)
+    : QObject{parent},mPair(_pair)
+{
+    mSeries = new Series::Series(_pair);
 
 
     QObject::connect(mSeries,&Series::Series::dataUpdated,[=](){
         this->update();
     });
 
+    this->setAcceptHoverEvents(true);
 
 
 
@@ -24,7 +42,7 @@ PairItem::PairItem(QObject *parent)
 
 QRectF Graphic::PairItem::boundingRect() const
 {
-    return QRectF(0,0,1000,60);
+    return QRectF(0,0,1000,100);
 }
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -49,10 +67,58 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
             auto rect = fontMetric.boundingRect(seri->kLineContainer().constLast().closePrice());
             painter->drawText(xPos, rect.height() ,seri->interval());
             painter->drawText(xPos, rect.height()+15 ,seri->kLineContainer().last().openPrice());
-            painter->drawText(xPos, rect.height()+30 ,seri->kLineContainer().last().closePrice());
-
-            xPos += rect.width()+10;
+            painter->drawText(xPos, rect.height()+30 ,seri->kLineContainer().last().highPrice());
+            painter->drawText(xPos, rect.height()+45 ,seri->kLineContainer().last().lowPrice());
+            painter->drawText(xPos, rect.height()+60 ,seri->kLineContainer().last().closePrice());
+            xPos += 50;
         }
     }
 
+}
+
+
+void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if( event->button() == Qt::RightButton ){
+        QMenu menu;
+
+
+        if( mSelected ){
+            menu.addAction("UnSelect",[=](){
+                mSelected = false;
+            });
+        }else{
+            menu.addAction("Select",[=](){
+                mSelected = true;
+            });
+        }
+        menu.addAction("Open Custom Url",[=](){
+            emit openUrlCliked();
+        });
+
+        menu.addAction("Open in TradingView",[=](){
+            emit openInTradingView();
+        });
+
+        menu.addSeparator();
+        menu.addAction("Open Candle Stick",[=](){
+            emit openCandles(event->screenPos());
+        });
+
+        menu.exec(event->screenPos());
+    }
+}
+
+
+void Graphic::PairItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    QApplication::setOverrideCursor(Qt::ArrowCursor);
+    QGraphicsItem::hoverEnterEvent(event);
+
+}
+
+void Graphic::PairItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    QApplication::restoreOverrideCursor();
+    QGraphicsItem::hoverLeaveEvent(event);
 }

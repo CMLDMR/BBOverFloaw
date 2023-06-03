@@ -69,6 +69,8 @@ AlarmWidget::AlarmWidget(QWidget *parent)
     mMessageLabel = new QLabel();
     mLayout->addWidget(mMessageLabel);
 
+    setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
+
 }
 
 void AlarmWidget::playSound()

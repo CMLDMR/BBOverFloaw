@@ -69,6 +69,16 @@ void Series::SocketWorker()
             }else{
 
                 auto _kline = kLine;
+                _kline.insert("o",item->kLineContainer().last().openPrice());
+
+                if( _kline.highPrice().toDouble() < item->kLineContainer().last().highPrice().toDouble() ){
+                    _kline.insert("h",item->kLineContainer().last().highPrice());
+                }
+
+                if( _kline.lowPrice().toDouble() > item->kLineContainer().last().lowPrice().toDouble() ){
+                    _kline.insert("l",item->kLineContainer().last().lowPrice());
+                }
+
                 _kline.insert("t",item->kLineContainer().last().openTime());
                 _kline.insert("T",item->kLineContainer().last().closeTime());
 

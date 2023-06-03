@@ -4,7 +4,7 @@
 #include <QObject>
 #include "main/series.h"
 
-namespace Indicator {
+namespace Indicator_legacy {
 
 class Bollinger : public QObject
 {
@@ -29,8 +29,10 @@ private:
 
     double getDerivation(const int &index);
 
+    const int mLength{21};
+
 };
 
-} // namespace Indicator
+} // namespace Indicator_legacy
 
 #endif // INDICATOR_BOLLINGER_H

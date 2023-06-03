@@ -15,7 +15,7 @@ Series_Legacy::Series_Legacy(const QString pair, const QString &interval)
 {
 
 
-    mBollinger = new Indicator::Bollinger(this);
+    mBollinger = new Indicator_legacy::Bollinger(this);
 
     mAccessManager = new QNetworkAccessManager();
 
@@ -44,7 +44,7 @@ Series_Legacy::Series_Legacy(const QString pair, const QString &interval)
 
 
 
-    mAccessManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit=50")));
+    mAccessManager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit=63")));
 
 }
 
@@ -81,7 +81,7 @@ void Series_Legacy::update(const QString &pair, const QString &interval)
 
 }
 
-Indicator::Bollinger *Series_Legacy::bollinger() const
+Indicator_legacy::Bollinger *Series_Legacy::bollinger() const
 {
     return mBollinger;
 }

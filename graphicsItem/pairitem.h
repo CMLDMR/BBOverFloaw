@@ -13,18 +13,37 @@ class PairItem : public QObject, public QGraphicsItem
     Q_OBJECT
     Q_INTERFACES(QGraphicsItem)
 public:
-    explicit PairItem(QObject *parent = nullptr);
+    explicit PairItem(const QString &_pair , QObject *parent = nullptr);
 
 signals:
 
+    void openCandles(const QPoint &);
+    void openUrlCliked();
+    void openInTradingView();
 
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
     virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 
+    QString pair() const;
+
+    Series::Series *series() const;
+
 private:
     Series::Series *mSeries;
+
+    bool mSelected;
+    QString mPair;
+
+    // QGraphicsItem interface
+protected:
+    virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+    // QGraphicsItem interface
+protected:
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 };
 
 } // namespace Graphic
