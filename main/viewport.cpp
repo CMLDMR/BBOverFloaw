@@ -44,22 +44,26 @@ ViewPort::ViewPort()
     //    addItem("TOMOUSDT");
 
 
-//    auto pairItem = new Graphic::PairItem("LINAUSDT");
-//    mScene->addItem(pairItem);
-//    QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
-//        QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
-//    });
 
-//    QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
-//        Chart::ChartWidget* mWidget = new Chart::ChartWidget();
-//        mWidget->show();
-//    });
 
 
 }
 
 void ViewPort::addItem(const QString &pairName)
 {
+    auto pairItem = new Graphic::PairItem(pairName);
+    mScene->addItem(pairItem);
+    QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
+        QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
+    });
+
+    QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
+        Chart::ChartWidget* mWidget = new Chart::ChartWidget(pairItem->series());
+        mWidget->show();
+    });
+
+
+    return;
 
     if( Session::SessionManager::instance()->pairContains(pairName) ){
         return;

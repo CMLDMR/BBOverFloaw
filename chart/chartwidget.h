@@ -5,6 +5,10 @@
 #include <QChart>
 #include <QChartView>
 
+namespace Series{
+    class Series;
+    class Seri;
+};
 
 namespace Chart {
 
@@ -17,13 +21,18 @@ class ChartWidget : public QWidget
     Q_OBJECT
 
 public:
-    explicit ChartWidget(QWidget *parent = nullptr);
+    explicit ChartWidget(Series::Series* _mSeries, QWidget *parent = nullptr);
     ~ChartWidget();
 
 private:
     Ui::ChartWidget *ui;
 
     QChartView *chartView;
+
+    Series::Series* mSeries;
+
+    void addChart(const int row , const int column , Series::Seri* _mSeri);
+
 };
 
 

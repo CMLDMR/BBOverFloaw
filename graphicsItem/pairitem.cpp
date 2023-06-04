@@ -27,7 +27,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
     mSeries = new Series::Series(_pair);
 
 
-    QObject::connect(mSeries,&Series::Series::dataUpdated,[=](){
+    QObject::connect(mSeries,&Series::Series::dataUpdated,[=](const bool &newCandle){
         this->update();
     });
 
@@ -70,6 +70,8 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
             painter->drawText(xPos, rect.height()+30 ,seri->kLineContainer().last().highPrice());
             painter->drawText(xPos, rect.height()+45 ,seri->kLineContainer().last().lowPrice());
             painter->drawText(xPos, rect.height()+60 ,seri->kLineContainer().last().closePrice());
+            painter->drawText(xPos, rect.height()+75 ,QString::number(seri->kLineContainer().size()));
+
             xPos += 50;
         }
     }

@@ -5,6 +5,8 @@
 #include "seri.h"
 #include "binance/websocketapi/websocketapi.h"
 
+#include <optional>
+
 
 namespace Series {
 
@@ -22,8 +24,10 @@ public:
 
     QString pair() const;
 
+    std::optional<Seri*> getSeri( const QString &interval );
+
 signals:
-    void dataUpdated();
+    void dataUpdated(const bool&);
 
 
 private:
