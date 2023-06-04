@@ -30,21 +30,23 @@ void Series::SocketWorker()
     qDebug() << "Start Series";
 
     mSeriList.append(new Seri(mPair,"1m"));
-    emit dataUpdated();
+    mClose = mSeriList.last()->kLineContainer().last().closePrice().toDouble();
+
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"3m"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"5m"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"15m"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"30m"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"1h"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"4h"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"1d"));
-    emit dataUpdated();
+    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"1w"));
 
 
@@ -54,6 +56,7 @@ void Series::SocketWorker()
     QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedKLine,[=](const Binance::Public::KLine &kLine ){
         mClose = kLine.closePrice().toDouble();
         mTimeStr = QDateTime::fromMSecsSinceEpoch(kLine.eventTime()).time().toString("hh:mm:ss");
+
 
         for( auto &item : mSeriList ){
             if( kLine.eventTime() >= item->kLineContainer().last().closeTime() ){
@@ -86,7 +89,7 @@ void Series::SocketWorker()
                 item->kLineContainer().append(_kline);
             }
         }
-        emit dataUpdated();
+        emit dataUpdated(kLine.Is_this_kline_closed());
     });
 
     mSocket->startAggregateStream();
@@ -100,6 +103,21 @@ QString Series::timeStr() const
 QString Series::pair() const
 {
     return mPair;
+}
+
+std::optional<Seri *> Series::getSeri(const QString &interval)
+{
+    Seri* seri{nullptr};
+
+    for( const auto &item : mSeriList ){
+        if( item->interval() == interval ){
+            seri = item;
+            break;
+        }
+    }
+
+
+    return seri;
 }
 
 } // namespace Series
