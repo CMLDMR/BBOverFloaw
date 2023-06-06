@@ -104,6 +104,12 @@ const qint64 Seri::closeTime(const int &index)
     return mKLineContainer.at(index).closeTime();
 }
 
+const double Seri::volume(const int &index)
+{
+    if( index == -1 ) return mKLineContainer.last().volume();
+    return mKLineContainer.at(index).volume();
+}
+
 Binance::Public::KLine Seri::last() const
 {
     return mKLineContainer.last();

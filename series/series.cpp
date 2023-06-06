@@ -108,6 +108,8 @@ void Series::SocketWorker()
                 item->append(kline);
             }
 
+//            qDebug() <<"LAST: " << item->last();
+
 
 
             emit item->updated();

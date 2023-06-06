@@ -48,7 +48,7 @@ KLine::KLine(const QJsonArray &other)
     mLowPrice = other.at(3).toVariant().toDouble();
     mClosePrice = other.at(4).toVariant().toDouble();
 
-    mVolume = other.at(6).toVariant().toDouble();
+    mVolume = other.at(5).toVariant().toDouble();
     mAssetVolume = other.at(7).toVariant().toDouble();
     mNumberOfTrade = other.at(8).toVariant().toLongLong();
     mTakerBaseAssetVolume = other.at(9).toVariant().toDouble();
