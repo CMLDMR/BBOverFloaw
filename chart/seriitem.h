@@ -24,16 +24,18 @@ signals:
 private:
     Series::Seri* mSeri;
 
-    qreal mWidth{50};
-    const qreal mHeight{400};
-    qreal mInfoHeight{50};
-    const qreal mVolumeHeight{100};
+    qreal mWidth{40};
+    const qreal mHeight{200};
+    qreal mInfoHeight{30};
+    const qreal mVolumeHeight{75};
+    const qreal mQuotaVolumeHeight{75};
 
-    const qreal tickerAreaWidth{15};
+    const qreal tickerAreaWidth{7};
 
 
     std::tuple<QRectF,QLineF,Qt::GlobalColor> candle(const int &index) const;
-    std::tuple<QRectF,Qt::GlobalColor> volume(const int &index) const;
+    std::tuple<QRectF, QRectF, QRectF, Qt::GlobalColor> volume(const int &index) const;
+    QPointF volumeDif( const int &index );
 
 
     // QGraphicsItem interface

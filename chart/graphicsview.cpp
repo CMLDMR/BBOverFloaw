@@ -12,17 +12,32 @@ GraphicsView::GraphicsView(Series::Series *_series)
     :mSeries(_series)
 {
 
-    // Y eksenini Ters çevir
-//    auto transform = this->transform();
-//    transform.scale(1,-1);
-//    this->setTransform(transform);
-
+    this->setViewportUpdateMode(FullViewportUpdate);
 
     mScene = new Scene();
 
     this->setScene(mScene);
 
-    mScene->addItem(new SeriItem(mSeries->getSeri("1m").value()));
+    int i = 0;
+    int j = 0;
+    int ypos = 0;
+    for( const auto &seri : mSeries->seriList() ){
+        auto mSeri3m = new SeriItem(seri);
+        mScene->addItem(mSeri3m);
+
+        if( j % 2 == 0 ){
+            mSeri3m->setPos(0,i*(mSeri3m->boundingRect().height()+10));
+            ypos = i*(mSeri3m->boundingRect().height()+10);
+        }else{
+            mSeri3m->setPos(100*7+100 + 10,ypos);
+        }
+        j++;
+        if( j >= 2 ){
+            i++;
+            j = 0;
+        }
+    }
+
 }
 
 } // namespace Chart
