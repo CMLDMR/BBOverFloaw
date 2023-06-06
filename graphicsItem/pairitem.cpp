@@ -64,12 +64,12 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
     {// intervals
         int xPos = 150;
         for( const auto &seri : mSeries->seriList() ){
-            auto rect = fontMetric.boundingRect(seri->kLineContainer().constLast().closePrice());
+            auto rect = fontMetric.boundingRect(QString::number(seri->close()));
             painter->drawText(xPos, rect.height() ,seri->interval());
-            painter->drawText(xPos, rect.height()+15 ,seri->kLineContainer().last().openPrice());
-            painter->drawText(xPos, rect.height()+30 ,seri->kLineContainer().last().highPrice());
-            painter->drawText(xPos, rect.height()+45 ,seri->kLineContainer().last().lowPrice());
-            painter->drawText(xPos, rect.height()+60 ,seri->kLineContainer().last().closePrice());
+            painter->drawText(xPos, rect.height()+15 ,QString::number(seri->open()));
+            painter->drawText(xPos, rect.height()+30 ,QString::number(seri->high()));
+            painter->drawText(xPos, rect.height()+45 ,QString::number(seri->low()));
+            painter->drawText(xPos, rect.height()+60 ,QString::number(seri->close()));
             painter->drawText(xPos, rect.height()+75 ,QString::number(seri->kLineContainer().size()));
 
             xPos += 50;

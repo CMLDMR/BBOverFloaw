@@ -45,8 +45,6 @@ ViewPort::ViewPort()
 
 
 
-
-
 }
 
 void ViewPort::addItem(const QString &pairName)

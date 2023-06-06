@@ -2,8 +2,7 @@
 #define CHART_CHARTWIDGET_H
 
 #include <QWidget>
-#include <QChart>
-#include <QChartView>
+
 
 namespace Series{
     class Series;
@@ -11,6 +10,9 @@ namespace Series{
 };
 
 namespace Chart {
+
+class GraphicsView;
+
 
 namespace Ui {
 class ChartWidget;
@@ -27,7 +29,7 @@ public:
 private:
     Ui::ChartWidget *ui;
 
-    QChartView *chartView;
+    GraphicsView *mView;
 
     Series::Series* mSeries;
 
