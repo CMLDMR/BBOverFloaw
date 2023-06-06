@@ -3,6 +3,7 @@
 #include "series/seri.h"
 
 
+#include <QGraphicsScene>
 #include <QPainter>
 
 
@@ -15,6 +16,7 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
 
     QObject::connect(mSeri,&Series::Seri::updated,[=](){
         this->update();
+        this->scene()->update(this->scene()->itemsBoundingRect());
     });
 
 
@@ -30,7 +32,7 @@ std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) c
     auto high = mSeri->high(index);
     auto low = mSeri->low(index);
 
-    if( close > open ){
+    if( close >= open ){
 
         qreal xPos = index * tickerAreaWidth+2;
         qreal yPos = mInfoHeight+mHeight - (open - min)/(max-min)*mHeight;
@@ -58,7 +60,7 @@ std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) c
 
 }
 
-std::tuple<QRectF, Qt::GlobalColor> SeriItem::volume(const int &index) const
+std::tuple<QRectF,QRectF,QRectF, Qt::GlobalColor> SeriItem::volume(const int &index) const
 {
 
     qreal max = mSeri->at(0).volume();
@@ -73,24 +75,42 @@ std::tuple<QRectF, Qt::GlobalColor> SeriItem::volume(const int &index) const
 
     auto _volumeYAx = mInfoHeight+mHeight+mVolumeHeight;
 
-    qreal xPos = index * tickerAreaWidth+3;
+    qreal xPos = index * tickerAreaWidth+1;
     qreal yPos = _volumeYAx - (mSeri->volume(index))/max*mVolumeHeight;
-    qreal width = tickerAreaWidth-3;
+    qreal width = tickerAreaWidth-1;
     qreal height = mSeri->volume(index)/max*mVolumeHeight;
 
-    Qt::GlobalColor color = close > open ? Qt::darkGreen : Qt::darkRed;
+    Qt::GlobalColor color = close >= open ? Qt::darkGreen : Qt::darkRed;
 
-    return std::make_tuple(QRectF(xPos,yPos,width,height),color);
+    qreal bYpos = _volumeYAx - mSeri->takerVolume(index)/max*mVolumeHeight;
+    qreal bheight = mSeri->takerVolume(index)/max*mVolumeHeight;
+
+    qreal sYpos = _volumeYAx - (mSeri->volume(index)-mSeri->takerVolume(index))/max*mVolumeHeight;
+    qreal sheight = height-bheight;
+
+    return std::make_tuple(QRectF(xPos,yPos,width,height),
+                           QRectF(xPos,bYpos,width/2,bheight),
+                           QRectF(xPos+width/2,sYpos,width/2,sheight)
+                           ,color);
 
 
 }
+
+QPointF SeriItem::volumeDif(const int &index)
+{
+    qreal max = mSeri->at(0).volume();
+
+    return QPointF();
+}
+
+
 
 } // namespace Chart
 
 
 QRectF Chart::SeriItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight);
+    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight);
 }
 
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -98,7 +118,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     painter->drawRect(boundingRect());
     painter->fillRect(QRectF(0,0,mWidth,mInfoHeight),Qt::gray);
-    painter->drawText(0,20,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
+    painter->drawText(0,15,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
 
     mWidth = mSeri->size() * tickerAreaWidth +100;
     for( int i = 0 ; i < mSeri->size() ; i++ ){
@@ -117,22 +137,28 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         auto close = mSeri->close();
         painter->drawText(mSeri->size() * tickerAreaWidth+20,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
         painter->drawText(mSeri->size() * tickerAreaWidth+20,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+20,QString::number(60-(mSeri->last().eventTime()%60000)/1000));
-
     }
 
     {
-        painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
-        painter->drawText(0,mInfoHeight+mHeight+20,"VOLUME");
+        painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
+        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + QString::number(mSeri->volume()));
 
         for( int i = 0 ; i < mSeri->size() ; i++ ){
-            auto [rect,color] = this->volume(i);
-//            qDebug() << rect;
+            auto [rect,rectbuy,rectsell,color] = this->volume(i);
             painter->fillRect(rect,color);
-
+            painter->fillRect(rectbuy,Qt::green);
+            painter->fillRect(rectsell,Qt::red);
         }
-
-
     }
+
+//    {
+//        painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
+//        painter->drawText(0,mInfoHeight+mHeight+20,"VOLUME");
+
+//        for( int i = 1 ; i < mSeri->size() ; i++ ){
+
+//        }
+//    }
 
 
 }

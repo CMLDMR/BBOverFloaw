@@ -37,6 +37,7 @@ public:
     const qint64 openTime( const int &index = -1 );
     const qint64 closeTime( const int &index = -1 );
     const double volume( const int &index = -1 );
+    const double takerVolume( const int &index = -1 );
 
 
     Binance::Public::KLine last() const;

@@ -33,21 +33,21 @@ void Series::SocketWorker()
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
     emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"3m"));
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"5m"));
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"15m"));
-//    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"3m"));
+    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"5m"));
+    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"15m"));
+    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"30m"));
 //    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"1h"));
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"4h"));
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"1d"));
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"1w"));
+    mSeriList.append(new Seri(mPair,"1h"));
+    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"4h"));
+    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"1d"));
+    emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"1w"));
 
 
 
@@ -75,10 +75,14 @@ void Series::SocketWorker()
                 kline.setVolume(aggregate.quantity());
                 kline.setNumberOfTrade(1);
 
-                if( aggregate.isMaker() ){
+                if( !aggregate.isMaker() ){
                     kline.setTakerQuotaAseetVolume(aggregate.price()*aggregate.quantity());
+                    kline.setTakerBaseAssetVolume(aggregate.quantity());
+
                 }else{
                     kline.setTakerQuotaAseetVolume(0);
+                    kline.setTakerBaseAssetVolume(0);
+
                 }
 
                 item->append(kline);
@@ -101,8 +105,10 @@ void Series::SocketWorker()
 
                 kline.setVolume(kline.volume()+aggregate.quantity());
                 kline.setAssetVolume(kline.quoteAssetVolume()+aggregate.quantity()*aggregate.price());
-                kline.setTakerBaseAssetVolume(kline.takerBuyBaseAssetVolume()+aggregate.quantity());
-                kline.setTakerQuotaAseetVolume(kline.takerBuyQuoteAssetVolume()+aggregate.price()*aggregate.quantity());
+                if( !aggregate.isMaker() ){
+                    kline.setTakerBaseAssetVolume(kline.takerBuyBaseAssetVolume()+aggregate.quantity());
+                    kline.setTakerQuotaAseetVolume(kline.takerBuyQuoteAssetVolume()+aggregate.price()*aggregate.quantity());
+                }
                 kline.setNumberOfTrade(kline.numberOfTrades()+1);
                 item->removelast();
                 item->append(kline);
