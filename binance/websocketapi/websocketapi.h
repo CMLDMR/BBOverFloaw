@@ -6,6 +6,7 @@
 #include <QWebSocket>
 
 #include "binance/kline.h"
+#include "binance/websocketapi/aggregate.h"
 
 
 namespace Binance {
@@ -22,7 +23,8 @@ public:
     void startAggregateStream();
 
 signals:
-    void receivedKLine(const Binance::Public::KLine &);
+    void receivedKLine(const Binance::Public::KLine);
+    void receivedAggregate(const Binance::Public::WebSocketAPI::Aggregate &);
 
 
 private:
@@ -34,6 +36,8 @@ private:
     QWebSocket* mSocket;
     void startedSocket();
     Binance::Public::KLine mLastKLine;
+    Binance::Public::WebSocketAPI::Aggregate mLastAggregate;
+
 };
 
 } // namespace WebSocketAPI

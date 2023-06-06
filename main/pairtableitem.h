@@ -81,7 +81,7 @@ private:
 
     QString getFixedPrecision(const double &value , const int &precision = 2);
 
-    qreal mWidth = 261, mHeight = 70;
+    qreal mWidth = 351, mHeight = 70;
     int mTimerId;
     bool mWillRemove{false};
     QTimer* mTimer;

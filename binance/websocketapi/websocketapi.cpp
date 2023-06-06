@@ -33,16 +33,26 @@ void WebSocketAPI::startedSocket()
     mSocket = new QWebSocket();
 
     QObject::connect(mSocket,&QWebSocket::textMessageReceived,[=](const QString &msg){
-        auto obj = QJsonDocument::fromJson(msg.toUtf8()).object();
-        mLastKLine = KLine(obj);
-        emit receivedKLine(mLastKLine);
+        const auto obj = QJsonDocument::fromJson(msg.toUtf8()).object();
+        mLastAggregate = Aggregate(obj);
+        emit receivedAggregate(mLastAggregate);
     });
 
     QObject::connect(mSocket,&QWebSocket::connected,[=](){
         qDebug() << __FILE__ << __LINE__ <<"Socket Connected" << mPair;
     });
 
-    mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_1m"));
+    QObject::connect(mSocket,&QWebSocket::disconnected,[=](){
+        qDebug() << __FILE__ << __LINE__ <<"Socket DisConnected" << mPair;
+    });
+
+    // Kline Websocket
+    //mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@kline_1m"));
+
+
+    mSocket->open(QUrl("wss://fstream.binance.com/ws/"+mPair.toLower()+"@aggTrade"));
+
+    //"wss://fstream.binance.com/ws/"+symbol+"@aggTrade"
 }
 
 } // namespace WebSocketAPI

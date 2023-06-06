@@ -30,66 +30,92 @@ void Series::SocketWorker()
     qDebug() << "Start Series";
 
     mSeriList.append(new Seri(mPair,"1m"));
-    mClose = mSeriList.last()->kLineContainer().last().closePrice().toDouble();
+    mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
     emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"3m"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"5m"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"15m"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"30m"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"1h"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"4h"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"1d"));
-    emit dataUpdated(false);
-    mSeriList.append(new Seri(mPair,"1w"));
+//    mSeriList.append(new Seri(mPair,"3m"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"5m"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"15m"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"30m"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"1h"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"4h"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"1d"));
+//    emit dataUpdated(false);
+//    mSeriList.append(new Seri(mPair,"1w"));
 
 
 
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
 
-    QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedKLine,[=](const Binance::Public::KLine &kLine ){
-        mClose = kLine.closePrice().toDouble();
-        mTimeStr = QDateTime::fromMSecsSinceEpoch(kLine.eventTime()).time().toString("hh:mm:ss");
+    QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedAggregate,[=](const Binance::Public::WebSocketAPI::Aggregate aggregate ){
+        mClose = aggregate.price();
+        mTimeStr = QDateTime::fromMSecsSinceEpoch(aggregate.eventTime()).time().toString("hh:mm:ss");
 
+        bool Is_this_kline_closed = false;
 
         for( auto &item : mSeriList ){
-            if( kLine.eventTime() >= item->kLineContainer().last().closeTime() ){
 
-                auto _kline = kLine;
-                auto fark = item->kLineContainer().last().OpenCloseDuration();
-                _kline.insert("t",item->kLineContainer().last().closeTime()+1);
-                _kline.insert("T",item->kLineContainer().last().closeTime()+fark);
+            auto kline = item->last();
+            kline.setEventTime(aggregate.eventTime());
 
+            if( aggregate.eventTime() > kline.closeTime() ){
 
-                item->kLineContainer().append(_kline);
-                if( item->kLineContainer().size() > 50 ) item->kLineContainer().removeFirst();
+                kline.setOpenTime(item->openTime()+item->duration());
+                kline.setCloseTime(item->closeTime()+item->duration());
+                kline.setHighPrice(aggregate.price());
+                kline.setLowPrice(aggregate.price());
+                kline.setClosePrice(aggregate.price());
+                kline.setOpenPrice(aggregate.price());
+                kline.setVolume(aggregate.quantity());
+                kline.setNumberOfTrade(1);
+
+                if( aggregate.isMaker() ){
+                    kline.setTakerQuotaAseetVolume(aggregate.price()*aggregate.quantity());
+                }else{
+                    kline.setTakerQuotaAseetVolume(0);
+                }
+
+                item->append(kline);
+                item->removeFirst();
+
+                Is_this_kline_closed = true;
             }else{
 
-                auto _kline = kLine;
-                _kline.insert("o",item->kLineContainer().last().openPrice());
 
-                if( _kline.highPrice().toDouble() < item->kLineContainer().last().highPrice().toDouble() ){
-                    _kline.insert("h",item->kLineContainer().last().highPrice());
+                kline.setClosePrice(aggregate.price());
+
+
+                if( aggregate.price() > kline.highPrice() ){
+                    kline.setHighPrice(aggregate.price());
                 }
 
-                if( _kline.lowPrice().toDouble() > item->kLineContainer().last().lowPrice().toDouble() ){
-                    _kline.insert("l",item->kLineContainer().last().lowPrice());
+                if( aggregate.price() < kline.lowPrice() ){
+                    kline.setLowPrice(aggregate.price());
                 }
 
-                _kline.insert("t",item->kLineContainer().last().openTime());
-                _kline.insert("T",item->kLineContainer().last().closeTime());
-
-                item->kLineContainer().removeLast();
-                item->kLineContainer().append(_kline);
+                kline.setVolume(kline.volume()+aggregate.quantity());
+                kline.setAssetVolume(kline.quoteAssetVolume()+aggregate.quantity()*aggregate.price());
+                kline.setTakerBaseAssetVolume(kline.takerBuyBaseAssetVolume()+aggregate.quantity());
+                kline.setTakerQuotaAseetVolume(kline.takerBuyQuoteAssetVolume()+aggregate.price()*aggregate.quantity());
+                kline.setNumberOfTrade(kline.numberOfTrades()+1);
+                item->removelast();
+                item->append(kline);
             }
+
+
+
+            emit item->updated();
+
         }
-        emit dataUpdated(kLine.Is_this_kline_closed());
+        emit dataUpdated(Is_this_kline_closed);
+
+
     });
 
     mSocket->startAggregateStream();

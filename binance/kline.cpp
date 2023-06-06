@@ -25,104 +25,137 @@ KLine::KLine()
 
 KLine::KLine(const QJsonArray &other)
 {
-    insert("e",other.at(6));   //Open Time
-    insert("t",other.at(0));   //Open Time
-    insert("o",other.at(1));   //Open Price
-    insert("c",other.at(4));   //Close Price
-    insert("h",other.at(2));   //High Price
-    insert("l",other.at(3));   //Low Price
-    insert("v",other.at(5));   //Volume
-    insert("T",other.at(6));   //Close Time
-    insert("q",other.at(7));   //asset Volume
-    insert("n",other.at(8));   //number of Trade
-    insert("V",other.at(9));   //base Asset Volume
-    insert("Q",other.at(10));   //quota Asset Volume
-    insert("x",true);   //new Candle
+//    insert("e",other.at(6));   //Open Time
+//    insert("t",other.at(0));   //Open Time
+//    insert("o",other.at(1));   //Open Price
+//    insert("c",other.at(4));   //Close Price
+//    insert("h",other.at(2));   //High Price
+//    insert("l",other.at(3));   //Low Price
+//    insert("v",other.at(5));   //Volume
+//    insert("T",other.at(6));   //Close Time
+//    insert("q",other.at(7));   //asset Volume
+//    insert("n",other.at(8));   //number of Trade
+//    insert("V",other.at(9));   //taker base Asset Volume
+//    insert("Q",other.at(10));   //taker quota Asset Volume
+//    insert("x",true);   //new Candle
+
+    mEventTime = other.at(6).toVariant().toLongLong();
+    mOpenTime = other.at(0).toVariant().toLongLong();
+    mCloseTime = other.at(6).toVariant().toLongLong();
+
+    mOpenPrice = other.at(1).toVariant().toDouble();
+    mHighPrice = other.at(2).toVariant().toDouble();
+    mLowPrice = other.at(3).toVariant().toDouble();
+    mClosePrice = other.at(4).toVariant().toDouble();
+
+    mVolume = other.at(6).toVariant().toDouble();
+    mAssetVolume = other.at(7).toVariant().toDouble();
+    mNumberOfTrade = other.at(8).toVariant().toLongLong();
+    mTakerBaseAssetVolume = other.at(9).toVariant().toDouble();
+    mTakerQuotaAseetVolume = other.at(10).toVariant().toDouble();
+    mIs_this_kline_closed = true;
 
 }
 
 KLine::KLine(const QJsonObject &object)
 {
     auto kObj = object.value("k").toObject();
-    insert("t",kObj.value("t"));   //Open Time
-    insert("o",kObj.value("o"));   //Open Price
-    insert("c",kObj.value("c"));   //Close Price
-    insert("h",kObj.value("h"));   //High Price
-    insert("l",kObj.value("l"));   //Low Price
-    insert("v",kObj.value("v"));   //Volume
-    insert("T",kObj.value("T"));   //Close Time
-    insert("q",kObj.value("q"));   //asset Volume
-    insert("n",kObj.value("n"));   //number of Trade
-    insert("V",kObj.value("V"));   //base Asset Volume
-    insert("Q",kObj.value("Q"));   //quota Asset Volume
-    insert("x",kObj.value("x"));   //new Candle
-    insert("e",object.value("E")); //new Candle
+//    insert("t",kObj.value("t"));   //Open Time *
+//    insert("o",kObj.value("o"));   //Open Price *
+//    insert("c",kObj.value("c"));   //Close Price
+//    insert("h",kObj.value("h"));   //High Price
+//    insert("l",kObj.value("l"));   //Low Price
+//    insert("v",kObj.value("v"));   //Volume
+//    insert("T",kObj.value("T"));   //Close Time
+//    insert("q",kObj.value("q"));   //asset Volume
+//    insert("n",kObj.value("n"));   //number of Trade
+//    insert("V",kObj.value("V"));   //base Asset Volume
+//    insert("Q",kObj.value("Q"));   //quota Asset Volume
+//    insert("x",kObj.value("x"));   //new Candle
+//    insert("e",object.value("E")); //new Candle
+
+    mEventTime = object.value("E").toVariant().toLongLong();
+    mOpenTime = kObj.value("t").toVariant().toLongLong();
+    mCloseTime = kObj.value("T").toVariant().toLongLong();
+
+    mOpenPrice = kObj.value("o").toVariant().toDouble();
+    mHighPrice = kObj.value("h").toVariant().toDouble();
+    mLowPrice = kObj.value("l").toVariant().toDouble();
+    mClosePrice = kObj.value("c").toVariant().toDouble();
+
+    mVolume = kObj.value("v").toVariant().toDouble();
+    mAssetVolume = kObj.value("q").toVariant().toDouble();
+    mNumberOfTrade = kObj.value("n").toVariant().toLongLong();
+    mTakerBaseAssetVolume = kObj.value("V").toVariant().toDouble();
+    mTakerQuotaAseetVolume = kObj.value("Q").toVariant().toDouble();
+
+    mIs_this_kline_closed = object.value("x").toBool();
 
 }
 
 qint64 KLine::eventTime() const
 {
-    return value("e").toVariant().toLongLong();
+    return mEventTime;
 }
 
 qint64 KLine::openTime() const
 {
-    return value("t").toVariant().toLongLong();
+    return mOpenTime;
 }
 
-QString KLine::openPrice() const
+double KLine::openPrice() const
 {
-    return value("o").toString();
+    return mOpenPrice;
 }
 
-QString KLine::highPrice() const
+double KLine::highPrice() const
 {
-    return value("h").toString();
+    return mHighPrice;
 }
 
-QString KLine::lowPrice() const
+double KLine::lowPrice() const
 {
-    return value("l").toString();
+    return mLowPrice;
 }
 
-QString KLine::closePrice() const
+double KLine::closePrice() const
 {
-    return value("c").toString();
+    return mClosePrice;
 }
 
-QString KLine::volume() const
+double KLine::volume() const
 {
-    return value("v").toString();
+    return mVolume;
 }
 
 qint64 KLine::closeTime() const
 {
-    return value("T").toVariant().toLongLong();
+    return mCloseTime;
 }
 
-QString KLine::quoteAssetVolume() const
+double KLine::quoteAssetVolume() const
 {
-    return value("q").toString();
+    return mAssetVolume;
 }
 
 qint64 KLine::numberOfTrades() const
 {
-    return value("n").toVariant().toLongLong();
+    return mNumberOfTrade;
 }
 
-QString KLine::takerBuyBaseAssetVolume() const
+double KLine::takerBuyBaseAssetVolume() const
 {
-    return value("V").toString();
+    return mTakerBaseAssetVolume;
 }
 
-QString KLine::takerBuyQuoteAssetVolume() const
+double KLine::takerBuyQuoteAssetVolume() const
 {
-    return value("Q").toString();
+    return mTakerQuotaAseetVolume;
 }
 
 bool KLine::Is_this_kline_closed() const
 {
-    return value("x").toBool();
+    return mIs_this_kline_closed;
 }
 
 qint64 KLine::OpenCloseDuration()
@@ -133,22 +166,82 @@ qint64 KLine::OpenCloseDuration()
 
 KLine &KLine::operator=(const KLine &other)
 {
-    insert("t",other.value("t"));   //Open Time
-    insert("o",other.value("o"));   //Open Price
-    insert("c",other.value("c"));   //Close Price
-    insert("h",other.value("h"));   //High Price
-    insert("l",other.value("l"));   //Low Price
-    insert("v",other.value("v"));   //Volume
-    insert("T",other.value("T"));   //Close Time
-    insert("q",other.value("q"));   //asset Volume
-    insert("n",other.value("n"));   //number of Trade
-    insert("V",other.value("V"));   //base Asset Volume
-    insert("Q",other.value("Q"));   //quota Asset Volume
-    insert("x",other.value("x"));   //new Candle
-    insert("x",other.Is_this_kline_closed());   //new Candle
-    insert("e",other.value("e"));   //event Time
+    mEventTime = other.mEventTime;
+    mOpenTime = other.mOpenTime;
+    mCloseTime = other.mCloseTime;
 
+    mOpenPrice = other.mOpenPrice;
+    mHighPrice = other.mHighPrice;
+    mLowPrice = other.mLowPrice;
+    mClosePrice = other.mClosePrice;
+
+    mVolume = other.mVolume;
+    mAssetVolume = other.mAssetVolume;
+    mNumberOfTrade = other.mNumberOfTrade;
+    mTakerBaseAssetVolume = other.mTakerBaseAssetVolume;
+    mTakerQuotaAseetVolume = other.mTakerQuotaAseetVolume;
+    mIs_this_kline_closed = other.mIs_this_kline_closed;
     return *this;
+}
+
+void KLine::setEventTime(qint64 newEventTime)
+{
+    mEventTime = newEventTime;
+}
+
+void KLine::setOpenTime(qint64 newOpenTime)
+{
+    mOpenTime = newOpenTime;
+}
+
+void KLine::setCloseTime(qint64 newCloseTime)
+{
+    mCloseTime = newCloseTime;
+}
+
+void KLine::setOpenPrice(double newOpenPrice)
+{
+    mOpenPrice = newOpenPrice;
+}
+
+void KLine::setHighPrice(double newHighPrice)
+{
+    mHighPrice = newHighPrice;
+}
+
+void KLine::setLowPrice(double newLowPrice)
+{
+    mLowPrice = newLowPrice;
+}
+
+void KLine::setClosePrice(double newClosePrice)
+{
+    mClosePrice = newClosePrice;
+}
+
+void KLine::setVolume(double newVolume)
+{
+    mVolume = newVolume;
+}
+
+void KLine::setAssetVolume(double newAssetVolume)
+{
+    mAssetVolume = newAssetVolume;
+}
+
+void KLine::setNumberOfTrade(qint64 newNumberOfTrade)
+{
+    mNumberOfTrade = newNumberOfTrade;
+}
+
+void KLine::setTakerBaseAssetVolume(double newTakerBaseAssetVolume)
+{
+    mTakerBaseAssetVolume = newTakerBaseAssetVolume;
+}
+
+void KLine::setTakerQuotaAseetVolume(double newTakerQuotaAseetVolume)
+{
+    mTakerQuotaAseetVolume = newTakerQuotaAseetVolume;
 }
 
 

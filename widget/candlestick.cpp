@@ -32,7 +32,7 @@ void CandleStickItem::setSeries(Main::Series_Legacy *newSeries)
 
 QRectF CandleStickItem::boundingRect() const
 {
-    return QRectF(0.,0.,700.,250.);
+    return QRectF(0.,0.,900.,250.);
 }
 
 void CandleStickItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)

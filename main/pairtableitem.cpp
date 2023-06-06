@@ -34,9 +34,9 @@ PairTableItem::PairTableItem(const QString &pair)
     mSeriesList.push_back(new Series_Legacy(mPair,"15m"));
 //    mSeriesList.push_back(new Series_Legacy(mPair,"30m"));
     mSeriesList.push_back(new Series_Legacy(mPair,"1h"));
-//    mSeriesList.push_back(new Series_Legacy(mPair,"4h"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"4h"));
 //    mSeriesList.push_back(new Series(mPair,"12h"));
-//    mSeriesList.push_back(new Series_Legacy(mPair,"1d"));
+    mSeriesList.push_back(new Series_Legacy(mPair,"1d"));
 //    mSeriesList.push_back(new Series_Legacy(mPair,"1w"));
 
     canRequst = false;
@@ -224,7 +224,7 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
                     m1w_up = _upper > 0 ? true : false;
                 }
 
-                if( m1_up && m5_up && m15_up && m1h_up){
+                if( m1_up && m5_up && m15_up && m1h_up && m4h_up && m1d_up ){
 
                     if( interval == "1m" ){
                         if( _upper > 0.25 && bollingerPercent > 1.5 ){
@@ -242,7 +242,7 @@ void PairTableItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *opt
 //                    }
 
                 }
-                if( m1_down && m5_down && m15_down && m1h_down ){
+                if( m1_down && m5_down && m15_down && m1h_down && m4h_up && m1d_up ){
 
                     if( interval == "1m" ){
                         if( _upper > 0.25 && bollingerPercent > 1.5 ){
