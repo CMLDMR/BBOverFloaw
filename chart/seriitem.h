@@ -26,11 +26,15 @@ private:
 
     qreal mWidth{50};
     const qreal mHeight{400};
+    qreal mInfoHeight{50};
+    const qreal mVolumeHeight{100};
 
     const qreal tickerAreaWidth{15};
 
 
     std::tuple<QRectF,QLineF,Qt::GlobalColor> candle(const int &index) const;
+    std::tuple<QRectF,Qt::GlobalColor> volume(const int &index) const;
+
 
     // QGraphicsItem interface
 public:
