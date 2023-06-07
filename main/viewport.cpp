@@ -51,6 +51,7 @@ void ViewPort::addItem(const QString &pairName)
 {
     auto pairItem = new Graphic::PairItem(pairName);
     mScene->addItem(pairItem);
+    pairItem->setPos(0,mScene->items().count()*(pairItem->boundingRect().height()+10));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
         QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
     });

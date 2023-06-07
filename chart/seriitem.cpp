@@ -226,8 +226,9 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     auto font = painter->font();
     painter->setFont(QFont("Tahoma",11,1));
     painter->drawText(3,13,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
-    painter->setPen(pen);
     painter->setFont(font);
+    painter->setPen(pen);
+
 
 
 
@@ -244,13 +245,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->setPen(pen);
     }
 
-    {
-        auto min = mSeri->minPrice();
-        auto max = mSeri->maxPrice();
-        auto close = mSeri->close();
-        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
-        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
-    }
+
 
     {
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
@@ -273,6 +268,14 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         }
     }
 
+
+    {
+        auto min = mSeri->minPrice();
+        auto max = mSeri->maxPrice();
+        auto close = mSeri->close();
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
+    }
 
     painter->drawRect(boundingRect());
 
