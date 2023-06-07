@@ -13,6 +13,7 @@ GraphicsView::GraphicsView(Series::Series *_series)
 {
 
     this->setViewportUpdateMode(FullViewportUpdate);
+    setDragMode(DragMode::ScrollHandDrag);
 
     mScene = new Scene();
 

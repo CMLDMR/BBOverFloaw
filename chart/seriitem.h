@@ -26,7 +26,7 @@ private:
 
     qreal mWidth{40};
     const qreal mHeight{200};
-    qreal mInfoHeight{30};
+    qreal mInfoHeight{16};
     const qreal mVolumeHeight{75};
     const qreal mQuotaVolumeHeight{75};
 
@@ -36,6 +36,8 @@ private:
     std::tuple<QRectF,QLineF,Qt::GlobalColor> candle(const int &index) const;
     std::tuple<QRectF, QRectF, QRectF, Qt::GlobalColor> volume(const int &index) const;
     QPointF volumeDif( const int &index );
+
+    QString Readable(const double sayi);
 
 
     // QGraphicsItem interface
