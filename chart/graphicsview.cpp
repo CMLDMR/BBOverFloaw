@@ -22,6 +22,7 @@ GraphicsView::GraphicsView(Series::Series *_series)
     int i = 0;
     int j = 0;
     int ypos = 0;
+    int lastWidth;
     for( const auto &seri : mSeries->seriList() ){
         auto mSeri3m = new SeriItem(seri);
         mScene->addItem(mSeri3m);
@@ -30,13 +31,16 @@ GraphicsView::GraphicsView(Series::Series *_series)
             mSeri3m->setPos(0,i*(mSeri3m->boundingRect().height()+10));
             ypos = i*(mSeri3m->boundingRect().height()+10);
         }else{
-            mSeri3m->setPos(100*7+100 + 10,ypos);
+            mSeri3m->setPos(lastWidth + 10,ypos);
         }
         j++;
         if( j >= 2 ){
             i++;
             j = 0;
         }
+
+        lastWidth = mSeri3m->boundingRect().width();
+
     }
 
 }
