@@ -20,7 +20,7 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
     : QObject{parent},
     mSeri(_seri)
 {
-
+    mWidth = mSeri->size() * tickerAreaWidth +100;
     QObject::connect(mSeri,&Series::Seri::updated,[=](){
         this->update();
         this->scene()->update(this->scene()->itemsBoundingRect());
@@ -230,7 +230,6 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     painter->setFont(font);
 
 
-    mWidth = mSeri->size() * tickerAreaWidth +100;
 
     drawGrid(painter);
 
