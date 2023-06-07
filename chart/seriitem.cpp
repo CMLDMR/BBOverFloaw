@@ -2,6 +2,13 @@
 
 #include "series/seri.h"
 
+#include <iomanip>
+#include <iostream>
+#include<fstream>
+
+
+
+
 
 #include <QGraphicsScene>
 #include <QPainter>
@@ -98,9 +105,62 @@ std::tuple<QRectF,QRectF,QRectF, Qt::GlobalColor> SeriItem::volume(const int &in
 
 QPointF SeriItem::volumeDif(const int &index)
 {
-    qreal max = mSeri->at(0).volume();
+    QVector<double> volDif;
+    qreal maxVol = 0;
+    qreal minVol = 0;
 
-    return QPointF();
+    qreal currentmakerVol = 0;
+
+    for( int i = 0 ; i < mSeri->size() ; i++ ){
+
+
+
+        if( i == 0 ){
+            auto makerVol = mSeri->volume(i) - mSeri->takerVolume(i)-mSeri->takerVolume(i);
+            volDif.append(makerVol);
+            maxVol = makerVol;
+            minVol = makerVol;
+        }else{
+            auto makerVol =volDif.last()+ mSeri->volume(i) - mSeri->takerVolume(i)-mSeri->takerVolume(i);
+            volDif.append(makerVol);
+            maxVol = maxVol < makerVol ? makerVol : maxVol;
+            minVol = minVol > makerVol ? makerVol : minVol;;
+        }
+
+        if( i < index ){
+            currentmakerVol = volDif.last();
+        }
+    }
+
+    qreal xPos = index * tickerAreaWidth+2;
+    qreal yPos = mInfoHeight+mHeight+mVolumeHeight+/*mQuotaVolumeHeight-*/(currentmakerVol  - minVol)/(maxVol-minVol)*mQuotaVolumeHeight;
+
+    return QPointF(xPos+tickerAreaWidth/2-1,yPos);
+}
+
+QString SeriItem::Readable(const double sayi)
+{
+
+    std::stringstream out;
+
+    if( sayi > 1000000000 ){
+
+        auto newSayi = sayi /1000000000;
+        out << std::fixed << std::setprecision(3) << newSayi;
+        return QString::fromStdString(out.str())+"G";
+    }else if( sayi > 1000000 ){
+        auto newSayi = sayi /1000000;
+        out << std::fixed << std::setprecision(3) << newSayi;
+        return QString::fromStdString(out.str())+"M";
+    }else if( sayi > 1000 ){
+        auto newSayi = sayi/1000;
+        out << std::fixed << std::setprecision(3) << newSayi;
+        return QString::fromStdString(out.str())+"K";
+    }else{
+        auto newSayi = sayi;
+        out << std::fixed << std::setprecision(0) << newSayi;
+        return QString::fromStdString(out.str());
+    }
 }
 
 
@@ -116,9 +176,15 @@ QRectF Chart::SeriItem::boundingRect() const
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
-    painter->drawRect(boundingRect());
-    painter->fillRect(QRectF(0,0,mWidth,mInfoHeight),Qt::gray);
-    painter->drawText(0,15,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
+    painter->fillRect(QRectF(0,0,mWidth,mInfoHeight),QColor(25,25,25));
+    auto pen = painter->pen();
+    painter->setPen(QPen(Qt::white));
+    auto font = painter->font();
+    painter->setFont(QFont("Tahoma",11,1));
+    painter->drawText(3,13,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
+    painter->setPen(pen);
+    painter->setFont(font);
+
 
     mWidth = mSeri->size() * tickerAreaWidth +100;
     for( int i = 0 ; i < mSeri->size() ; i++ ){
@@ -135,13 +201,13 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         auto min = mSeri->minPrice();
         auto max = mSeri->maxPrice();
         auto close = mSeri->close();
-        painter->drawText(mSeri->size() * tickerAreaWidth+20,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
-        painter->drawText(mSeri->size() * tickerAreaWidth+20,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+20,QString::number(60-(mSeri->last().eventTime()%60000)/1000));
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,QDateTime::fromMSecsSinceEpoch(mSeri->duration()-mSeri->last().eventTime()%60000-120*60000,Qt::LocalTime,3).time().toString("hh:mm:ss"));//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
 
     {
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
-        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + QString::number(mSeri->volume()));
+        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()));
 
         for( int i = 0 ; i < mSeri->size() ; i++ ){
             auto [rect,rectbuy,rectsell,color] = this->volume(i);
@@ -151,14 +217,16 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         }
     }
 
-//    {
-//        painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
-//        painter->drawText(0,mInfoHeight+mHeight+20,"VOLUME");
+    {
+        painter->fillRect(QRectF(0,mInfoHeight+mHeight+mVolumeHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
+        painter->drawText(0,mInfoHeight+mHeight+mVolumeHeight+14,"Volume Dif");
 
-//        for( int i = 1 ; i < mSeri->size() ; i++ ){
+        for( int i = 1 ; i < mSeri->size() ; i++ ){
+            painter->drawLine(QLineF(this->volumeDif(i-1),this->volumeDif(i)));
+        }
+    }
 
-//        }
-//    }
 
+    painter->drawRect(boundingRect());
 
 }
