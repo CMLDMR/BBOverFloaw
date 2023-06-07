@@ -163,6 +163,26 @@ QString SeriItem::Readable(const double sayi)
     }
 }
 
+QString SeriItem::countDown()
+{
+    //TODO: Kalan Süre Gün:Saat:Dakika:Saniye Olarak Hesaplanacak
+    int gun, saat, dakika, saniye;
+    int kalanSure;
+    int toplamSure = (mSeri->closeTime()-mSeri->last().eventTime())/1000;
+
+    gun = toplamSure / (24 * 60 * 60); // Toplam saniyeyi güne çevirme
+    kalanSure = toplamSure % (24 * 60 * 60); // Günlere çevrilmemiş kalan saniye
+
+    saat = kalanSure / (60 * 60); // Kalan saniyeyi saate çevirme
+    kalanSure = kalanSure % (60 * 60); // Saatlere çevrilmemiş kalan saniye
+
+    dakika = kalanSure / 60; // Kalan saniyeyi dakikaya çevirme
+    saniye = kalanSure % 60; // Dakikalara çevrilmemiş kalan saniye
+
+
+    return QString("%1:%2:%3:%4").arg(gun).arg(saat).arg(dakika).arg(saniye);
+}
+
 void SeriItem::drawGrid(QPainter *painter)
 {
 
@@ -230,7 +250,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         auto max = mSeri->maxPrice();
         auto close = mSeri->close();
         painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
-        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,QDateTime::fromMSecsSinceEpoch(mSeri->duration()-mSeri->last().eventTime()%60000-120*60000,Qt::LocalTime,3).time().toString("hh:mm:ss"));//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
 
     {

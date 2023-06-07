@@ -38,6 +38,7 @@ private:
     QPointF volumeDif( const int &index );
 
     QString Readable(const double sayi);
+    QString countDown();
 
 
     void drawGrid(QPainter* painter);
