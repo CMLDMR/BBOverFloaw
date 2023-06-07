@@ -207,6 +207,58 @@ void SeriItem::drawGrid(QPainter *painter)
 
 }
 
+void SeriItem::drawNumberOfTrade(QPainter *painter)
+{
+
+    {
+        auto maxTrade = static_cast<double>(mSeri->at(0).numberOfTrades());
+        auto minTrade = static_cast<double>(mSeri->at(0).numberOfTrades());
+        for( int i = 0 ; i < mSeri->size()-1 ; i++ ){
+            auto item = mSeri->at(i);
+            maxTrade = maxTrade < item.numberOfTrades() ? item.numberOfTrades() : maxTrade;
+            minTrade = minTrade > item.numberOfTrades() ? item.numberOfTrades() : minTrade;
+        }
+
+
+        auto _volumeYAx = mInfoHeight+mHeight+mVolumeHeight+2*mNumberTradeHeight;
+
+        for( int i = 0 ; i < mSeri->size()-1 ; i++ ){
+
+            auto numTrade = static_cast<double>(mSeri->numberOfTrade(i));
+            qreal xPos = i * tickerAreaWidth+1;
+            qreal yPos = _volumeYAx - (numTrade)/(maxTrade-minTrade)*mNumberTradeHeight;
+            qreal width = tickerAreaWidth-1;
+            qreal height = numTrade/(maxTrade-minTrade)*mNumberTradeHeight;
+            painter->fillRect(QRectF(xPos,yPos,width,height),Qt::green);
+        }
+    }
+
+    { //TODO: Bu Kısım Scale Düngün Değil. Alanın Dışında Çizimler Yapıyor
+        auto maxTrade = mSeri->at(0).volume()/static_cast<double>(mSeri->at(0).numberOfTrades());
+        auto minTrade = mSeri->at(0).volume()/static_cast<double>(mSeri->at(0).numberOfTrades());
+        for( int i = 0 ; i < mSeri->size()-1 ; i++ ){
+            auto item = mSeri->at(i);
+            auto rate = item.volume()/static_cast<double>(item.numberOfTrades());
+            maxTrade = maxTrade < rate ? rate : maxTrade;
+            minTrade = minTrade > rate ? rate : minTrade;
+        }
+
+        auto _volumeYAx = mInfoHeight+mHeight+mVolumeHeight+2*mNumberTradeHeight;
+
+        auto dif = maxTrade - minTrade;
+        for( int i = 0 ; i < mSeri->size()-1 ; i++ ){
+            auto item = mSeri->at(i);
+            auto rate = item.volume()/static_cast<double>(item.numberOfTrades());
+            qreal xPos = i * tickerAreaWidth+1;
+            qreal yPos = _volumeYAx - rate/dif*mNumberTradeHeight;
+            qreal width = tickerAreaWidth/2-1;
+            qreal height = rate/dif*mNumberTradeHeight;
+            painter->fillRect(QRectF(xPos,yPos,width,height),Qt::red);
+        }
+    }
+
+}
+
 
 
 } // namespace Chart
@@ -214,7 +266,7 @@ void SeriItem::drawGrid(QPainter *painter)
 
 QRectF Chart::SeriItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight);
+    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight/*+mNumberTradeHeight*/);
 }
 
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -276,6 +328,9 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
         painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
+
+//    drawNumberOfTrade(painter);
+
 
     painter->drawRect(boundingRect());
 

@@ -116,6 +116,12 @@ const double Seri::takerVolume(const int &index)
     return mKLineContainer.at(index).takerBuyBaseAssetVolume();
 }
 
+const qint64 Seri::numberOfTrade(const int &index)
+{
+    if( index == -1 ) return mKLineContainer.last().numberOfTrades();
+    return mKLineContainer.at(index).numberOfTrades();
+}
+
 Binance::Public::KLine Seri::last() const
 {
     return mKLineContainer.last();
