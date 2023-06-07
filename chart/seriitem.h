@@ -29,6 +29,8 @@ private:
     qreal mInfoHeight{16};
     const qreal mVolumeHeight{75};
     const qreal mQuotaVolumeHeight{75};
+    const qreal mNumberTradeHeight{75};
+
 
     const qreal tickerAreaWidth{7};
 
@@ -42,6 +44,8 @@ private:
 
 
     void drawGrid(QPainter* painter);
+    void drawNumberOfTrade(QPainter* painter);
+
 
 
     // QGraphicsItem interface
