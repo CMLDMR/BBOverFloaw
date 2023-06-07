@@ -163,6 +163,30 @@ QString SeriItem::Readable(const double sayi)
     }
 }
 
+void SeriItem::drawGrid(QPainter *painter)
+{
+
+    auto min = mSeri->minPrice();
+    auto max = mSeri->maxPrice();
+
+    auto dif = max - min;
+    auto step = dif/5.;
+    auto pen = painter->pen();
+    painter->setPen(QPen(QColor(200,200,200),1,Qt::DotLine));
+    for( int i = 1 ; i <= 5 ; i++ ){
+        auto yPos = mInfoHeight+(dif-i*step)/dif*mHeight;
+        painter->drawLine(0,yPos,mWidth,yPos);
+        painter->drawText(mWidth-50,yPos+14,QString("%1").arg(i*step+min));
+    }
+
+    for( int i = 0 ; i <= mSeri->size() ; i +=10 ){
+        painter->drawLine(i*tickerAreaWidth,mInfoHeight,i*tickerAreaWidth,mHeight+mInfoHeight);
+    }
+
+    painter->setPen(pen);
+
+}
+
 
 
 } // namespace Chart
@@ -187,6 +211,10 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
 
     mWidth = mSeri->size() * tickerAreaWidth +100;
+
+    drawGrid(painter);
+
+
     for( int i = 0 ; i < mSeri->size() ; i++ ){
         auto [rect,line,color] = candle(i);
         painter->fillRect(rect,color);

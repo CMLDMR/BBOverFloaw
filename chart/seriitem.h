@@ -40,6 +40,9 @@ private:
     QString Readable(const double sayi);
 
 
+    void drawGrid(QPainter* painter);
+
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
