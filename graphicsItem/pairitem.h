@@ -36,6 +36,9 @@ private:
     bool mSelected;
     QString mPair;
 
+    qreal mWidth{410};
+    qreal mHeight{65};
+
     // QGraphicsItem interface
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;

@@ -30,15 +30,15 @@ public:
     /// \param index
     /// \return
     ///
-    const double close( const int &index = -1 );
-    const double open( const int &index = -1 );
-    const double high( const int &index = -1 );
-    const double low( const int &index = -1 );
-    const qint64 openTime( const int &index = -1 );
-    const qint64 closeTime( const int &index = -1 );
-    const double volume( const int &index = -1 );
-    const double takerVolume( const int &index = -1 );
-    const qint64 numberOfTrade( const int &index = - 1 );
+    const double close( const int &index = -1 )  const;
+    const double open( const int &index = -1 ) const;
+    const double high( const int &index = -1 ) const;
+    const double low( const int &index = -1 ) const;
+    const qint64 openTime( const int &index = -1 ) const;
+    const qint64 closeTime( const int &index = -1 ) const;
+    const double volume( const int &index = -1 ) const;
+    const double takerVolume( const int &index = -1 ) const;
+    const qint64 numberOfTrade( const int &index = - 1 ) const;
 
     Binance::Public::KLine last() const;
 

@@ -4,6 +4,33 @@
 #include <QObject>
 #include "main/series.h"
 
+#include "series/seri.h"
+
+
+
+namespace Indicator {
+
+class Bollinger{
+
+public:
+
+    static std::tuple<double, double, double> bollinger( const Series::Seri &seri, const int mLength = 21 , const double stdDev = 2.1 );
+
+    static std::tuple<double, double> bollingerPercent( const Series::Seri &seri, const int mLength = 21 , const double stdDev = 2.1 );
+
+};
+
+}
+
+
+
+
+
+
+
+
+
+
 namespace Indicator_legacy {
 
 class Bollinger : public QObject

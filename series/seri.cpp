@@ -64,59 +64,59 @@ const QString Seri::interval() const
     return mInterval;
 }
 
-const double Seri::close(const int &index)
+const double Seri::close(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().closePrice();
     return mKLineContainer.at(index).closePrice();
 }
 
-const double Seri::open(const int &index)
+const double Seri::open(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().openPrice();
 
     return mKLineContainer.at(index).openPrice();
 }
 
-const double Seri::high(const int &index)
+const double Seri::high(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().highPrice();
 
     return mKLineContainer.at(index).highPrice();
 }
 
-const double Seri::low(const int &index)
+const double Seri::low(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().lowPrice();
     return mKLineContainer.at(index).lowPrice();
 }
 
-const qint64 Seri::openTime(const int &index)
+const qint64 Seri::openTime(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().openTime();
 
     return mKLineContainer.at(index).openTime();
 }
 
-const qint64 Seri::closeTime(const int &index)
+const qint64 Seri::closeTime(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().closeTime();
 
     return mKLineContainer.at(index).closeTime();
 }
 
-const double Seri::volume(const int &index)
+const double Seri::volume(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().volume();
     return mKLineContainer.at(index).volume();
 }
 
-const double Seri::takerVolume(const int &index)
+const double Seri::takerVolume(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().takerBuyBaseAssetVolume();
     return mKLineContainer.at(index).takerBuyBaseAssetVolume();
 }
 
-const qint64 Seri::numberOfTrade(const int &index)
+const qint64 Seri::numberOfTrade(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().numberOfTrades();
     return mKLineContainer.at(index).numberOfTrades();
