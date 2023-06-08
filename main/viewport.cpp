@@ -21,8 +21,17 @@ namespace Main {
 
 ViewPort::ViewPort()
 {
+
+    this->setViewportUpdateMode(FullViewportUpdate);
+    this->setDragMode(ScrollHandDrag);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+
     mScene = new ViewScene();
     setScene(mScene);
+
+
+
     //    auto orderBook = new Main::OrderBookItem(pair);
 //        auto tradeListItem = new Main::TradeListItem(pair);
     //    auto rangeVolumeItem = new Main::RangeVolume();
@@ -41,7 +50,15 @@ ViewPort::ViewPort()
     ////    rangeVolumeItem->setPos(1000,100);
 
 
-    //    addItem("TOMOUSDT");
+        addItem("BTCUSDT");
+        addItem("ETHUSDT");
+        addItem("BCHUSDT");
+        addItem("XRPUSDT");
+        addItem("EOSUSDT");
+        addItem("LTCUSDT");
+        addItem("KAVAUSDT");
+        addItem("TOMOUSDT");
+        addItem("TRXUSDT");
 
 
 
@@ -49,9 +66,18 @@ ViewPort::ViewPort()
 
 void ViewPort::addItem(const QString &pairName)
 {
+
+
+
+
+    if( Session::SessionManager::instance()->pairContains(pairName) ){
+        return;
+    }
+
+
     auto pairItem = new Graphic::PairItem(pairName);
     mScene->addItem(pairItem);
-    pairItem->setPos(0,mScene->items().count()*(pairItem->boundingRect().height()+10));
+    pairItem->setPos(rowCount*(pairItem->boundingRect().width()+3),mAddedInternal*(pairItem->boundingRect().height()+3));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
         QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
     });
@@ -62,15 +88,17 @@ void ViewPort::addItem(const QString &pairName)
     });
 
 
-    return;
-
-    if( Session::SessionManager::instance()->pairContains(pairName) ){
-        return;
-    }
-
     Session::SessionManager::instance()->addPair(pairName);
 
-    this->setPairItem(pairName);
+
+    mAddedInternal++;
+    if( mAddedInternal >= 12 ){
+        rowCount++;
+        mAddedInternal = 0;
+    }
+//    return;
+
+//    this->setPairItem(pairName);
 
 
 }

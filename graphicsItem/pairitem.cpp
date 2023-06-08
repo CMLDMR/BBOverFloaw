@@ -6,6 +6,9 @@
 #include <QAction>
 #include <QApplication>
 
+#include "indicator/bollinger.h"
+#include "global/utility.h"
+
 
 namespace Graphic {
 
@@ -28,13 +31,10 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 
     QObject::connect(mSeries,&Series::Series::dataUpdated,[=](const bool &newCandle){
-        this->update();
+        this->update(boundingRect());
     });
 
     this->setAcceptHoverEvents(true);
-
-
-
 }
 
 } // namespace Graphic
@@ -42,7 +42,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 QRectF Graphic::PairItem::boundingRect() const
 {
-    return QRectF(0,0,1000,100);
+    return QRectF(0,0,mWidth,mHeight);
 }
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -58,21 +58,46 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
 
     {// Last Price
         auto rect = fontMetric.boundingRect(QString::number(mSeries->close()));
-        painter->drawText(60, rect.height() ,QString::number(mSeries->close()));
+        painter->drawText(70, rect.height() ,QString::number(mSeries->close()));
+        painter->drawText(70, rect.height()+15 ,"BBU%");
+        painter->drawText(70, rect.height()+30 ,"BBD%");
+        painter->drawText(70, rect.height()+45 ,"Vol%");
+
     }
 
+
+
     {// intervals
-        int xPos = 150;
+        int xPos = 130;
         for( const auto &seri : mSeries->seriList() ){
             auto rect = fontMetric.boundingRect(QString::number(seri->close()));
             painter->drawText(xPos, rect.height() ,seri->interval());
-            painter->drawText(xPos, rect.height()+15 ,QString::number(seri->open()));
-            painter->drawText(xPos, rect.height()+30 ,QString::number(seri->high()));
-            painter->drawText(xPos, rect.height()+45 ,QString::number(seri->low()));
-            painter->drawText(xPos, rect.height()+60 ,QString::number(seri->close()));
-            painter->drawText(xPos, rect.height()+75 ,QString::number(seri->kLineContainer().size()));
 
-            xPos += 50;
+
+            {// Bollinger Percent
+
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri);
+
+                if( upper > 0 ){
+                    painter->fillRect(QRectF(xPos+1,rect.height()+2,33,rect.height()),Qt::green);
+                }
+                if( down > 0 ){
+                    painter->fillRect(QRectF(xPos+1,rect.height()+17,33,rect.height()),Qt::green);
+                }
+                painter->drawText(xPos, rect.height()+15 ,Global::getFixedPrecision(upper));
+                painter->drawText(xPos, rect.height()+30 ,Global::getFixedPrecision(down));
+            }
+
+
+
+            painter->drawText(xPos, rect.height()+45 ,QString::number(seri->kLineContainer().size()));
+
+            auto pen = painter->pen();
+            painter->setPen(QPen(Qt::gray,1,Qt::DotLine));
+            painter->drawLine(xPos-2,1,xPos-2,boundingRect().height()-2);
+
+            painter->setPen(pen);
+            xPos += 35;
         }
     }
 
