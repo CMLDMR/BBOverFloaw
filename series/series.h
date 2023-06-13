@@ -2,6 +2,9 @@
 #define SERIES_SERIES_H
 
 #include <QObject>
+#include <QImage>
+#include <QPainter>
+
 #include "seri.h"
 #include "binance/websocketapi/websocketapi.h"
 
@@ -26,6 +29,8 @@ public:
 
     std::optional<Seri*> getSeri( const QString &interval );
 
+    QImage *image() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -40,6 +45,11 @@ private:
 
     double mClose;
     QString mTimeStr;
+
+    QImage* mImage{nullptr};
+    QPainter* mPainter;
+    void prePareImage( QPainter* painter );
+    bool mAlarmActivated{false};
 
 };
 

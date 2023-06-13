@@ -33,11 +33,16 @@ public:
 private:
     Series::Series *mSeries;
 
-    bool mSelected;
+    bool mSelected{false};
+    bool mHovered{false};
     QString mPair;
 
-    qreal mWidth{410};
-    qreal mHeight{65};
+    qreal mWidth{285};
+    qreal mHeight{85};
+
+    int colorGradient{0};
+    bool mAlarmActivated{false};
+    int mUpdateDuration{0};
 
     // QGraphicsItem interface
 protected:

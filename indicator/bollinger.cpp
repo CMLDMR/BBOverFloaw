@@ -129,6 +129,7 @@ std::tuple<double, double, double> Indicator::Bollinger::bollinger(const Series:
     auto derivation = getDerivation(seri,mLength,stdDev);
 
     return std::make_tuple(movingAverage+stdDev*derivation,movingAverage,movingAverage-stdDev*derivation);
+//    return std::make_tuple(movingAverage+stdDev*derivation,0,0);
 
 
 }
@@ -139,6 +140,8 @@ std::tuple<double, double> Indicator::Bollinger::bollingerPercent(const Series::
 
     auto upperPercent = (seri.close() - upper)/seri.close()*100;
     auto downPercent = (down - seri.close())/seri.close()*100;
+
+    if( upper == 0 ) upperPercent = 0;
 
     return std::make_tuple(upperPercent,downPercent);
 
