@@ -12,7 +12,7 @@
 
 #include <QGraphicsScene>
 #include <QPainter>
-
+#include <QTimer>
 
 namespace Chart {
 
@@ -23,9 +23,26 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
     mWidth = mSeri->size() * tickerAreaWidth +100;
     QObject::connect(mSeri,&Series::Seri::updated,[=](){
         this->update();
-        this->scene()->update(this->scene()->itemsBoundingRect());
+//        this->scene()->update(this->scene()->itemsBoundingRect());
     });
 
+
+    auto mTimer = new QTimer();
+    QObject::connect(mTimer,&QTimer::timeout,[=](){
+
+//        if( mAlarmActivated ){
+//            colorGradient += 10;
+//            if( colorGradient >= 255 ){
+//                colorGradient = 0;
+//                mAlarmActivated = false;
+//            }
+
+//        }
+
+        this->update();
+    });
+
+    mTimer->start(100);
 
 }
 

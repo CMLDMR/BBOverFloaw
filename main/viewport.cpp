@@ -50,15 +50,15 @@ ViewPort::ViewPort()
     ////    rangeVolumeItem->setPos(1000,100);
 
 
-        addItem("BTCUSDT");
-        addItem("ETHUSDT");
-        addItem("BCHUSDT");
-        addItem("XRPUSDT");
-        addItem("EOSUSDT");
-        addItem("LTCUSDT");
-        addItem("KAVAUSDT");
-        addItem("TOMOUSDT");
-        addItem("TRXUSDT");
+//        addItem("BTCUSDT");
+//        addItem("ETHUSDT");
+//        addItem("BCHUSDT");
+//        addItem("XRPUSDT");
+//        addItem("EOSUSDT");
+//        addItem("LTCUSDT");
+//        addItem("KAVAUSDT");
+//        addItem("TOMOUSDT");
+//        addItem("TRXUSDT");
 
 
 
@@ -68,11 +68,18 @@ void ViewPort::addItem(const QString &pairName)
 {
 
 
-
-
-    if( Session::SessionManager::instance()->pairContains(pairName) ){
-        return;
+    bool exist = false;
+    for( const auto &item : mScene->items() ){
+        if( qgraphicsitem_cast<Graphic::PairItem*>(item)->pair() == pairName ){
+            exist = true;
+            break;
+        }
     }
+
+    if( exist ) return;
+
+
+
 
 
     auto pairItem = new Graphic::PairItem(pairName);
@@ -87,16 +94,21 @@ void ViewPort::addItem(const QString &pairName)
         mWidget->show();
     });
 
+    mAddedInternal++;
+    if( mAddedInternal >= 15 ){
+        rowCount++;
+        mAddedInternal = 0;
+    }
+
+    if( Session::SessionManager::instance()->pairContains(pairName) ){
+        return;
+    }
 
     Session::SessionManager::instance()->addPair(pairName);
 
 
-    mAddedInternal++;
-    if( mAddedInternal >= 12 ){
-        rowCount++;
-        mAddedInternal = 0;
-    }
-//    return;
+
+    return;
 
 //    this->setPairItem(pairName);
 

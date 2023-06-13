@@ -62,7 +62,7 @@ MainWindow::MainWindow(QWidget *parent)
             int count = 0;
             QObject::connect(mTimer,&QTimer::timeout,[=]()mutable{
                 if( count < Session::SessionManager::instance()->pairListSize() ){
-                    mViewPort->setPairItem(Session::SessionManager::instance()->pairName(count));
+                    mViewPort->addItem(Session::SessionManager::instance()->pairName(count));
                     mExchangeInfo->append(Session::SessionManager::instance()->pairName(count++));
                     if( count >= Session::SessionManager::instance()->pairListSize() ){
                         mTimer->stop();
@@ -74,7 +74,7 @@ MainWindow::MainWindow(QWidget *parent)
 
             });
 
-            mTimer->start(500);
+            mTimer->start(1000);
 
 //            for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
 //                QThread::currentThread()->wait(500);
