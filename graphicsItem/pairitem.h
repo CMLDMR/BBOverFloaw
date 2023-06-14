@@ -22,6 +22,10 @@ signals:
     void openInTradingView();
 
     void sort5m();
+    void sort15m();
+    void sort1h();
+
+    void sortAllm();
 
     // QGraphicsItem interface
 public:

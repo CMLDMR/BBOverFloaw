@@ -45,8 +45,8 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->end();
 
-    mSeriList.append(new Seri(mPair,"1m"));
-    mClose = mSeriList.last()->kLineContainer().last().closePrice();
+//    mSeriList.append(new Seri(mPair,"1m"));
+//    mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"3m"));
@@ -181,6 +181,7 @@ void Series::prePareImage(QPainter *painter)
 
     {// intervals
         int xPos = 110;
+        mAllUpperPercent = 0;
         for( const auto &seri : this->seriList() ){
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
@@ -193,9 +194,23 @@ void Series::prePareImage(QPainter *painter)
 
             int yPos = rect.height();
 
+            mAllUpperPercent = 0;
+
             {// Bollinger Percent 2.38
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,2.38);
+                if( seri->interval() == "5m" ){
+                    m5MinunteUpperPercent = upper;
+                }
+                if( seri->interval() == "15m" ){
+                    m15MinunteUpperPercent = upper;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HinunteUpperPercent = upper;
+                }
+
+                mAllUpperPercent += upper;
 
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
@@ -208,7 +223,6 @@ void Series::prePareImage(QPainter *painter)
             {// Bollinger Percent 3.82
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,3.82);
-
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
 //                    Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1").arg(3.82));
@@ -220,7 +234,6 @@ void Series::prePareImage(QPainter *painter)
             {// Bollinger Percent 5
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,5);
-
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
 //                    Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1").arg(5));
@@ -252,6 +265,26 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+double Series::getM1HinunteUpperPercent() const
+{
+    return m1HinunteUpperPercent;
+}
+
+double Series::getM15MinunteUpperPercent() const
+{
+    return m15MinunteUpperPercent;
+}
+
+double Series::allUpperPercent() const
+{
+    return mAllUpperPercent;
+}
+
+double Series::getM5MinunteUpperPercent() const
+{
+    return m5MinunteUpperPercent;
 }
 
 QString Series::timeStr() const

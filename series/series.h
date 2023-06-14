@@ -31,6 +31,14 @@ public:
 
     QImage *image() const;
 
+    double getM5MinunteUpperPercent() const;
+
+    double allUpperPercent() const;
+
+    double getM15MinunteUpperPercent() const;
+
+    double getM1HinunteUpperPercent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -50,6 +58,12 @@ private:
     QPainter* mPainter;
     void prePareImage( QPainter* painter );
     bool mAlarmActivated{false};
+
+    double m5MinunteUpperPercent{0};
+    double m15MinunteUpperPercent{0};
+    double m1HinunteUpperPercent{0};
+
+    double mAllUpperPercent{0};
 
 };
 

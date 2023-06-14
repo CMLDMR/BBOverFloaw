@@ -3,6 +3,7 @@
 
 #include <QGraphicsView>
 #include <QObject>
+#include <vector>
 
 class QGraphicsScene;
 namespace Screen{
@@ -40,7 +41,7 @@ private:
 
     QVector<Screen::CandleStickWindow*> mWindowList;
 
-    QVector<Graphic::PairItem*> mItemList;
+    std::vector<Graphic::PairItem*> mItemList;
 
 
 

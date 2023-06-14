@@ -14,6 +14,9 @@
 #include <QMouseEvent>
 #include <QDesktopServices>
 
+#include <algorithm>
+
+
 #include "graphicsItem/pairitem.h"
 #include "chart/chartwidget.h"
 
@@ -83,7 +86,7 @@ void ViewPort::addItem(const QString &pairName)
 
 
     auto pairItem = new Graphic::PairItem(pairName);
-    mItemList.append(pairItem);
+    mItemList.push_back(pairItem);
     mScene->addItem(pairItem);
     pairItem->setPos(rowCount*(pairItem->boundingRect().width()+3),mAddedInternal*(pairItem->boundingRect().height()+3));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
@@ -96,7 +99,72 @@ void ViewPort::addItem(const QString &pairName)
     });
 
     QObject::connect(pairItem,&Graphic::PairItem::sort5m,[=](){
-        qDebug() << "Sort Item by 5m";
+        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
+            return a->series()->getM5MinunteUpperPercent() > b->series()->getM5MinunteUpperPercent();
+        });
+
+        int i = 0;
+        int j = 0;
+        for( const auto &item : mItemList ){
+            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
+            j++;
+            if( j >= 15 ){
+                i++;
+                j = 0;
+            }
+        }
+    });
+
+    QObject::connect(pairItem,&Graphic::PairItem::sort15m,[=](){
+        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
+            return a->series()->getM15MinunteUpperPercent() > b->series()->getM15MinunteUpperPercent();
+        });
+
+        int i = 0;
+        int j = 0;
+        for( const auto &item : mItemList ){
+            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
+            j++;
+            if( j >= 15 ){
+                i++;
+                j = 0;
+            }
+        }
+    });
+
+    QObject::connect(pairItem,&Graphic::PairItem::sort1h,[=](){
+        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
+            return a->series()->getM1HinunteUpperPercent() > b->series()->getM1HinunteUpperPercent();
+        });
+
+        int i = 0;
+        int j = 0;
+        for( const auto &item : mItemList ){
+            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
+            j++;
+            if( j >= 15 ){
+                i++;
+                j = 0;
+            }
+        }
+    });
+
+
+    QObject::connect(pairItem,&Graphic::PairItem::sortAllm,[=](){
+        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
+            return a->series()->allUpperPercent() > b->series()->allUpperPercent();
+        });
+
+        int i = 0;
+        int j = 0;
+        for( const auto &item : mItemList ){
+            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
+            j++;
+            if( j >= 15 ){
+                i++;
+                j = 0;
+            }
+        }
     });
 
     mAddedInternal++;
