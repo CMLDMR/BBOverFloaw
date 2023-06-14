@@ -45,8 +45,8 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->end();
 
-//    mSeriList.append(new Seri(mPair,"1m"));
-//    mClose = mSeriList.last()->kLineContainer().last().closePrice();
+    mSeriList.append(new Seri(mPair,"1m"));
+    mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"3m"));
