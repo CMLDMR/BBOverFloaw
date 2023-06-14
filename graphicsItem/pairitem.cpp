@@ -115,6 +115,18 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort5m();
         });
 
+        sortMenu->addAction("Sort 15m",[=](){
+            emit sort15m();
+        });
+
+        sortMenu->addAction("Sort 1h",[=](){
+            emit sort1h();
+        });
+
+        sortMenu->addAction("Sort by Sum",[=](){
+            emit sortAllm();
+        });
+
         menu.exec(event->screenPos());
     }else if(event->button() == Qt::LeftButton){
         QGraphicsItem::mousePressEvent(event);
