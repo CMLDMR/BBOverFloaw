@@ -72,16 +72,12 @@ QRectF Graphic::PairItem::boundingRect() const
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
-
-
-
     if( mSeries->image() ){
         if( mHovered ){
             painter->fillRect(-4,-4,mSeries->image()->width()+8,mSeries->image()->height()+8,Qt::darkGray);
         }
         painter->drawImage(0,0,*mSeries->image(),0,0,-1,-1);
     }
-
 }
 
 
@@ -111,6 +107,12 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         menu.addSeparator();
         menu.addAction("Open Candle Stick",[=](){
             emit openCandles(event->screenPos());
+        });
+
+
+        auto sortMenu = menu.addMenu("Sort");
+        sortMenu->addAction("Sort 5m",[=](){
+            emit sort5m();
         });
 
         menu.exec(event->screenPos());

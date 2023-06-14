@@ -21,6 +21,8 @@ signals:
     void openUrlCliked();
     void openInTradingView();
 
+    void sort5m();
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;

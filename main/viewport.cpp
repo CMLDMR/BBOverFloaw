@@ -83,6 +83,7 @@ void ViewPort::addItem(const QString &pairName)
 
 
     auto pairItem = new Graphic::PairItem(pairName);
+    mItemList.append(pairItem);
     mScene->addItem(pairItem);
     pairItem->setPos(rowCount*(pairItem->boundingRect().width()+3),mAddedInternal*(pairItem->boundingRect().height()+3));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
@@ -92,6 +93,10 @@ void ViewPort::addItem(const QString &pairName)
     QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
         Chart::ChartWidget* mWidget = new Chart::ChartWidget(pairItem->series());
         mWidget->show();
+    });
+
+    QObject::connect(pairItem,&Graphic::PairItem::sort5m,[=](){
+        qDebug() << "Sort Item by 5m";
     });
 
     mAddedInternal++;

@@ -9,6 +9,10 @@ namespace Screen{
 class CandleStickWindow;
 }
 
+namespace Graphic{
+class PairItem;
+}
+
 
 namespace Main {
 
@@ -35,6 +39,8 @@ private:
 //    QStringList mPairList;
 
     QVector<Screen::CandleStickWindow*> mWindowList;
+
+    QVector<Graphic::PairItem*> mItemList;
 
 
 
