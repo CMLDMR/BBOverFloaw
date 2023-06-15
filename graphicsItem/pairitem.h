@@ -27,6 +27,9 @@ signals:
 
     void sortAllm();
 
+    void sort(const QString &);
+
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;
@@ -44,7 +47,7 @@ private:
     QString mPair;
 
     qreal mWidth{285};
-    qreal mHeight{85};
+    qreal mHeight{140};
 
     int colorGradient{0};
     bool mAlarmActivated{false};
