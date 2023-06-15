@@ -72,14 +72,19 @@ void ViewPort::addItem(const QString &pairName)
 
 
     bool exist = false;
+    QGraphicsItem* _item;
     for( const auto &item : mScene->items() ){
         if( qgraphicsitem_cast<Graphic::PairItem*>(item)->pair() == pairName ){
+            _item = item;
             exist = true;
             break;
         }
     }
 
-    if( exist ) return;
+    if( exist ) {
+        this->centerOn(_item);
+        return;
+    }
 
 
 
