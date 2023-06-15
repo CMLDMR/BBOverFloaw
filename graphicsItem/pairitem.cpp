@@ -34,6 +34,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 {
     mSeries = new Series::Series(_pair);
 
+    mWidth = mSeries->image()->width()+1;
 
 //    QObject::connect(mSeries,&Series::Series::dataUpdated,[=](const bool &newCandle){
 //        this->update(boundingRect());

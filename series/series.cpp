@@ -14,6 +14,10 @@ QMutex mutex;
 Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
+
+    mImage = new QImage(316,140,QImage::Format_RGB888);
+    mImage->fill(Qt::white);
+
     mThread = new QThread();
     this->moveToThread(mThread);
     QObject::connect(mThread,&QThread::started,this,&Series::SocketWorker);
@@ -36,8 +40,6 @@ void Series::SocketWorker()
 {
     qDebug() << "Start Series";
 
-    mImage = new QImage(281,140,QImage::Format_RGB888);
-    mImage->fill(Qt::white);
 
     mPainter = new QPainter();
     mPainter->begin(mImage);
@@ -45,8 +47,8 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->end();
 
-//    mSeriList.append(new Seri(mPair,"1m"));
-//    mClose = mSeriList.last()->kLineContainer().last().closePrice();
+    mSeriList.append(new Seri(mPair,"1m"));
+    mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"3m"));
@@ -187,6 +189,7 @@ void Series::prePareImage(QPainter *painter)
         int xPos = 110;
         mAllUpperPercent = 0;
         for( const auto &seri : this->seriList() ){
+
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
             painter->setPen(QPen(Qt::white));
