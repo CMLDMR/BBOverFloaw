@@ -27,6 +27,11 @@ Series::Series *PairItem::series() const
     return mSeries;
 }
 
+void PairItem::setFocusIndicate(bool newFocusIndicate)
+{
+    mFocusIndicate = newFocusIndicate;
+}
+
 
 
 PairItem::PairItem(const QString &_pair, QObject *parent)
@@ -47,18 +52,27 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
     QObject::connect(mTimer,&QTimer::timeout,[=](){
 
         if( mAlarmActivated ){
-            colorGradient += 10;
+            colorGradient += 1;
             if( colorGradient >= 255 ){
                 colorGradient = 0;
                 mAlarmActivated = false;
             }
         }
+
+        if( mFocusIndicate ){
+            colorGradient += 5;
+            if( colorGradient >= 255 ){
+                colorGradient = 0;
+                mFocusIndicate = false;
+            }
+        }
+
         this->update();
     });
 
 
     QTimer::singleShot(1000,[=](){
-        mTimer->start(125);
+        mTimer->start(100);
     });
 
 }
@@ -77,7 +91,13 @@ void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem 
         if( mHovered ){
             painter->fillRect(-4,-4,mSeries->image()->width()+8,mSeries->image()->height()+8,Qt::darkGray);
         }
+
+        if( mFocusIndicate ){
+            painter->fillRect(-4,-4,mSeries->image()->width()+8,mSeries->image()->height()+8,QColor(255,colorGradient,colorGradient));
+        }
+
         painter->drawImage(0,0,*mSeries->image(),0,0,-1,-1);
+
     }
 }
 
