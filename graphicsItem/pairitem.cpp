@@ -110,21 +110,56 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         });
 
 
-        auto sortMenu = menu.addMenu("Sort");
-        sortMenu->addAction("Sort 5m",[=](){
-            emit sort5m();
+
+        auto sortMenuUpper = menu.addMenu("Sort Upper");
+        sortMenuUpper->addAction("Sort 5M",[=](){
+            emit sort("5mu");
         });
 
-        sortMenu->addAction("Sort 15m",[=](){
-            emit sort15m();
+        sortMenuUpper->addAction("Sort 15M",[=](){
+            emit sort("15mu");
         });
 
-        sortMenu->addAction("Sort 1h",[=](){
-            emit sort1h();
+        sortMenuUpper->addAction("Sort 1H",[=](){
+            emit sort("1hu");
         });
 
-        sortMenu->addAction("Sort by Sum",[=](){
-            emit sortAllm();
+        sortMenuUpper->addAction("Sort 4H",[=](){
+            emit sort("4hu");
+        });
+
+        sortMenuUpper->addAction("Sort 1D",[=](){
+            emit sort("1du");
+        });
+
+        sortMenuUpper->addAction("Sort by Sum",[=](){
+            emit sort("U");
+        });
+
+
+        auto sortMenuDown = menu.addMenu("Sort Down");
+        sortMenuDown->addAction("Sort 5M",[=](){
+            emit sort("5md");
+        });
+
+        sortMenuDown->addAction("Sort 15M",[=](){
+            emit sort("15md");
+        });
+
+        sortMenuDown->addAction("Sort 1H",[=](){
+            emit sort("1hd");
+        });
+
+        sortMenuDown->addAction("Sort 4H",[=](){
+            emit sort("4hd");
+        });
+
+        sortMenuDown->addAction("Sort 1D",[=](){
+            emit sort("1dd");
+        });
+
+        sortMenuDown->addAction("Sort by Sum",[=](){
+            emit sort("D");
         });
 
         menu.exec(event->screenPos());

@@ -39,6 +39,20 @@ public:
 
     double getM1HinunteUpperPercent() const;
 
+    double getM4HinunteUpperPercent() const;
+
+    double getM1DinunteUpperPercent() const;
+
+    double getM5MDownPercent() const;
+
+    void setM15MinunteUpperPercent(double newM15MinunteUpperPercent);
+
+    double getM15MDownPercent() const;
+    double getM1HDownPercent() const;
+    double getM4HDownPercent() const;
+    double getM1DDownPercent() const;
+    double allDownPercent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -62,9 +76,17 @@ private:
     double m5MinunteUpperPercent{0};
     double m15MinunteUpperPercent{0};
     double m1HinunteUpperPercent{0};
-
+    double m4HinunteUpperPercent{0};
+    double m1DinunteUpperPercent{0};
     double mAllUpperPercent{0};
 
+
+    double m5MDownPercent{0};
+    double m15MDownPercent{0};
+    double m1HDownPercent{0};
+    double m4HDownPercent{0};
+    double m1DDownPercent{0};
+    double mAllDownPercent{0};
 };
 
 } // namespace Series

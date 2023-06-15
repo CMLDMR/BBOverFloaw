@@ -98,61 +98,38 @@ void ViewPort::addItem(const QString &pairName)
         mWidget->show();
     });
 
-    QObject::connect(pairItem,&Graphic::PairItem::sort5m,[=](){
-        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
-            return a->series()->getM5MinunteUpperPercent() > b->series()->getM5MinunteUpperPercent();
-        });
 
-        int i = 0;
-        int j = 0;
-        for( const auto &item : mItemList ){
-            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
-            j++;
-            if( j >= 15 ){
-                i++;
-                j = 0;
+    QObject::connect(pairItem,&Graphic::PairItem::sort,[=](const QString &interval){
+        std::sort(mItemList.begin(),mItemList.end(),[&interval](const Graphic::PairItem* a,const Graphic::PairItem* b){
+
+            if( interval == "1du"){
+                return a->series()->getM1DinunteUpperPercent() > b->series()->getM1DinunteUpperPercent();
+            }else if(interval == "4hu" ){
+                return a->series()->getM4HinunteUpperPercent() > b->series()->getM4HinunteUpperPercent();
+            }else if(interval == "1hu" ){
+                return a->series()->getM1HinunteUpperPercent() > b->series()->getM1HinunteUpperPercent();
+            }else if(interval == "15mu" ){
+                return a->series()->getM15MinunteUpperPercent() > b->series()->getM15MinunteUpperPercent();
+            }else if(interval == "5mu" ){
+                return a->series()->getM5MinunteUpperPercent() > b->series()->getM5MinunteUpperPercent();
+            }else if( interval == "U"){
+                return a->series()->allUpperPercent() > b->series()->allUpperPercent();
             }
-        }
-    });
 
-    QObject::connect(pairItem,&Graphic::PairItem::sort15m,[=](){
-        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
-            return a->series()->getM15MinunteUpperPercent() > b->series()->getM15MinunteUpperPercent();
-        });
-
-        int i = 0;
-        int j = 0;
-        for( const auto &item : mItemList ){
-            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
-            j++;
-            if( j >= 15 ){
-                i++;
-                j = 0;
+            else if( interval == "1dd"){
+                return a->series()->getM1DDownPercent() > b->series()->getM1DDownPercent();
+            }else if( interval == "4hd"){
+                return a->series()->getM4HDownPercent() > b->series()->getM4HDownPercent();
+            }else if( interval == "1hd"){
+                return a->series()->getM1HDownPercent() > b->series()->getM1HDownPercent();
+            }else if( interval == "15md"){
+                return a->series()->getM15MDownPercent() > b->series()->getM15MDownPercent();
+            }else if( interval == "5md"){
+                return a->series()->getM5MDownPercent() > b->series()->getM5MDownPercent();
+            }else if( interval == "D"){
+                return a->series()->allDownPercent() > b->series()->allDownPercent();
             }
-        }
-    });
 
-    QObject::connect(pairItem,&Graphic::PairItem::sort1h,[=](){
-        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
-            return a->series()->getM1HinunteUpperPercent() > b->series()->getM1HinunteUpperPercent();
-        });
-
-        int i = 0;
-        int j = 0;
-        for( const auto &item : mItemList ){
-            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
-            j++;
-            if( j >= 15 ){
-                i++;
-                j = 0;
-            }
-        }
-    });
-
-
-    QObject::connect(pairItem,&Graphic::PairItem::sortAllm,[=](){
-        std::sort(mItemList.begin(),mItemList.end(),[](const Graphic::PairItem* a,const Graphic::PairItem* b){
-            return a->series()->allUpperPercent() > b->series()->allUpperPercent();
         });
 
         int i = 0;
