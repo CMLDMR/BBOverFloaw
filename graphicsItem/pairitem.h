@@ -39,11 +39,14 @@ public:
 
     Series::Series *series() const;
 
+    void setFocusIndicate(bool newFocusIndicate);
+
 private:
     Series::Series *mSeries;
 
     bool mSelected{false};
     bool mHovered{false};
+    bool mFocusIndicate{false};
     QString mPair;
 
     qreal mWidth{285};
