@@ -136,6 +136,8 @@ void ViewPort::addItem(const QString &pairName)
                 return a->series()->allDownPercent() > b->series()->allDownPercent();
             }
 
+            return false;
+
         });
 
         int i = 0;
@@ -151,7 +153,7 @@ void ViewPort::addItem(const QString &pairName)
     });
 
     mAddedInternal++;
-    if( mAddedInternal >= 15 ){
+    if( mAddedInternal >= 10 ){
         rowCount++;
         mAddedInternal = 0;
     }
