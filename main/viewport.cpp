@@ -28,7 +28,7 @@ ViewPort::ViewPort()
     this->setViewportUpdateMode(FullViewportUpdate);
     this->setDragMode(ScrollHandDrag);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+//    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     mScene = new ViewScene();
     setScene(mScene);
@@ -120,6 +120,10 @@ void ViewPort::addItem(const QString &pairName)
                 return a->series()->getM5MinunteUpperPercent() > b->series()->getM5MinunteUpperPercent();
             }else if( interval == "U"){
                 return a->series()->allUpperPercent() > b->series()->allUpperPercent();
+            }else if( interval == "GUC"){
+                return a->series()->upperGreenCount() > b->series()->upperGreenCount();
+            }else if( interval == "TSU"){
+                return a->series()->allUpperSumPercent() > b->series()->allUpperSumPercent();
             }
 
             else if( interval == "1dd"){
@@ -134,6 +138,10 @@ void ViewPort::addItem(const QString &pairName)
                 return a->series()->getM5MDownPercent() > b->series()->getM5MDownPercent();
             }else if( interval == "D"){
                 return a->series()->allDownPercent() > b->series()->allDownPercent();
+            }else if( interval == "GDC"){
+                return a->series()->downGreenCount() > b->series()->downGreenCount();
+            }else if( interval == "TSD"){
+                return a->series()->allDownSumPercent() > b->series()->allDownSumPercent();
             }
 
             return false;
@@ -145,7 +153,7 @@ void ViewPort::addItem(const QString &pairName)
         for( const auto &item : mItemList ){
             item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
             j++;
-            if( j >= 15 ){
+            if( j >= mMaxRowCount ){
                 i++;
                 j = 0;
             }
@@ -153,7 +161,7 @@ void ViewPort::addItem(const QString &pairName)
     });
 
     mAddedInternal++;
-    if( mAddedInternal >= 10 ){
+    if( mAddedInternal >= mMaxRowCount ){
         rowCount++;
         mAddedInternal = 0;
     }

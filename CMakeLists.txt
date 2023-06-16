@@ -21,10 +21,14 @@ file(GLOB_RECURSE UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
 
 include_directories("${CMAKE_SOURCE_DIR}")
 
+set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/icon/appico.rc")
+
+
 set(PROJECT_SOURCES
         ${HEADERS}
         ${SOURCES}
         ${UIS}
+        ${app_icon_resource_windows}
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)

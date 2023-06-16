@@ -24,7 +24,7 @@ signals:
 private:
     Series::Seri* mSeri;
 
-    qreal mWidth{40};
+    qreal mWidth{50};
     const qreal mHeight{200};
     qreal mInfoHeight{16};
     const qreal mVolumeHeight{75};

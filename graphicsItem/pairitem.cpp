@@ -125,14 +125,42 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit openInTradingView();
         });
 
-        menu.addSeparator();
         menu.addAction("Open Candle Stick",[=](){
             emit openCandles(event->screenPos());
         });
 
+        menu.addSeparator();
+
+        auto ViewMenu = menu.addMenu("View Options");
+        ViewMenu->addAction("View Only Positive",[=](){
+            emit viewOnlyPositive(true);
+        });
+
+        ViewMenu->addAction("View Full Values",[=](){
+            emit viewOnlyPositive(false);
+        });
+
+
+
+
+
+        menu.addSeparator();
 
 
         auto sortMenuUpper = menu.addMenu("Sort Upper");
+
+        sortMenuUpper->addAction("Sort by Abs Sum",[=](){
+            emit sort("U");
+        });
+
+        sortMenuUpper->addAction("Sort by Total Sum",[=](){
+            emit sort("TSU");
+        });
+
+        sortMenuUpper->addAction("Sort Green Count",[=](){
+            emit sort("GUC");
+        });
+
         sortMenuUpper->addAction("Sort 5M",[=](){
             emit sort("5mu");
         });
@@ -153,12 +181,22 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("1du");
         });
 
-        sortMenuUpper->addAction("Sort by Sum",[=](){
-            emit sort("U");
-        });
+
 
 
         auto sortMenuDown = menu.addMenu("Sort Down");
+
+        sortMenuDown->addAction("Sort by Abs Sum",[=](){
+            emit sort("D");
+        });
+
+        sortMenuDown->addAction("Sort by Total Sum",[=](){
+            emit sort("TSD");
+        });
+
+        sortMenuDown->addAction("Sort Green Count",[=](){
+            emit sort("GDC");
+        });
         sortMenuDown->addAction("Sort 5M",[=](){
             emit sort("5md");
         });
@@ -179,9 +217,6 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("1dd");
         });
 
-        sortMenuDown->addAction("Sort by Sum",[=](){
-            emit sort("D");
-        });
 
         menu.exec(event->screenPos());
     }else if(event->button() == Qt::LeftButton){
