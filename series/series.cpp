@@ -15,7 +15,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage(316,140,QImage::Format_RGB888);
+    mImage = new QImage(350,140,QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -172,8 +172,10 @@ void Series::prePareImage(QPainter *painter)
 {
 
 
+
     mImage->fill(Qt::white);
     painter->begin(mImage);
+
 
 
     painter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
@@ -202,38 +204,42 @@ void Series::prePareImage(QPainter *painter)
     }
 
 
+    ///TODO: Önceden Hesaplanıp Sadece Positif Değer yazılacak
+//    this->calcAllBollingerValues();
 
     {// intervals
-        int xPos = 110;
+        int xPos = 144;
+        mUpperGreenCount = 0;
+        mDownGreenCount = 0;
+
         mAllUpperPercent = 0;
+        mAllDownPercent = 0;
+
+        mAllDownSumPercent = 0;
+        mAllUpperSumPercent = 0;
+
         for( const auto &seri : this->seriList() ){
 
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
             painter->setPen(QPen(Qt::white));
-//            painter->setBackground(Qt::gray);
             painter->fillRect(xPos-1,0,35,rect.height()+2,Qt::darkGray);
             painter->drawText(xPos, rect.height() ,seri->interval());
             painter->setPen(pen);
-//            painter->setBackground(Qt::white);
 
             int yPos = rect.height();
 
-            mAllUpperPercent = 0;
-            mAllDownPercent = 0;
+
 
             {// Bollinger Percent 2.38
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,2.38);
-
-//                painter->drawText(5, 15+75 ,"D% 2.38 "+Global::getFixedPrecision(down));
-
                 if( seri->interval() == "5m" ){
                     m5MinunteUpperPercent = upper;
                     m5MDownPercent = down;
                     auto [u,m,d] = Indicator::Bollinger::bollinger(*seri,60,2.38);
-                    painter->drawText(5, 15+75 ,"D% 2.38 "+Global::getFixedPrecision(d));
-                    painter->drawText(5, 15+15 ,"U% 2.38 "+Global::getFixedPrecision(u));
+                    painter->drawText(5, 15+75 ,"2.38 "+Global::getFixedPrecision(d));
+                    painter->drawText(5, 15+15 ,"2.38 "+Global::getFixedPrecision(u));
 
                 }
 
@@ -258,21 +264,26 @@ void Series::prePareImage(QPainter *painter)
                     m1DDownPercent = down;
                 }
 
+                mAllDownSumPercent += down;
+                mAllUpperSumPercent += upper;
 
-                mAllUpperPercent += upper;
-                mAllDownPercent += down;
+
 
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
-//                    Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1").arg(2.38));
                     mAlarmActivated = true;
+                    mUpperGreenCount++;
+                    mAllUpperPercent += upper;
+
                 }
                 if( down > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2+60,33,rect.height()),Qt::green);
                     mAlarmActivated = true;
+                    mDownGreenCount++;
+                    mAllDownPercent += down;
+
                 }
                 painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision(down));
-
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision(upper)); yPos += 15;
 
             }
@@ -282,12 +293,17 @@ void Series::prePareImage(QPainter *painter)
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,3.82);
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
-//                    Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1").arg(3.82));
                     mAlarmActivated = true;
+                    mUpperGreenCount++;
+                    mAllUpperPercent += upper;
+
                 }
                 if( down > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2+60,33,rect.height()),Qt::green);
                     mAlarmActivated = true;
+                    mDownGreenCount++;
+                    mAllDownPercent += down;
+
                 }
                 painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision(down));
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision(upper)); yPos += 15;
@@ -298,12 +314,17 @@ void Series::prePareImage(QPainter *painter)
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,5);
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
-//                    Global::Alarm::AlarmWidget::instance()->popUpMessage(mPair + " SHORT " + QString("%1").arg(5));
                     mAlarmActivated = true;
+                    mUpperGreenCount++;
+                    mAllUpperPercent += upper;
+
                 }
                 if( down > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2+60,33,rect.height()),Qt::green);
                     mAlarmActivated = true;
+                    mDownGreenCount++;
+                    mAllDownPercent += down;
+
                 }
                 painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision(down));
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision(upper)); yPos += 15;
@@ -316,11 +337,17 @@ void Series::prePareImage(QPainter *painter)
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,33,rect.height()),Qt::green);
                     mAlarmActivated = true;
+                    mUpperGreenCount++;
+                    mAllUpperPercent += upper;
+
                 }
 
                 if( down > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2+60,33,rect.height()),Qt::green);
                     mAlarmActivated = true;
+                    mDownGreenCount++;
+                    mAllDownPercent += down;
+
                 }
                 painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision(down));
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision(upper)); yPos += 15;
@@ -334,9 +361,78 @@ void Series::prePareImage(QPainter *painter)
             painter->setPen(pen);
             xPos += 35;
         }
+
+        painter->drawText(65, 15+75 ,"S:"+Global::getFixedPrecision(mAllDownPercent) + " A:"+Global::getFixedPrecision(mAllDownSumPercent));
+        painter->drawText(65, 15+15 ,"S:"+Global::getFixedPrecision(mAllUpperPercent) + " A:"+Global::getFixedPrecision(mAllUpperSumPercent));
     }
 
     painter->end();
+
+}
+
+double Series::allDownSumPercent() const
+{
+    return mAllDownSumPercent;
+}
+
+double Series::allUpperSumPercent() const
+{
+    return mAllUpperSumPercent;
+}
+
+int Series::downGreenCount() const
+{
+    return mDownGreenCount;
+}
+
+int Series::upperGreenCount() const
+{
+    return mUpperGreenCount;
+}
+
+void Series::calcAllBollingerValues()
+{
+
+    mAllUpperPercent = 0;
+    for( const auto &seri : this->seriList() ){
+
+        mAllUpperPercent = 0;
+        mAllDownPercent = 0;
+
+        {// Bollinger Percent 2.38
+
+            auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,2.38);
+            if( seri->interval() == "5m" ){
+                m5MinunteUpperPercent = upper;
+                m5MDownPercent = down;
+            }
+
+            if( seri->interval() == "15m" ){
+                m15MinunteUpperPercent = upper;
+                m15MDownPercent = down;
+            }
+
+            if( seri->interval() == "1h" ){
+                m1HinunteUpperPercent = upper;
+                m1HDownPercent = down;
+            }
+
+            if( seri->interval() == "4h" ){
+                m4HinunteUpperPercent = upper;
+                m4HDownPercent = down;
+            }
+
+            if( seri->interval() == "1d" ){
+                m1DinunteUpperPercent = upper;
+                m1DDownPercent = down;
+            }
+            mAllUpperPercent += upper;
+            mAllDownPercent += down;
+        }
+
+    }
+
+
 
 }
 

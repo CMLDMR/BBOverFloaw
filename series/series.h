@@ -53,6 +53,14 @@ public:
     double getM1DDownPercent() const;
     double allDownPercent() const;
 
+    int upperGreenCount() const;
+
+    int downGreenCount() const;
+
+    double allUpperSumPercent() const;
+
+    double allDownSumPercent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -61,6 +69,8 @@ private:
     QString mPair;
     QVector<Seri*> mSeriList;
     Binance::Public::WebSocketAPI::WebSocketAPI* mSocket;
+
+    bool mViewOnlyPositive{true};
 
     QThread* mThread;
     void SocketWorker();
@@ -79,6 +89,9 @@ private:
     double m4HinunteUpperPercent{0};
     double m1DinunteUpperPercent{0};
     double mAllUpperPercent{0};
+    double mAllUpperSumPercent{0};
+
+    int mUpperGreenCount{0};
 
 
     double m5MDownPercent{0};
@@ -87,6 +100,12 @@ private:
     double m4HDownPercent{0};
     double m1DDownPercent{0};
     double mAllDownPercent{0};
+    double mAllDownSumPercent{0};
+    int mDownGreenCount{0};
+
+    void calcAllBollingerValues();
+
+
 };
 
 } // namespace Series

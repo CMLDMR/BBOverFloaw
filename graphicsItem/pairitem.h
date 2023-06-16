@@ -21,13 +21,9 @@ signals:
     void openUrlCliked();
     void openInTradingView();
 
-    void sort5m();
-    void sort15m();
-    void sort1h();
-
-    void sortAllm();
-
     void sort(const QString &);
+
+    void viewOnlyPositive( const bool );
 
 
     // QGraphicsItem interface
@@ -47,6 +43,7 @@ private:
     bool mSelected{false};
     bool mHovered{false};
     bool mFocusIndicate{false};
+    bool mViewOnlyPositiveLine{true};
     QString mPair;
 
     qreal mWidth{285};
