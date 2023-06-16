@@ -43,33 +43,48 @@ void Series::SocketWorker()
 
     mPainter = new QPainter();
     mPainter->begin(mImage);
-    mPainter->drawText(10,20,this->pair()+" Loading...");
+    auto tempFont = mPainter->font();
+    mPainter->setFont(QFont("Tahoma",16));
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
-    mPainter->end();
+    mPainter->drawText(20,40,this->pair()+" Loading...");
 
     mSeriList.append(new Seri(mPair,"1m"));
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
+    mPainter->fillRect(0,40,52,20,Qt::darkGreen);
+
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"3m"));
+
 //    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"5m"));
     mClose = mSeriList.last()->close();
+    mPainter->fillRect(0,40,52+52,20,Qt::darkGreen);
+    emit dataUpdated(false);
 
-    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"15m"));
+    mPainter->fillRect(0,40,52+2*52,20,Qt::darkGreen);
     emit dataUpdated(false);
+
 //    mSeriList.append(new Seri(mPair,"30m"));
 //    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
+
+    mPainter->fillRect(0,40,52+3*52,20,Qt::darkGreen);
+
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
+
+    mPainter->fillRect(0,40,52+4*52,20,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"1w"));
 
+    mPainter->fillRect(0,40,315,20,Qt::darkGreen);
 
+    mPainter->setFont(tempFont);
+    mPainter->end();
 
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
 
@@ -177,6 +192,9 @@ void Series::prePareImage(QPainter *painter)
         painter->drawText(5, 15+45 ,"U% 5.00");
         painter->drawText(5, 15+60 ,"U% 6.18");
 //        painter->drawText(5, 15+75 ,"D% 2.38");
+
+        painter->fillRect(1,78,mImage->rect().width()-2,61,QColor(235,235,235));
+
         painter->drawText(5, 15+90 ,"D% 3.18");
         painter->drawText(5, 15+105 ,"D% 5.00");
         painter->drawText(5, 15+120 ,"D% 6.18");
