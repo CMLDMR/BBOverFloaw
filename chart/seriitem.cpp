@@ -196,8 +196,14 @@ QString SeriItem::countDown()
     dakika = kalanSure / 60; // Kalan saniyeyi dakikaya çevirme
     saniye = kalanSure % 60; // Dakikalara çevrilmemiş kalan saniye
 
+    auto gunStr = gun == 0 ? "" : ( gun < 10 ? QString("0%1:").arg(gun) : QString("%1:").arg(gun));
+    auto saatStr = saat == 0 ? "" : ( saat < 10 ? QString("0%1:").arg(saat) : QString("%1:").arg(saat));
+    auto dakikaStr = dakika == 0 ? "00:" : ( dakika < 10 ? QString("0%1:").arg(dakika) : QString("%1:").arg(dakika));
+    auto saniyeStr = saniye == 0 ? "00" : ( saniye < 10 ? QString("0%1").arg(saniye) : QString("%1").arg(saniye));
 
-    return QString("%1:%2:%3:%4").arg(gun).arg(saat).arg(dakika).arg(saniye);
+
+    return gunStr+saatStr+dakikaStr+saniyeStr;
+//    return QString("%1:%2:%3:%4").arg(gun).arg(saat).arg(dakika).arg(saniye);
 }
 
 void SeriItem::drawGrid(QPainter *painter)

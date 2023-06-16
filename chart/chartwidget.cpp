@@ -15,6 +15,7 @@ ChartWidget::ChartWidget(Series::Series *_mSeries, QWidget *parent) :
     mSeries(_mSeries)
 {
     ui->setupUi(this);
+    this->setWindowTitle("Multi Chart - " + mSeries->pair() );
 
     mView = new GraphicsView(mSeries);
 

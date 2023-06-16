@@ -7,7 +7,7 @@ Seri::Seri(const QString &pair, const QString &interval, QObject *parent)
     : QObject{parent},mPair(pair),mInterval(interval)
 {
     mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,110);
-    qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();
+//    qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();
 
     const qint64 baseDuration = 60000;
     if( interval == "1m" ) mDuration = baseDuration;
@@ -120,6 +120,13 @@ const qint64 Seri::numberOfTrade(const int &index) const
 {
     if( index == -1 ) return mKLineContainer.last().numberOfTrades();
     return mKLineContainer.at(index).numberOfTrades();
+}
+
+const double Seri::percentLastBar(const int &index) const
+{
+    if( index == -1 ) return (this->close()-this->open())/this->open()*100.;
+    return (this->close(index)-this->open(index))/this->open(index)*100.;
+
 }
 
 Binance::Public::KLine Seri::last() const

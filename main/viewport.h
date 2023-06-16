@@ -43,6 +43,8 @@ private:
 
     std::vector<Graphic::PairItem*> mItemList;
 
+    const int mMaxRowCount{10};
+
 
 
 

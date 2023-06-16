@@ -144,6 +144,30 @@ void ViewPort::addItem(const QString &pairName)
                 return a->series()->allDownSumPercent() > b->series()->allDownSumPercent();
             }
 
+            else if( interval == "1du%"){
+                return a->series()->getM1DinuntePercent() > b->series()->getM1DinuntePercent();
+            }else if( interval == "4hu%"){
+                return a->series()->getM4HinuntePercent() > b->series()->getM4HinuntePercent();
+            }else if( interval == "1hu%"){
+                return a->series()->getM1HinuntePercent() > b->series()->getM1HinuntePercent();
+            }else if( interval == "15mu%"){
+                return a->series()->getM15MinuntePercent() > b->series()->getM15MinuntePercent();
+            }else if( interval == "5mu%"){
+                return a->series()->getM5MinuntePercent() > b->series()->getM5MinuntePercent();
+            }
+
+            else if( interval == "1dd%"){
+                return a->series()->getM1DinuntePercent() < b->series()->getM1DinuntePercent();
+            }else if( interval == "4hd%"){
+                return a->series()->getM4HinuntePercent() < b->series()->getM4HinuntePercent();
+            }else if( interval == "1hd%"){
+                return a->series()->getM1HinuntePercent() < b->series()->getM1HinuntePercent();
+            }else if( interval == "15md%"){
+                return a->series()->getM15MinuntePercent() < b->series()->getM15MinuntePercent();
+            }else if( interval == "5md%"){
+                return a->series()->getM5MinuntePercent() < b->series()->getM5MinuntePercent();
+            }
+
             return false;
 
         });

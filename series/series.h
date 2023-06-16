@@ -61,6 +61,16 @@ public:
 
     double allDownSumPercent() const;
 
+    double getM5MinuntePercent() const;
+
+    double getM15MinuntePercent() const;
+
+    double getM1HinuntePercent() const;
+
+    double getM4HinuntePercent() const;
+
+    double getM1DinuntePercent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -102,6 +112,13 @@ private:
     double mAllDownPercent{0};
     double mAllDownSumPercent{0};
     int mDownGreenCount{0};
+
+
+    double m5MinuntePercent{0};
+    double m15MinuntePercent{0};
+    double m1HinuntePercent{0};
+    double m4HinuntePercent{0};
+    double m1DinuntePercent{0};
 
     void calcAllBollingerValues();
 
