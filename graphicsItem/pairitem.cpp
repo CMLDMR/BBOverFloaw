@@ -218,6 +218,51 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         });
 
 
+        auto sortMenuPercentAscending = menu.addMenu("Sort Percent Ascending");
+
+        sortMenuPercentAscending->addAction("5M %",[=](){
+            emit sort("5mu%");
+        });
+
+        sortMenuPercentAscending->addAction("15M %",[=](){
+            emit sort("15mu%");
+        });
+
+        sortMenuPercentAscending->addAction("1H %",[=](){
+            emit sort("1hu%");
+        });
+
+        sortMenuPercentAscending->addAction("4H %",[=](){
+            emit sort("4hu%");
+        });
+
+        sortMenuPercentAscending->addAction("1D %",[=](){
+            emit sort("1du%");
+        });
+
+        auto sortMenuPercentDescending = menu.addMenu("Sort Percent Descending");
+
+        sortMenuPercentDescending->addAction("5M %",[=](){
+            emit sort("5md%");
+        });
+
+        sortMenuPercentDescending->addAction("15M %",[=](){
+            emit sort("15md%");
+        });
+
+        sortMenuPercentDescending->addAction("1H %",[=](){
+            emit sort("1hd%");
+        });
+
+        sortMenuPercentDescending->addAction("4H %",[=](){
+            emit sort("4hd%");
+        });
+
+        sortMenuPercentDescending->addAction("1D %",[=](){
+            emit sort("1dd%");
+        });
+
+
         menu.exec(event->screenPos());
     }else if(event->button() == Qt::LeftButton){
         QGraphicsItem::mousePressEvent(event);

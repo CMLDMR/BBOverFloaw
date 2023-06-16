@@ -38,7 +38,7 @@ public:
     void setFocusIndicate(bool newFocusIndicate);
 
 private:
-    Series::Series *mSeries;
+    Series::Series *mSeries{nullptr};
 
     bool mSelected{false};
     bool mHovered{false};
@@ -47,7 +47,7 @@ private:
     QString mPair;
 
     qreal mWidth{285};
-    qreal mHeight{140};
+    qreal mHeight{155};
 
     int colorGradient{0};
     bool mAlarmActivated{false};

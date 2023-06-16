@@ -39,6 +39,7 @@ public:
     const double volume( const int &index = -1 ) const;
     const double takerVolume( const int &index = -1 ) const;
     const qint64 numberOfTrade( const int &index = - 1 ) const;
+    const double percentLastBar( const int &index = -1 ) const;
 
     Binance::Public::KLine last() const;
 
