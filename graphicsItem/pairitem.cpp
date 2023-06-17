@@ -156,6 +156,13 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("fullred");
         });
 
+        sortMenuBar->addAction("Full Bar Percent Ascending",[=](){
+            emit sort("fullbarpercentA");
+        });
+        sortMenuBar->addAction("Full Bar Percent Descending",[=](){
+            emit sort("fullbarpercentD");
+        });
+
 
         auto sortMenuUpper = menu.addMenu("Sort Upper");
 

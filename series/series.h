@@ -81,7 +81,7 @@ public:
     /// \brief getAllBarPercentAndColorCount, L/S/N, Percent, GreenCount, RedCount
     /// \return
     ///
-    std::tuple<double,int,int> getAllBarPercentAndColorCount();
+    std::tuple<double,double,double> getAllBarPercentAndColorCount();
 
     double open() const;
 
