@@ -177,6 +177,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("4hu");
         });
 
+        sortMenuUpper->addAction("Sort 12H",[=](){
+            emit sort("12hu");
+        });
+
         sortMenuUpper->addAction("Sort 1D",[=](){
             emit sort("1du");
         });
@@ -213,6 +217,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("4hd");
         });
 
+        sortMenuDown->addAction("Sort 12H",[=](){
+            emit sort("12hd");
+        });
+
         sortMenuDown->addAction("Sort 1D",[=](){
             emit sort("1dd");
         });
@@ -236,6 +244,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("4hu%");
         });
 
+        sortMenuPercentAscending->addAction("12H %",[=](){
+            emit sort("12hu%");
+        });
+
         sortMenuPercentAscending->addAction("1D %",[=](){
             emit sort("1du%");
         });
@@ -256,6 +268,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         sortMenuPercentDescending->addAction("4H %",[=](){
             emit sort("4hd%");
+        });
+
+        sortMenuPercentDescending->addAction("12H %",[=](){
+            emit sort("12hd%");
         });
 
         sortMenuPercentDescending->addAction("1D %",[=](){

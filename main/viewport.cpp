@@ -110,6 +110,8 @@ void ViewPort::addItem(const QString &pairName)
 
             if( interval == "1du"){
                 return a->series()->getM1DinunteUpperPercent() > b->series()->getM1DinunteUpperPercent();
+            }else if(interval == "12hu" ){
+                return a->series()->getM12HinunteUpperPercent() > b->series()->getM12HinunteUpperPercent();
             }else if(interval == "4hu" ){
                 return a->series()->getM4HinunteUpperPercent() > b->series()->getM4HinunteUpperPercent();
             }else if(interval == "1hu" ){
@@ -128,6 +130,8 @@ void ViewPort::addItem(const QString &pairName)
 
             else if( interval == "1dd"){
                 return a->series()->getM1DDownPercent() > b->series()->getM1DDownPercent();
+            }else if( interval == "12hd"){
+                return a->series()->getM12HDownPercent() > b->series()->getM12HDownPercent();
             }else if( interval == "4hd"){
                 return a->series()->getM4HDownPercent() > b->series()->getM4HDownPercent();
             }else if( interval == "1hd"){
@@ -146,6 +150,8 @@ void ViewPort::addItem(const QString &pairName)
 
             else if( interval == "1du%"){
                 return a->series()->getM1DinuntePercent() > b->series()->getM1DinuntePercent();
+            }else if( interval == "12hu%"){
+                return a->series()->getM12HinuntePercent() > b->series()->getM12HinuntePercent();
             }else if( interval == "4hu%"){
                 return a->series()->getM4HinuntePercent() > b->series()->getM4HinuntePercent();
             }else if( interval == "1hu%"){
@@ -158,6 +164,8 @@ void ViewPort::addItem(const QString &pairName)
 
             else if( interval == "1dd%"){
                 return a->series()->getM1DinuntePercent() < b->series()->getM1DinuntePercent();
+            }else if( interval == "12hd%"){
+                return a->series()->getM12HinuntePercent() < b->series()->getM12HinuntePercent();
             }else if( interval == "4hd%"){
                 return a->series()->getM4HinuntePercent() < b->series()->getM4HinuntePercent();
             }else if( interval == "1hd%"){
