@@ -146,6 +146,16 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         menu.addSeparator();
 
+        auto sortMenuBar = menu.addMenu("Sort By Bars");
+
+        sortMenuBar->addAction("Full Green",[=](){
+            emit sort("fullgreen");
+        });
+
+        sortMenuBar->addAction("Full Red",[=](){
+            emit sort("fullred");
+        });
+
 
         auto sortMenuUpper = menu.addMenu("Sort Upper");
 
