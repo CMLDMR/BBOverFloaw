@@ -440,9 +440,9 @@ double Series::getM12HDownPercent() const
     return m12HDownPercent;
 }
 
-std::tuple<double, int, int> Series::getAllBarPercentAndColorCount()
+std::tuple<double, double, double> Series::getAllBarPercentAndColorCount()
 {
-    return std::make_tuple(mAllBarPercentSum,mAllBarGreenCount,mAllBarRedCount);
+    return std::make_tuple(mAllBarPercentSum,static_cast<double>(mAllBarGreenCount),static_cast<double>(mAllBarRedCount));
 }
 
 double Series::getM12HinunteUpperPercent() const

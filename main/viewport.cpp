@@ -54,15 +54,15 @@ ViewPort::ViewPort()
 
     addItem("BTCUSDT");
     addItem("ETHUSDT");
-    addItem("BCHUSDT");
-    addItem("LTCUSDT");
-    addItem("ETCUSDT");
-    addItem("LINKUSDT");
-    addItem("ADAUSDT");
-    addItem("DASHUSDT");
-    addItem("XMRUSDT");
-    addItem("ZECUSDT");
-    addItem("BNBUSDT");
+//    addItem("BCHUSDT");
+//    addItem("LTCUSDT");
+//    addItem("ETCUSDT");
+//    addItem("LINKUSDT");
+//    addItem("ADAUSDT");
+//    addItem("DASHUSDT");
+//    addItem("XMRUSDT");
+//    addItem("ZECUSDT");
+//    addItem("BNBUSDT");
 
 
 
@@ -180,11 +180,34 @@ void ViewPort::addItem(const QString &pairName)
             else if( interval == "fullgreen"){
                 auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
                 auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
-                return greenCounta > redCounta;
+
+                if( greenCounta > greenCountb ){
+                    return true;
+                }else if(greenCounta == greenCountb ){
+                    return percenta > percentb;
+                }else{
+                    return false;
+                }
+
             }else if( interval == "fullred"){
                 auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
                 auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
-                return greenCounta < greenCountb;
+
+                if( redCounta < redCountb ){
+                    return true;
+                }else if(redCounta == redCountb ){
+                    return percenta < percentb;
+                }else{
+                    return false;
+                }
+            }else if( interval == "fullbarpercentA"){
+                auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
+                auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
+                return percenta < percentb;
+            }else if( interval == "fullbarpercentD"){
+                auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
+                auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
+                return percenta > percentb;
             }
 
             return false;
