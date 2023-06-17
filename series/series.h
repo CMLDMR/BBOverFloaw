@@ -77,6 +77,14 @@ public:
 
     double getM12HDownPercent() const;
 
+    ///
+    /// \brief getAllBarPercentAndColorCount, L/S/N, Percent, GreenCount, RedCount
+    /// \return
+    ///
+    std::tuple<double,int,int> getAllBarPercentAndColorCount();
+
+    double open() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -92,6 +100,7 @@ private:
     void SocketWorker();
 
     double mClose;
+    double mOpen;
     QString mTimeStr;
 
     QImage* mImage{nullptr};
@@ -129,7 +138,9 @@ private:
     double m12HinuntePercent{0};
     double m1DinuntePercent{0};
 
-    void calcAllBollingerValues();
+    double mAllBarPercentSum{0};
+    int mAllBarGreenCount{0};
+    int mAllBarRedCount{0};
 
 
 };

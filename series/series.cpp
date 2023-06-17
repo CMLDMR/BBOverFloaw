@@ -15,7 +15,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage(424,155,QImage::Format_RGB888);
+    mImage = new QImage(464,155,QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -51,19 +51,20 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"1m"));
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
-    mPainter->fillRect(0,40,mImage->width()/6,20,Qt::darkGreen);
+    mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
 
 //    emit dataUpdated(false);
 //    mSeriList.append(new Seri(mPair,"3m"));
 
-//    emit dataUpdated(false);
+
     mSeriList.append(new Seri(mPair,"5m"));
     mClose = mSeriList.last()->close();
-    mPainter->fillRect(0,40,2*mImage->width()/6,20,Qt::darkGreen);
+    mOpen = mSeriList.last()->open();
+    mPainter->fillRect(0,60,2*mImage->width()/7,20,Qt::darkGreen);
     emit dataUpdated(false);
 
     mSeriList.append(new Seri(mPair,"15m"));
-    mPainter->fillRect(0,40,3*mImage->width()/6,20,Qt::darkGreen);
+    mPainter->fillRect(0,60,3*mImage->width()/7,20,Qt::darkGreen);
     emit dataUpdated(false);
 
 //    mSeriList.append(new Seri(mPair,"30m"));
@@ -71,7 +72,7 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
 
-    mPainter->fillRect(0,40,4*mImage->width()/6,20,Qt::darkGreen);
+    mPainter->fillRect(0,60,4*mImage->width()/7,20,Qt::darkGreen);
 
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
@@ -79,12 +80,14 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"12h"));
     emit dataUpdated(false);
 
-    mPainter->fillRect(0,40,5*mImage->width()/6,20,Qt::darkGreen);
+    mPainter->fillRect(0,60,5*mImage->width()/7,20,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
 //    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"1w"));
+    mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
 
-    mPainter->fillRect(0,40,mImage->width(),20,Qt::darkGreen);
+    mSeriList.append(new Seri(mPair,"1w"));
+
+    mPainter->fillRect(0,60,mImage->width(),20,Qt::darkGreen);
 
     mPainter->setFont(tempFont);
     mPainter->end();
@@ -116,12 +119,11 @@ void Series::SocketWorker()
                 if( !aggregate.isMaker() ){
                     kline.setTakerQuotaAseetVolume(aggregate.price()*aggregate.quantity());
                     kline.setTakerBaseAssetVolume(aggregate.quantity());
-
                 }else{
                     kline.setTakerQuotaAseetVolume(0);
                     kline.setTakerBaseAssetVolume(0);
-
                 }
+
 
                 item->append(kline);
                 item->removeFirst();
@@ -166,6 +168,11 @@ void Series::SocketWorker()
     mSocket->startAggregateStream();
 }
 
+double Series::open() const
+{
+    return mOpen;
+}
+
 QImage *Series::image() const
 {
     return mImage;
@@ -181,16 +188,40 @@ void Series::prePareImage(QPainter *painter)
 
 
 
-    //    auto fontMetric = painter->fontMetrics();
+    //
 
     {// Pair name
-        //        auto rect = fontMetric.boundingRect(mSeries->pair());
-        painter->drawText(5,15 ,this->pair().mid(0,this->pair().size()-4));
+
+
+        auto font = painter->font();
+        auto pen = painter->pen();
+        painter->setFont(QFont("Tahoma",9,4));
+        painter->setPen(QPen(Qt::white));
+
+        auto fontMetric = painter->fontMetrics();
+        auto rect = fontMetric.boundingRect(this->pair().mid(0,this->pair().size()-4));
+        painter->fillRect(2,0,rect.width()+6,rect.height()+2,Qt::gray);
+        painter->drawText(5,13 ,this->pair().mid(0,this->pair().size()-4));
+        painter->setPen(pen);
+        painter->setFont(font);
     }
 
     {// Last Price
-        //        auto rect = fontMetric.boundingRect(QString::number(mSeries->close()));
-        painter->drawText(50, 15 ,QString::number(this->close()));
+        auto font = painter->font();
+        auto pen = painter->pen();
+        painter->setFont(QFont("Tahoma",10,2));
+
+        auto fontMetric = painter->fontMetrics();
+        auto rect = fontMetric.boundingRect(QString::number(this->close()));
+        painter->fillRect(67,0,rect.width()+6,rect.height()+2,this->close() > this->open() ? Qt::darkRed : Qt::darkGreen);
+        mOpen = this->close();
+
+        painter->setPen(QPen(Qt::white));
+        painter->drawText(70, 13 ,QString::number(this->close()));
+        painter->setPen(pen);
+        painter->setFont(font);
+
+
 //        painter->drawText(5, 15+15 ,"U% 2.38");
         painter->drawText(5, 30+30 ,"U% 3.18");
         painter->drawText(5, 30+45 ,"U% 5.00");
@@ -221,7 +252,22 @@ void Series::prePareImage(QPainter *painter)
         mAllDownSumPercent = 0;
         mAllUpperSumPercent = 0;
 
+        mAllBarGreenCount = 0;
+        mAllBarRedCount = 0;
+
+        mAllBarPercentSum = 0;
+
         for( const auto &seri : this->seriList() ){
+
+            if( seri->interval() != "1w" ){
+                mAllBarPercentSum += seri->percentLastBar();
+                if( seri->percentLastBar() > 0 ){
+                    mAllBarGreenCount++;
+                }else if( seri->percentLastBar() < 0 ){
+                    mAllBarRedCount++;
+                }
+            }
+
 
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
@@ -378,6 +424,9 @@ void Series::prePareImage(QPainter *painter)
 
         painter->drawText(65, 30+75 ,"S:"+Global::getFixedPrecision(mAllDownPercent) + " A:"+Global::getFixedPrecision(mAllDownSumPercent));
         painter->drawText(65, 30+15 ,"S:"+Global::getFixedPrecision(mAllUpperPercent) + " A:"+Global::getFixedPrecision(mAllUpperSumPercent));
+
+        painter->drawText(2, 15+15 ,Global::getFixedPrecision(mAllBarPercentSum) + "% " + QString("%1/%2").arg(mAllBarGreenCount).arg(mAllBarRedCount));
+
     }
 
     painter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
@@ -389,6 +438,11 @@ void Series::prePareImage(QPainter *painter)
 double Series::getM12HDownPercent() const
 {
     return m12HDownPercent;
+}
+
+std::tuple<double, int, int> Series::getAllBarPercentAndColorCount()
+{
+    return std::make_tuple(mAllBarPercentSum,mAllBarGreenCount,mAllBarRedCount);
 }
 
 double Series::getM12HinunteUpperPercent() const
@@ -446,51 +500,7 @@ int Series::upperGreenCount() const
     return mUpperGreenCount;
 }
 
-void Series::calcAllBollingerValues()
-{
 
-    mAllUpperPercent = 0;
-    for( const auto &seri : this->seriList() ){
-
-        mAllUpperPercent = 0;
-        mAllDownPercent = 0;
-
-        {// Bollinger Percent 2.38
-
-            auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,2.38);
-            if( seri->interval() == "5m" ){
-                m5MinunteUpperPercent = upper;
-                m5MDownPercent = down;
-            }
-
-            if( seri->interval() == "15m" ){
-                m15MinunteUpperPercent = upper;
-                m15MDownPercent = down;
-            }
-
-            if( seri->interval() == "1h" ){
-                m1HinunteUpperPercent = upper;
-                m1HDownPercent = down;
-            }
-
-            if( seri->interval() == "4h" ){
-                m4HinunteUpperPercent = upper;
-                m4HDownPercent = down;
-            }
-
-            if( seri->interval() == "1d" ){
-                m1DinunteUpperPercent = upper;
-                m1DDownPercent = down;
-            }
-            mAllUpperPercent += upper;
-            mAllDownPercent += down;
-        }
-
-    }
-
-
-
-}
 
 double Series::getM15MDownPercent() const
 {

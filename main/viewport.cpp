@@ -52,15 +52,17 @@ ViewPort::ViewPort()
     ////    rangeVolumeItem->setPos(1000,100);
 
 
-//        addItem("BTCUSDT");
-//        addItem("ETHUSDT");
-//        addItem("BCHUSDT");
-//        addItem("XRPUSDT");
-//        addItem("EOSUSDT");
-//        addItem("LTCUSDT");
-//        addItem("KAVAUSDT");
-//        addItem("TOMOUSDT");
-//        addItem("TRXUSDT");
+    addItem("BTCUSDT");
+    addItem("ETHUSDT");
+    addItem("BCHUSDT");
+    addItem("LTCUSDT");
+    addItem("ETCUSDT");
+    addItem("LINKUSDT");
+    addItem("ADAUSDT");
+    addItem("DASHUSDT");
+    addItem("XMRUSDT");
+    addItem("ZECUSDT");
+    addItem("BNBUSDT");
 
 
 
@@ -173,6 +175,16 @@ void ViewPort::addItem(const QString &pairName)
                 return a->series()->getM15MinuntePercent() < b->series()->getM15MinuntePercent();
             }else if( interval == "5md%"){
                 return a->series()->getM5MinuntePercent() < b->series()->getM5MinuntePercent();
+            }
+
+            else if( interval == "fullgreen"){
+                auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
+                auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
+                return greenCounta > redCounta;
+            }else if( interval == "fullred"){
+                auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();
+                auto [percentb,greenCountb,redCountb] = b->series()->getAllBarPercentAndColorCount();
+                return greenCounta < greenCountb;
             }
 
             return false;
