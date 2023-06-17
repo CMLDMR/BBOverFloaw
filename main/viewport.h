@@ -27,7 +27,6 @@ public:
     ViewPort();
 
     void addItem( const QString &pairName );
-    void setPairItem( const QString &pairName );
 
 
 private:

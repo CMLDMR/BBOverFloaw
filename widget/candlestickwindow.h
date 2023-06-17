@@ -30,7 +30,6 @@ public:
     explicit CandleStickWindow(QWidget *parent = nullptr);
     ~CandleStickWindow();
 
-    void setSeries(QVector<Main::Series_Legacy *> *newSeries);
 
 private:
     Ui::CandleStickWindow *ui;
