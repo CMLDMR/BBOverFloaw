@@ -15,7 +15,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage(384,155,QImage::Format_RGB888);
+    mImage = new QImage(424,155,QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -74,6 +74,9 @@ void Series::SocketWorker()
     mPainter->fillRect(0,40,4*mImage->width()/6,20,Qt::darkGreen);
 
     mSeriList.append(new Seri(mPair,"4h"));
+    emit dataUpdated(false);
+
+    mSeriList.append(new Seri(mPair,"12h"));
     emit dataUpdated(false);
 
     mPainter->fillRect(0,40,5*mImage->width()/6,20,Qt::darkGreen);
@@ -262,6 +265,12 @@ void Series::prePareImage(QPainter *painter)
                     m4HDownPercent = down;
                 }
 
+                if( seri->interval() == "12h" ){
+                    m12HinuntePercent = seri->percentLastBar();
+                    m12HinunteUpperPercent = upper;
+                    m12HDownPercent = down;
+                }
+
 
                 if( seri->interval() == "1d" ){
                     m1DinuntePercent = seri->percentLastBar();
@@ -375,6 +384,21 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+double Series::getM12HDownPercent() const
+{
+    return m12HDownPercent;
+}
+
+double Series::getM12HinunteUpperPercent() const
+{
+    return m12HinunteUpperPercent;
+}
+
+double Series::getM12HinuntePercent() const
+{
+    return m12HinuntePercent;
 }
 
 double Series::getM1DinuntePercent() const

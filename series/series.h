@@ -71,6 +71,12 @@ public:
 
     double getM1DinuntePercent() const;
 
+    double getM12HinuntePercent() const;
+
+    double getM12HinunteUpperPercent() const;
+
+    double getM12HDownPercent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -97,6 +103,7 @@ private:
     double m15MinunteUpperPercent{0};
     double m1HinunteUpperPercent{0};
     double m4HinunteUpperPercent{0};
+    double m12HinunteUpperPercent{0};
     double m1DinunteUpperPercent{0};
     double mAllUpperPercent{0};
     double mAllUpperSumPercent{0};
@@ -108,6 +115,7 @@ private:
     double m15MDownPercent{0};
     double m1HDownPercent{0};
     double m4HDownPercent{0};
+    double m12HDownPercent{0};
     double m1DDownPercent{0};
     double mAllDownPercent{0};
     double mAllDownSumPercent{0};
@@ -118,6 +126,7 @@ private:
     double m15MinuntePercent{0};
     double m1HinuntePercent{0};
     double m4HinuntePercent{0};
+    double m12HinuntePercent{0};
     double m1DinuntePercent{0};
 
     void calcAllBollingerValues();
