@@ -102,6 +102,7 @@ private:
     double mClose;
     double mOpen;
     QString mTimeStr;
+    qint64 mLastTimeForEmitSignal{0};
 
     QImage* mImage{nullptr};
     QPainter* mPainter;
