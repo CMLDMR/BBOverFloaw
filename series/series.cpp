@@ -153,7 +153,11 @@ void Series::SocketWorker()
                 item->removelast();
                 item->append(kline);
             }
-            prePareImage(mPainter);
+
+            if( kline.eventTime() - mLastTimeForEmitSignal > 100 ){
+                mLastTimeForEmitSignal = kline.eventTime();
+                prePareImage(mPainter);
+            }
 
 //            emit item->updated();
 
