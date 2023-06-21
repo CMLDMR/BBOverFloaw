@@ -324,7 +324,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     {
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
-        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()));
+        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
 
         for( int i = 0 ; i < mSeri->size() ; i++ ){
             auto [rect,rectbuy,rectsell,color] = this->volume(i);
@@ -336,7 +336,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     {
         painter->fillRect(QRectF(0,mInfoHeight+mHeight+mVolumeHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
-        painter->drawText(0,mInfoHeight+mHeight+mVolumeHeight+14,"Volume Dif");
+        painter->drawText(0,mInfoHeight+mHeight+mVolumeHeight+14,"Volume Dif :" + Readable(mSeri->takerVolume() - (mSeri->volume() - mSeri->takerVolume())));
 
         for( int i = 1 ; i < mSeri->size() ; i++ ){
             painter->drawLine(QLineF(this->volumeDif(i-1),this->volumeDif(i)));
@@ -348,8 +348,10 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         auto min = mSeri->minPrice();
         auto max = mSeri->maxPrice();
         auto close = mSeri->close();
-        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight,QString::number(mSeri->close()));
-        painter->drawText(mSeri->size() * tickerAreaWidth+10,mInfoHeight+mHeight - (close - min)/(max-min)*mHeight+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
+        auto yPos = mInfoHeight+mHeight - (close - min)/(max-min)*mHeight;
+        yPos = yPos < 28 ? 28 : yPos;
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,yPos,QString::number(mSeri->close()));
+        painter->drawText(mSeri->size() * tickerAreaWidth+10,yPos+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
 
 //    drawNumberOfTrade(painter);
