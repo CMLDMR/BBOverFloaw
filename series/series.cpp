@@ -185,14 +185,8 @@ QImage *Series::image() const
 void Series::prePareImage(QPainter *painter)
 {
 
-
-
     mImage->fill(Qt::white);
     painter->begin(mImage);
-
-
-
-    //
 
     {// Pair name
 
@@ -529,11 +523,6 @@ double Series::getM1DDownPercent() const
 double Series::allDownPercent() const
 {
     return mAllDownPercent;
-}
-
-void Series::setM15MinunteUpperPercent(double newM15MinunteUpperPercent)
-{
-    m15MinunteUpperPercent = newM15MinunteUpperPercent;
 }
 
 double Series::getM5MDownPercent() const
