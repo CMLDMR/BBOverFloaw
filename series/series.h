@@ -45,8 +45,6 @@ public:
 
     double getM5MDownPercent() const;
 
-    void setM15MinunteUpperPercent(double newM15MinunteUpperPercent);
-
     double getM15MDownPercent() const;
     double getM1HDownPercent() const;
     double getM4HDownPercent() const;
