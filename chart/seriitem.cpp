@@ -288,7 +288,7 @@ void SeriItem::drawNumberOfTrade(QPainter *painter)
 
 QRectF Chart::SeriItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight+mNumberTradeHeight);
+    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight/*+mNumberTradeHeight*/);
 }
 
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -353,7 +353,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->drawText(mSeri->size() * tickerAreaWidth+10,yPos+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
 
-    drawNumberOfTrade(painter);
+//    drawNumberOfTrade(painter);
 
 
     painter->drawRect(boundingRect());
