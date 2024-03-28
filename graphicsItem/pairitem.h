@@ -26,6 +26,10 @@ signals:
     void viewOnlyPositive( const bool );
 
 
+    void openOrderTimeLineBook();
+
+
+
     // QGraphicsItem interface
 public:
     virtual QRectF boundingRect() const override;

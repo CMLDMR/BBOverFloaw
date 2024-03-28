@@ -44,11 +44,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     ui->verticalGraphLayout->addWidget(mViewPort);
 
-    QObject::connect(mExchangeInfo,&ExchangeInfo::ExchangeInfo::selectedPair,[=](const QString mPairName){
+    QObject::connect(mExchangeInfo,&ExchangeInfo::ExchangeInfo::selectedPair,[=, this](const QString mPairName){
                 mViewPort->addItem(mPairName);
     });
 
-    QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
+    QObject::connect(ui->actionSound_Test,&QAction::triggered,[=, this](){
         qDebug() << ui->actionSound_Test->text();
     });
 
@@ -56,12 +56,12 @@ MainWindow::MainWindow(QWidget *parent)
         Session::SessionManager::instance()->saveDialog();
     });
 
-    QObject::connect(ui->actionLoad,&QAction::triggered,[=]( const bool &val){
+    QObject::connect(ui->actionLoad,&QAction::triggered,[=, this]( const bool &val){
         if( Session::SessionManager::instance()->openSessionDialog() ){
 
             QTimer* mTimer = new QTimer();
             int count = 0;
-            QObject::connect(mTimer,&QTimer::timeout,[=]()mutable{
+            QObject::connect(mTimer,&QTimer::timeout,[=, this]()mutable{
                 if( count < Session::SessionManager::instance()->pairListSize() ){
                     mViewPort->addItem(Session::SessionManager::instance()->pairName(count));
                     mExchangeInfo->append(Session::SessionManager::instance()->pairName(count++));

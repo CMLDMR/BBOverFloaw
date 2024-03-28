@@ -129,6 +129,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit openCandles(event->screenPos());
         });
 
+        menu.addAction("Open OrderBook",[=, this](){
+            emit openOrderTimeLineBook();
+        });
+
         menu.addSeparator();
 
         auto ViewMenu = menu.addMenu("View Options");
@@ -296,7 +300,7 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         });
 
 
-        menu.exec(event->screenPos());
+        menu.exec( event->screenPos() );
     }else if(event->button() == Qt::LeftButton){
         QGraphicsItem::mousePressEvent(event);
     }

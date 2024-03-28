@@ -18,6 +18,7 @@
 
 #include "graphicsItem/pairitem.h"
 #include "chart/chartwidget.h"
+#include "OrderBookViewWidget.h"
 
 namespace Main {
 
@@ -34,26 +35,28 @@ ViewPort::ViewPort()
 
 
 
-    //    auto orderBook = new Main::OrderBookItem(pair);
-//        auto tradeListItem = new Main::TradeListItem(pair);
+    // auto orderBook = new Main::OrderBookItem("DUSKUSDT");
+    //    auto tradeListItem = new Main::TradeListItem("DUSKUSDT");
     //    auto rangeVolumeItem = new Main::RangeVolume();
 
-    ////    QObject::connect(tradeListItem,&TradeListItem::ticker,rangeVolumeItem,&RangeVolume::addTicker);
+    //    QObject::connect(tradeListItem,&TradeListItem::ticker,rangeVolumeItem,&RangeVolume::addTicker);
 
 
-    ////    mScene->addItem(orderBook);
-//        mScene->addItem(tradeListItem);
-    ////    mScene->addItem(rangeVolumeItem);
+    //    mScene->addItem(orderBook);
+    //    mScene->addItem(tradeListItem);
+    //    mScene->addItem(rangeVolumeItem);
 
 
 
-    ////    orderBook->setPos(0,100);
-//        tradeListItem->setPos(550,100);
-    ////    rangeVolumeItem->setPos(1000,100);
+    //    orderBook->setPos(0,100);
+    //    tradeListItem->setPos(550,100);
+    //    rangeVolumeItem->setPos(1000,100);
 
 
     addItem("BTCUSDT");
     addItem("ETHUSDT");
+    addItem("DUSKUSDT");
+
 //    addItem("BCHUSDT");
 //    addItem("LTCUSDT");
 //    addItem("ETCUSDT");
@@ -75,11 +78,17 @@ void ViewPort::addItem(const QString &pairName)
     bool exist = false;
     Graphic::PairItem* _item;
     for( const auto &item : mScene->items() ){
-        if( qgraphicsitem_cast<Graphic::PairItem*>(item)->pair() == pairName ){
-            _item = qgraphicsitem_cast<Graphic::PairItem*>(item);
-            exist = true;
-            break;
+
+
+        auto pair_Item = qgraphicsitem_cast<Graphic::PairItem*>(item);
+        if( pair_Item ) {
+            if( pair_Item->pair() == pairName ){
+                _item = qgraphicsitem_cast<Graphic::PairItem*>(item);
+                exist = true;
+                break;
+            }
         }
+
     }
 
     if( exist ) {
@@ -103,6 +112,13 @@ void ViewPort::addItem(const QString &pairName)
     QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
         Chart::ChartWidget* mWidget = new Chart::ChartWidget(pairItem->series());
         mWidget->show();
+    });
+
+    QObject::connect( pairItem , &Graphic::PairItem::openOrderTimeLineBook , [=](){
+        qDebug() << __LINE__ << __func__ ;
+        auto orderBookViewWidget = new OrderBookViewWidget( );
+        orderBookViewWidget->setPair( pairItem->pair() );
+        orderBookViewWidget->show();
     });
 
 
