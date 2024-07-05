@@ -31,6 +31,12 @@ public:
     double takerBuyQuoteAssetVolume() const;
     bool Is_this_kline_closed() const;
 
+    double quotaOpen() const;
+    double quotaHigh() const;
+    double quotaLow() const;
+    double quotaClose() const;
+
+
     qint64 OpenCloseDuration();
 
 
@@ -50,6 +56,7 @@ public:
     void setNumberOfTrade(qint64 newNumberOfTrade);
     void setTakerBaseAssetVolume(double newTakerBaseAssetVolume);
     void setTakerQuotaAseetVolume(double newTakerQuotaAseetVolume);
+    void setQuotaAssetVolume( const bool isMaker, const double quotaVolume , bool newCandle = false );
 
 private:
 
@@ -73,6 +80,12 @@ private:
     qint64 mNumberOfTrade;
     double mTakerBaseAssetVolume;
     double mTakerQuotaAseetVolume;
+
+    double mQuotaAssetVolumeHigh { 0 };
+    double mQuotaAssetVolumeLow{ 0 };
+    double mQuotaAssetVolumeOpen{ 0 };
+    double mQuotaAssetVolumeClose{ 0 };
+
 
     bool mIs_this_kline_closed;
 

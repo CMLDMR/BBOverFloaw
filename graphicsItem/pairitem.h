@@ -28,6 +28,8 @@ signals:
 
     void openOrderTimeLineBook();
 
+    void openVolumeGraph();
+
 
 
     // QGraphicsItem interface

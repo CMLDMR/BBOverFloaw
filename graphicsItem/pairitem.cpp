@@ -129,6 +129,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit openCandles(event->screenPos());
         });
 
+        menu.addAction("Open Volume Graph",[=, this](){
+            emit openVolumeGraph();
+        });
+
         menu.addAction("Open OrderBook",[=, this](){
             emit openOrderTimeLineBook();
         });

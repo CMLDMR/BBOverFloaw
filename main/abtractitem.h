@@ -22,6 +22,7 @@ signals:
     void openCandled(const QPoint&);
     void openUrlCliked();
     void openInTradingView();
+    void openVolumeGraph();
 
 private:
     enum class MouseState{

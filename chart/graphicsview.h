@@ -24,6 +24,9 @@ private:
     Scene* mScene;
 
     Series::Series* mSeries;
+
+private slots:
+    void reArrageItem();
 };
 
 } // namespace Chart

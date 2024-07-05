@@ -41,6 +41,11 @@ public:
     const qint64 numberOfTrade( const int &index = - 1 ) const;
     const double percentLastBar( const int &index = -1 ) const;
 
+    const double quotaClose( const int &index = -1 )  const;
+    const double quotaOpen( const int &index = -1 ) const;
+    const double quotaHigh( const int &index = -1 ) const;
+    const double quotaLow( const int &index = -1 ) const;
+
     Binance::Public::KLine last() const;
 
     size_t size() const;
@@ -49,6 +54,8 @@ public:
     const double maxPrice() const;
     const double minPrice() const;
 
+    const double maxQuotaVolume() const;
+    const double minQuotaVolume() const;
 
     class iterator{
     public:

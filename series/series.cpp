@@ -115,6 +115,7 @@ void Series::SocketWorker()
                 kline.setOpenPrice(aggregate.price());
                 kline.setVolume(aggregate.quantity());
                 kline.setNumberOfTrade(1);
+                kline.setQuotaAssetVolume( aggregate.isMaker() , aggregate.price()*aggregate.quantity() , true );
 
                 if( !aggregate.isMaker() ){
                     kline.setTakerQuotaAseetVolume(aggregate.price()*aggregate.quantity());
@@ -145,6 +146,9 @@ void Series::SocketWorker()
 
                 kline.setVolume(kline.volume()+aggregate.quantity());
                 kline.setAssetVolume(kline.quoteAssetVolume()+aggregate.quantity()*aggregate.price());
+
+                kline.setQuotaAssetVolume( aggregate.isMaker() , aggregate.price()*aggregate.quantity() );
+
                 if( !aggregate.isMaker() ){
                     kline.setTakerBaseAssetVolume(kline.takerBuyBaseAssetVolume()+aggregate.quantity());
                     kline.setTakerQuotaAseetVolume(kline.takerBuyQuoteAssetVolume()+aggregate.price()*aggregate.quantity());

@@ -18,6 +18,7 @@
 
 #include "graphicsItem/pairitem.h"
 #include "chart/chartwidget.h"
+#include "chart/VolumeGraph.h"
 #include "OrderBookViewWidget.h"
 
 namespace Main {
@@ -55,7 +56,7 @@ ViewPort::ViewPort()
 
     addItem("BTCUSDT");
     addItem("ETHUSDT");
-    addItem("DUSKUSDT");
+    // addItem("DUSKUSDT");
 
 //    addItem("BCHUSDT");
 //    addItem("LTCUSDT");
@@ -106,11 +107,16 @@ void ViewPort::addItem(const QString &pairName)
     mScene->addItem(pairItem);
     pairItem->setPos(rowCount*(pairItem->boundingRect().width()+3),mAddedInternal*(pairItem->boundingRect().height()+3));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
-        QDesktopServices::openUrl(QUrl("http://80.253.245.39:8893/?trade="+pairItem->pair()));
+        QDesktopServices::openUrl(QUrl("http://91.151.84.201:8893/?trade="+pairItem->pair()));
     });
 
     QObject::connect(pairItem,&Graphic::PairItem::openCandles,[=](const QPoint &point){
         Chart::ChartWidget* mWidget = new Chart::ChartWidget(pairItem->series());
+        mWidget->show();
+    });
+
+    QObject::connect(pairItem,&Graphic::PairItem::openVolumeGraph,[=](){
+        Chart::VolumeGraph* mWidget = new Chart::VolumeGraph(pairItem->series());
         mWidget->show();
     });
 

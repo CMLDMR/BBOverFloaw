@@ -158,6 +158,26 @@ bool KLine::Is_this_kline_closed() const
     return mIs_this_kline_closed;
 }
 
+double KLine::quotaOpen() const
+{
+    return mQuotaAssetVolumeOpen;
+}
+
+double KLine::quotaHigh() const
+{
+    return mQuotaAssetVolumeHigh;
+}
+
+double KLine::quotaLow() const
+{
+    return mQuotaAssetVolumeLow;
+}
+
+double KLine::quotaClose() const
+{
+    return mQuotaAssetVolumeClose;
+}
+
 qint64 KLine::OpenCloseDuration()
 {
     auto fark = this->closeTime()-this->openTime();
@@ -242,6 +262,29 @@ void KLine::setTakerBaseAssetVolume(double newTakerBaseAssetVolume)
 void KLine::setTakerQuotaAseetVolume(double newTakerQuotaAseetVolume)
 {
     mTakerQuotaAseetVolume = newTakerQuotaAseetVolume;
+}
+
+void KLine::setQuotaAssetVolume(const bool isMaker, const double quotaVolume, bool newCandle)
+{
+    if( newCandle ) {
+        mQuotaAssetVolumeOpen = mQuotaAssetVolumeClose;
+        mQuotaAssetVolumeLow = mQuotaAssetVolumeClose;
+        mQuotaAssetVolumeHigh = mQuotaAssetVolumeClose;
+    }
+
+    {
+        if( ! isMaker ) {
+            mQuotaAssetVolumeClose += quotaVolume;
+        }
+        else{
+            mQuotaAssetVolumeClose -= quotaVolume;
+        }
+
+        if( mQuotaAssetVolumeHigh < mQuotaAssetVolumeClose ) mQuotaAssetVolumeHigh = mQuotaAssetVolumeClose;
+        if( mQuotaAssetVolumeLow > mQuotaAssetVolumeClose )  mQuotaAssetVolumeLow = mQuotaAssetVolumeClose;
+    }
+
+
 }
 
 
