@@ -160,22 +160,71 @@ bool KLine::Is_this_kline_closed() const
 
 double KLine::quotaOpen() const
 {
-    return mQuotaAssetVolumeOpen;
+    if( mQuotaAssetVolumeOpen != 0 ) {
+        return mQuotaAssetVolumeOpen;
+    }
+    else{
+        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
+        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
+        if( buyDollarVolume > sellDollarVolume  ) {
+            return sellDollarVolume;
+        }
+        else{
+            return buyDollarVolume;
+        }
+    }
 }
 
 double KLine::quotaHigh() const
 {
-    return mQuotaAssetVolumeHigh;
+    // return mQuotaAssetVolumeHigh;
+    if( mQuotaAssetVolumeHigh != 0 ) {
+        return mQuotaAssetVolumeHigh;
+    }
+    else{
+        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
+        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
+        if( buyDollarVolume > sellDollarVolume  ) {
+            return buyDollarVolume;
+        }
+        else{
+            return sellDollarVolume;
+        }
+    }
 }
 
 double KLine::quotaLow() const
 {
-    return mQuotaAssetVolumeLow;
+    if( mQuotaAssetVolumeLow != 0 ) {
+        return mQuotaAssetVolumeLow;
+    }
+    else{
+        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
+        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
+        if( buyDollarVolume > sellDollarVolume  ) {
+            return sellDollarVolume;
+        }
+        else{
+            return buyDollarVolume;
+        }
+    }
 }
 
 double KLine::quotaClose() const
 {
-    return mQuotaAssetVolumeClose;
+    if( mQuotaAssetVolumeClose != 0 ) {
+        return mQuotaAssetVolumeClose;
+    }
+    else{
+        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
+        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
+        if( buyDollarVolume > sellDollarVolume  ) {
+            return buyDollarVolume;
+        }
+        else{
+            return sellDollarVolume;
+        }
+    }
 }
 
 qint64 KLine::OpenCloseDuration()
@@ -285,6 +334,26 @@ void KLine::setQuotaAssetVolume(const bool isMaker, const double quotaVolume, bo
     }
 
 
+}
+
+void KLine::setQuotaAssetVolumeHigh(double newQuotaAssetVolumeHigh)
+{
+    mQuotaAssetVolumeHigh = newQuotaAssetVolumeHigh;
+}
+
+void KLine::setQuotaAssetVolumeLow(double newQuotaAssetVolumeLow)
+{
+    mQuotaAssetVolumeLow = newQuotaAssetVolumeLow;
+}
+
+void KLine::setQuotaAssetVolumeOpen(double newQuotaAssetVolumeOpen)
+{
+    mQuotaAssetVolumeOpen = newQuotaAssetVolumeOpen;
+}
+
+void KLine::setQuotaAssetVolumeClose(double newQuotaAssetVolumeClose)
+{
+    mQuotaAssetVolumeClose = newQuotaAssetVolumeClose;
 }
 
 

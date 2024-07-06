@@ -54,10 +54,10 @@ void Seri::removeFirst()
     mKLineContainer.removeFirst();
 }
 
-void Seri::replacelast(const Binance::Public::KLine &kline)
-{
-    this->mKLineContainer.replace(mKLineContainer.capacity(),kline);
-}
+// void Seri::replacelast(const Binance::Public::KLine &kline)
+// {
+//     this->mKLineContainer.replace(mKLineContainer.capacity(),kline);
+// }
 
 const QString Seri::interval() const
 {
