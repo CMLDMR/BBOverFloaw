@@ -60,7 +60,7 @@ public:
 
 private:
 
-    friend QDebug operator<<(QDebug debug,const KLine &line ){
+    friend QDebug operator<<(QDebug &debug,const KLine &line ){
         debug << "T:"+QDateTime::fromMSecsSinceEpoch(line.closeTime()).time().toString("hh:mm:ss")
               << "O:"<<line.openPrice() << "H:"<<line.highPrice() << "L:"<<line.lowPrice() << "C:"<<line.closePrice()
               << "VOL:" << line.mVolume << "\n";

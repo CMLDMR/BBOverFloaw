@@ -56,7 +56,7 @@ ViewPort::ViewPort()
 
     addItem("BTCUSDT");
     addItem("ETHUSDT");
-    // addItem("DUSKUSDT");
+    addItem("SOLUSDT");
 
 //    addItem("BCHUSDT");
 //    addItem("LTCUSDT");

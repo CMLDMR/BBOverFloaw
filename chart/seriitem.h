@@ -65,6 +65,8 @@ private:
     void drawVolumeCandle (  QPainter* painter );
 
 
+    bool m_mouseHoverEnter { false };
+    qreal   m_xMouseHoverPos;
 
     // QGraphicsItem interface
 public:
@@ -74,6 +76,10 @@ public:
     // QGraphicsItem interface
 protected:
     virtual void mousePressEvent(QGraphicsSceneMouseEvent *event) override;
+
+    virtual void hoverMoveEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
 };
 
 } // namespace Chart
