@@ -45,17 +45,17 @@ RestAPI::RestAPI(QObject *parent)
 
     QObject::connect(mManager,&QNetworkAccessManager::finished,[=](QNetworkReply* reply ){
 
-            auto obj = QJsonDocument::fromJson(reply->readAll()).object();
-            mManager->clearAccessCache();
-            mManager->clearConnectionCache();
+        auto obj = QJsonDocument::fromJson(reply->readAll()).object();
+        mManager->clearAccessCache();
+        mManager->clearConnectionCache();
 
-            auto asset = obj.value("symbols").toArray();
-            mSymbolList.clear();
-            for( const auto &item : asset ){
-                Symbol symbol(item.toObject());
-                mSymbolList.append(symbol);
-            }
-            this->saveList();
+        auto asset = obj.value("symbols").toArray();
+        mSymbolList.clear();
+        for( const auto &item : asset ){
+            Symbol symbol(item.toObject());
+            mSymbolList.append(symbol);
+        }
+        this->saveList();
 
     });
 
@@ -139,6 +139,23 @@ const QVector<Binance::Public::KLine> RestAPI::getCandles(const QString &pair, c
     for( const auto &item : ar ){
         auto _ar = item.toArray();
         Binance::Public::KLine kLine(_ar);
+
+        const auto buyDollarVolume = kLine.takerBuyQuoteAssetVolume();
+        const auto sellDollarVolume = kLine.quoteAssetVolume() - kLine.takerBuyQuoteAssetVolume();
+        if( kList.size() ) {
+
+            kLine.setQuotaAssetVolumeOpen( kList.last().quotaClose() );
+            kLine.setQuotaAssetVolumeClose( kList.last().quotaClose() + buyDollarVolume - sellDollarVolume );
+
+            kLine.setQuotaAssetVolumeHigh( kLine.quotaClose() );
+            kLine.setQuotaAssetVolumeLow( kLine.quotaOpen() );
+
+        }
+        else{
+            kLine.setQuotaAssetVolume( buyDollarVolume > sellDollarVolume , buyDollarVolume - sellDollarVolume , true );
+
+        }
+
         kList.append(kLine);
     }
 

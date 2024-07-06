@@ -21,7 +21,7 @@ public:
     void append( const Binance::Public::KLine &kline );
     void removelast();
     void removeFirst();
-    void replacelast(const Binance::Public::KLine &kline);
+    // void replacelast(const Binance::Public::KLine &kline);
 
     const QString interval() const;
 

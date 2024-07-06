@@ -58,6 +58,11 @@ public:
     void setTakerQuotaAseetVolume(double newTakerQuotaAseetVolume);
     void setQuotaAssetVolume( const bool isMaker, const double quotaVolume , bool newCandle = false );
 
+    void setQuotaAssetVolumeHigh(double newQuotaAssetVolumeHigh);
+    void setQuotaAssetVolumeLow(double newQuotaAssetVolumeLow);
+    void setQuotaAssetVolumeOpen(double newQuotaAssetVolumeOpen);
+    void setQuotaAssetVolumeClose(double newQuotaAssetVolumeClose);
+
 private:
 
     friend QDebug operator<<(QDebug &debug,const KLine &line ){
