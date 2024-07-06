@@ -115,7 +115,7 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     auto yOffset = 15;
 
-    painter->drawText(65-fontMetric.boundingRect("Vol$").width(),yOffset-2,"Vol$");
+    painter->drawText(65 -fontMetric.boundingRect("Vol$").width(),yOffset-2,"Vol$");
     painter->drawText(145-fontMetric.boundingRect("Qty").width(),yOffset-2,"Qty");
     painter->drawText(240-fontMetric.boundingRect("Price").width(),yOffset-2,"Price");
 
@@ -131,6 +131,10 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
     auto maxVol = bidMax < askMax ? askMax : bidMax;
 
+    qreal totalBuySideDollar  = 0;
+    qreal totalSellSideDollar = 0;
+
+
     for( int i = 0 ; i < bidObj.size() ; i++ ){
         auto xWidth = bidObj.qty(i)/maxVol*200;
 
@@ -144,6 +148,8 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
         bidText =QString("%1").arg(bidObj.volDollar(i),6,'f',0);
         painter->drawText(65-fontMetric.boundingRect(bidText).width(),(i+1)*height-3+yOffset,bidText);
+
+        totalBuySideDollar += bidObj.price( i ) * bidObj.qty( i );
     }
 
 
@@ -161,9 +167,12 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
 
         bidText =QString("%1").arg(askObj.volDollar(i),6,'f',0);
         painter->drawText(406,(i+1)*height-3+yOffset,bidText);
+
+        totalSellSideDollar += askObj.price( i ) * askObj.qty( i );
     }
 
 
+    emit updatedOrderBookVol( totalBuySideDollar , totalSellSideDollar );
 
 //    for( int i = 0 ; i < askObj.size() ; i++ ){
 //        painter->fillRect(QRectF(250,i*12,askObj.qty(i)/maxVol*150,11),Qt::red);

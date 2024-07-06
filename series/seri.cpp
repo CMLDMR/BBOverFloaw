@@ -129,6 +129,30 @@ const double Seri::percentLastBar(const int &index) const
 
 }
 
+const double Seri::quotaClose(const int &index) const
+{
+    if( index == -1 ) return mKLineContainer.last().quotaClose();
+    return mKLineContainer.at(index).quotaClose();
+}
+
+const double Seri::quotaOpen(const int &index) const
+{
+    if( index == -1 ) return mKLineContainer.last().quotaOpen();
+    return mKLineContainer.at(index).quotaOpen();
+}
+
+const double Seri::quotaHigh(const int &index) const
+{
+    if( index == -1 ) return mKLineContainer.last().quotaHigh();
+    return mKLineContainer.at(index).quotaHigh();
+}
+
+const double Seri::quotaLow(const int &index) const
+{
+    if( index == -1 ) return mKLineContainer.last().quotaLow();
+    return mKLineContainer.at(index).quotaLow();
+}
+
 Binance::Public::KLine Seri::last() const
 {
     return mKLineContainer.last();
@@ -165,6 +189,36 @@ const double Seri::minPrice() const
         }
     }
     return minprice;
+}
+
+const double Seri::maxQuotaVolume() const
+{
+
+    auto maxElement = std::max_element( mKLineContainer.begin() , mKLineContainer.end() , []( Binance::Public::KLine line1 , Binance::Public::KLine line2 ) {
+        return line1.quotaHigh() < line2.quotaHigh();
+    });
+
+    if( maxElement != mKLineContainer.end() ) {
+        return maxElement->quotaHigh();
+    }
+    else{
+        return 0;
+    }
+}
+
+const double Seri::minQuotaVolume() const
+{
+
+    auto minElement = std::min_element( mKLineContainer.begin() , mKLineContainer.end() , []( Binance::Public::KLine line1 , Binance::Public::KLine line2 ) {
+        return line1.quotaLow() < line2.quotaLow();
+    });
+
+    if( minElement != mKLineContainer.end() ) {
+        return minElement->quotaLow();
+    }
+    else{
+        return 0;
+    }
 }
 
 Seri::iterator Seri::begin()

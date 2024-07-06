@@ -4,7 +4,8 @@
 
 #include <iomanip>
 #include <iostream>
-#include<fstream>
+#include "binance/Utility.h"
+#include <fstream>
 
 
 
@@ -13,6 +14,8 @@
 #include <QGraphicsScene>
 #include <QPainter>
 #include <QTimer>
+#include <QGraphicsSceneMouseEvent>
+#include <QMenu>
 
 namespace Chart {
 
@@ -20,29 +23,22 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
     : QObject{parent},
     mSeri(_seri)
 {
+
+    setAcceptHoverEvents( true );
+
     mWidth = mSeri->size() * tickerAreaWidth +100;
-    QObject::connect(mSeri,&Series::Seri::updated,[=](){
+    QObject::connect(mSeri,&Series::Seri::updated,[=, this](){
         this->update();
-//        this->scene()->update(this->scene()->itemsBoundingRect());
+        //        this->scene()->update(this->scene()->itemsBoundingRect());
     });
 
 
     auto mTimer = new QTimer();
-    QObject::connect(mTimer,&QTimer::timeout,[=](){
-
-//        if( mAlarmActivated ){
-//            colorGradient += 10;
-//            if( colorGradient >= 255 ){
-//                colorGradient = 0;
-//                mAlarmActivated = false;
-//            }
-
-//        }
-
+    QObject::connect(mTimer,&QTimer::timeout,[=, this](){
         this->update();
     });
 
-    mTimer->start(100);
+    mTimer->start(40);
 
 }
 
@@ -82,6 +78,44 @@ std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) c
 
 
 
+}
+
+std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::volumeCandle(const int &index) const
+{
+    auto min = mSeri->minQuotaVolume();
+    auto max = mSeri->maxQuotaVolume();
+
+    auto close = mSeri->quotaClose(index) ;
+    auto open  = mSeri->quotaOpen(index) ;
+    auto high  = mSeri->quotaHigh(index) ;
+    auto low   = mSeri->quotaLow(index) ;
+
+
+    auto lastYIndex = mHeight+
+                      (enableVolume ? mVolumeHeight : 0 ) +
+                      (enableQuotaVolume ? mQuotaVolumeHeight : 0 ) +
+                      (enableNumberTrade ? mNumberTradeHeight : 0 );
+
+    Qt::GlobalColor color = Qt::GlobalColor::red;
+
+    double price1 = close;
+    double price2 = open;
+
+    if( close >= open ){
+        price1 = open;
+        price2 = close;
+        color = Qt::GlobalColor::green;
+    }
+
+    qreal xPos = index * tickerAreaWidth+2 ;
+    qreal yPos = mInfoHeight+mHeight - (price1 - min)/(max-min)*mVolumeCandleStickHeight + lastYIndex;
+    qreal width = tickerAreaWidth-2;
+    qreal height = (price1 - price2)/(max-min)*mVolumeCandleStickHeight;
+
+    qreal _high = mInfoHeight+mHeight-(high  - min)/(max-min)*mVolumeCandleStickHeight + lastYIndex;
+    qreal _low = mInfoHeight+mHeight-(low  - min)/(max-min)*mVolumeCandleStickHeight + lastYIndex;
+
+    return std::make_tuple(QRectF(xPos,yPos,width,height),QLineF(xPos+tickerAreaWidth/2-1,_high,xPos+tickerAreaWidth/2-1,_low),color);
 }
 
 std::tuple<QRectF,QRectF,QRectF, Qt::GlobalColor> SeriItem::volume(const int &index) const
@@ -203,7 +237,7 @@ QString SeriItem::countDown()
 
 
     return gunStr+saatStr+dakikaStr+saniyeStr;
-//    return QString("%1:%2:%3:%4").arg(gun).arg(saat).arg(dakika).arg(saniye);
+    //    return QString("%1:%2:%3:%4").arg(gun).arg(saat).arg(dakika).arg(saniye);
 }
 
 void SeriItem::drawGrid(QPainter *painter)
@@ -281,6 +315,55 @@ void SeriItem::drawNumberOfTrade(QPainter *painter)
 
 }
 
+void SeriItem::drawVolumeCandle(QPainter *painter)
+{
+    painter->save();
+    qreal yposClose = 0;
+    for( int i = 0 ; i < mSeri->size() ; i++ ){
+        auto [rect,line,color] = volumeCandle(i);
+        if( color == Qt::red ) {
+            yposClose = rect.y();
+        }
+        else{
+            yposClose = rect.y() + rect.height();
+        }
+
+        painter->fillRect(rect,color);
+        painter->drawText(rect,QString::number(i));
+        auto pen = painter->pen();
+        painter->setPen(QPen(color));
+        painter->drawLine(line);
+        painter->setPen(pen);
+    }
+
+    // Draw Grid
+    auto min = mSeri->minQuotaVolume();
+    auto max = mSeri->maxQuotaVolume();
+
+    auto dif = max - min;
+    auto step = dif/5.;
+    auto pen = painter->pen();
+    painter->setPen(QPen(QColor(200,200,200),1,Qt::DotLine));
+    for( int i = 1 ; i <= 5 ; i++ ){
+        auto yPos = mInfoHeight+(dif-i*step)/dif*mHeight + mQuotaVolumeHeight + mHeight + mVolumeHeight ;
+        painter->drawLine(0,yPos,mWidth,yPos);
+        painter->drawText(mWidth-50,yPos+14,QString("%1").arg( Utility::humanReadable( i*step+min ).data() ) );
+    }
+
+    for( int i = 0 ; i <= mSeri->size() ; i +=10 ){
+        painter->drawLine(i*tickerAreaWidth, mInfoHeight + mQuotaVolumeHeight + mHeight + mVolumeHeight,
+                          i*tickerAreaWidth, mHeight+mInfoHeight + mQuotaVolumeHeight + mHeight + mVolumeHeight );
+    }
+
+    painter->setPen(Qt::black);
+    const QString str = QString("Volume $: %1").arg( Utility::humanReadable(mSeri->quotaClose()).data());
+    painter->drawText(0, mInfoHeight + mHeight + mQuotaVolumeHeight + mVolumeHeight+14, str );
+    painter->drawText(mSeri->size() * tickerAreaWidth+10, yposClose , QString("%1").arg( Utility::humanReadable(mSeri->quotaClose()).data()) );
+
+
+    painter->restore();
+}
+
 
 
 } // namespace Chart
@@ -288,7 +371,11 @@ void SeriItem::drawNumberOfTrade(QPainter *painter)
 
 QRectF Chart::SeriItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mHeight+mInfoHeight+mVolumeHeight+mQuotaVolumeHeight/*+mNumberTradeHeight*/);
+    return QRectF( 0 , 0 , mWidth , mHeight+mInfoHeight +
+                                    (enableVolume ? mVolumeHeight : 0 ) +
+                                    (enableQuotaVolume ? mQuotaVolumeHeight : 0 ) +
+                                    (enableNumberTrade ? mNumberTradeHeight : 0 ) +
+                                    (enableVolumeCandle ? mVolumeCandleStickHeight : 0 ) );
 }
 
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -309,6 +396,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     drawGrid(painter);
 
 
+    // Draw Candle
     for( int i = 0 ; i < mSeri->size() ; i++ ){
         auto [rect,line,color] = candle(i);
         painter->fillRect(rect,color);
@@ -320,8 +408,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     }
 
 
-
-    {
+    if( enableVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
         painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
 
@@ -333,7 +420,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         }
     }
 
-    {
+    if( enableQuotaVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight+mVolumeHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
         painter->drawText(0,mInfoHeight+mHeight+mVolumeHeight+14,"Volume Dif :" + Readable(mSeri->takerVolume() - (mSeri->volume() - mSeri->takerVolume())));
 
@@ -353,9 +440,87 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->drawText(mSeri->size() * tickerAreaWidth+10,yPos+14,countDown());//QString::number(mSeri->duration()/1000-(mSeri->last().eventTime()%60000)/1000));
     }
 
-//    drawNumberOfTrade(painter);
+    if( enableVolumeCandle ) {
+        drawVolumeCandle(painter);
+    }
 
+    if( enableNumberTrade ) {
+        drawNumberOfTrade(painter);
+    }
+
+
+    if( m_mouseHoverEnter ) {
+        painter->save();
+        painter->setPen(QPen(QColor(150,150,150),1,Qt::SolidLine));
+        painter->drawLine( m_xMouseHoverPos , 0 , m_xMouseHoverPos , this->boundingRect().height() );
+        painter->restore();
+    }
 
     painter->drawRect(boundingRect());
 
+}
+
+
+void Chart::SeriItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+
+    if( event->button() == Qt::RightButton ){
+        QMenu menu;
+
+        auto action1 = menu.addAction("Enable/Disable Volume",[=, this](){
+            enableVolume = !enableVolume;
+            emit update();
+        });
+        action1->setCheckable( true );
+        action1->setChecked( enableVolume );
+
+        auto action2 = menu.addAction("Enable/Disable QuotaVolume",[=, this](){
+            enableQuotaVolume = !enableQuotaVolume;
+            emit update();
+        });
+        action2->setCheckable( true );
+        action2->setChecked( enableQuotaVolume );
+
+        auto action3 = menu.addAction("Enable/Disable NumberTrade",[=, this](){
+            enableNumberTrade = !enableNumberTrade;
+            emit update();
+        });
+        action3->setCheckable( true );
+        action3->setChecked( enableNumberTrade );
+
+        auto action4 = menu.addAction("Enable/Disable VolumeCandleStick",[=, this](){
+            enableVolumeCandle = !enableVolumeCandle;
+            emit update();
+        });
+        action4->setCheckable( true );
+        action4->setChecked( enableVolumeCandle );
+
+        menu.exec( event->screenPos() );
+    }
+
+
+    QGraphicsItem::mousePressEvent( event );
+}
+
+
+
+void Chart::SeriItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_xMouseHoverPos = event->pos().x();
+    QGraphicsItem::hoverMoveEvent( event );
+}
+
+
+void Chart::SeriItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    setCursor(Qt::CrossCursor);
+    m_mouseHoverEnter = true;
+    QGraphicsItem::hoverEnterEvent( event );
+}
+
+void Chart::SeriItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    setCursor(Qt::OpenHandCursor);
+    m_mouseHoverEnter = false;
+    QGraphicsItem::hoverLeaveEvent( event );
 }
