@@ -44,8 +44,9 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
 
 std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) const
 {
-    auto min = mSeri->minPrice();
-    auto max = mSeri->maxPrice();
+    const auto Padding = ( mSeri->maxPrice() - mSeri->minPrice() );
+    auto min = mSeri->minPrice() - Padding * .1 ;
+    auto max = mSeri->maxPrice() + Padding * .1 ;
 
     auto close = mSeri->close(index);
     auto open = mSeri->open(index);
@@ -82,8 +83,9 @@ std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) c
 
 std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::volumeCandle(const int &index) const
 {
-    auto min = mSeri->minQuotaVolume();
-    auto max = mSeri->maxQuotaVolume();
+    const auto Padding = ( mSeri->maxQuotaVolume() - mSeri->minQuotaVolume() );
+    auto min = mSeri->minQuotaVolume() - Padding * .1 ;
+    auto max = mSeri->maxQuotaVolume() + Padding * .1 ;
 
     auto close = mSeri->quotaClose(index) ;
     auto open  = mSeri->quotaOpen(index) ;
@@ -328,10 +330,12 @@ void SeriItem::drawVolumeCandle(QPainter *painter)
             yposClose = rect.y() + rect.height();
         }
 
-        painter->fillRect(rect,color);
+        const auto barColor = color == Qt::red ? QColor( 200 , 100 , 100 ) : QColor( 100 , 200 , 100 );
+
+        painter->fillRect(rect, barColor );
         painter->drawText(rect,QString::number(i));
         auto pen = painter->pen();
-        painter->setPen(QPen(color));
+        painter->setPen(QPen(barColor));
         painter->drawLine(line);
         painter->setPen(pen);
     }
@@ -356,7 +360,7 @@ void SeriItem::drawVolumeCandle(QPainter *painter)
     }
 
     painter->setPen(Qt::black);
-    const QString str = QString("Volume $: %1").arg( Utility::humanReadable(mSeri->quotaClose()).data());
+    const QString str = QString("Volume $: %1").arg( Utility::humanReadable(mSeri->quotaClose() - mSeri->quotaOpen()).data());
     painter->drawText(0, mInfoHeight + mHeight + mQuotaVolumeHeight + mVolumeHeight+14, str );
     painter->drawText(mSeri->size() * tickerAreaWidth+10, yposClose , QString("%1").arg( Utility::humanReadable(mSeri->quotaClose()).data()) );
 
@@ -381,15 +385,12 @@ QRectF Chart::SeriItem::boundingRect() const
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
+    painter->save();
     painter->fillRect(QRectF(0,0,mWidth,mInfoHeight),QColor(25,25,25));
-    auto pen = painter->pen();
     painter->setPen(QPen(Qt::white));
-    auto font = painter->font();
     painter->setFont(QFont("Tahoma",11,1));
     painter->drawText(3,13,mSeri->pair() + " " + mSeri->interval() + " O:"+QString("%1 H:%2 L:%3 C:%4").arg(mSeri->open()).arg(mSeri->high()).arg(mSeri->low()).arg(mSeri->close()));
-    painter->setFont(font);
-    painter->setPen(pen);
-
+    painter->restore();
 
 
 
@@ -399,12 +400,15 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
     // Draw Candle
     for( int i = 0 ; i < mSeri->size() ; i++ ){
         auto [rect,line,color] = candle(i);
-        painter->fillRect(rect,color);
+
+        const auto barColor = color == Qt::red ? QColor(233,30,99) : QColor(0,188,212);
+
+        painter->fillRect(rect,barColor);
         painter->drawText(rect,QString::number(i));
-        auto pen = painter->pen();
-        painter->setPen(QPen(color));
+        painter->save();
+        painter->setPen(QPen(barColor));
         painter->drawLine(line);
-        painter->setPen(pen);
+        painter->restore();
     }
 
 
@@ -453,6 +457,8 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->save();
         painter->setPen(QPen(QColor(150,150,150),1,Qt::SolidLine));
         painter->drawLine( m_xMouseHoverPos , 0 , m_xMouseHoverPos , this->boundingRect().height() );
+        painter->drawLine( 0 , m_yMouseHoverPos , this->boundingRect().width() , m_yMouseHoverPos );
+
         painter->restore();
     }
 
@@ -507,6 +513,7 @@ void Chart::SeriItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void Chart::SeriItem::hoverMoveEvent(QGraphicsSceneHoverEvent *event)
 {
     m_xMouseHoverPos = event->pos().x();
+    m_yMouseHoverPos = event->pos().y();
     QGraphicsItem::hoverMoveEvent( event );
 }
 

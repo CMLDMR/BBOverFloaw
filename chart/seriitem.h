@@ -27,7 +27,7 @@ private:
     Series::Seri* mSeri;
 
     qreal mWidth{50};
-    const qreal mHeight{200};
+    const qreal mHeight{250};
     qreal mInfoHeight{16};
     const qreal mVolumeHeight{75};
     const qreal mQuotaVolumeHeight{75};
@@ -67,6 +67,7 @@ private:
 
     bool m_mouseHoverEnter { false };
     qreal   m_xMouseHoverPos;
+    qreal   m_yMouseHoverPos;
 
     // QGraphicsItem interface
 public:
