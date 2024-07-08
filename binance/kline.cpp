@@ -160,71 +160,22 @@ bool KLine::Is_this_kline_closed() const
 
 double KLine::quotaOpen() const
 {
-    if( mQuotaAssetVolumeOpen != 0 ) {
-        return mQuotaAssetVolumeOpen;
-    }
-    else{
-        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
-        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
-        if( buyDollarVolume > sellDollarVolume  ) {
-            return sellDollarVolume;
-        }
-        else{
-            return buyDollarVolume;
-        }
-    }
+    return mQuotaAssetVolumeOpen;
 }
 
 double KLine::quotaHigh() const
 {
-    // return mQuotaAssetVolumeHigh;
-    if( mQuotaAssetVolumeHigh != 0 ) {
-        return mQuotaAssetVolumeHigh;
-    }
-    else{
-        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
-        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
-        if( buyDollarVolume > sellDollarVolume  ) {
-            return buyDollarVolume;
-        }
-        else{
-            return sellDollarVolume;
-        }
-    }
+    return mQuotaAssetVolumeHigh;
 }
 
 double KLine::quotaLow() const
 {
-    if( mQuotaAssetVolumeLow != 0 ) {
-        return mQuotaAssetVolumeLow;
-    }
-    else{
-        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
-        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
-        if( buyDollarVolume > sellDollarVolume  ) {
-            return sellDollarVolume;
-        }
-        else{
-            return buyDollarVolume;
-        }
-    }
+    return mQuotaAssetVolumeLow;
 }
 
 double KLine::quotaClose() const
 {
-    if( mQuotaAssetVolumeClose != 0 ) {
-        return mQuotaAssetVolumeClose;
-    }
-    else{
-        const auto buyDollarVolume = this->takerBuyQuoteAssetVolume();
-        const auto sellDollarVolume = this->quoteAssetVolume() - this->takerBuyQuoteAssetVolume();
-        if( buyDollarVolume > sellDollarVolume  ) {
-            return buyDollarVolume;
-        }
-        else{
-            return sellDollarVolume;
-        }
-    }
+    return mQuotaAssetVolumeClose;
 }
 
 qint64 KLine::OpenCloseDuration()
