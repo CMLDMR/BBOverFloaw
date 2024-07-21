@@ -82,7 +82,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 QRectF Graphic::PairItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mSeries->image()->height() );
+    return QRectF(0,0,mSeries->image()->width(),mSeries->image()->height() );
 }
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
