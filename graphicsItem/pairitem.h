@@ -53,7 +53,7 @@ private:
     QString mPair;
 
     qreal mWidth{285};
-    qreal mHeight{155};
+    qreal mHeight{170};
 
     int colorGradient{0};
     bool mAlarmActivated{false};

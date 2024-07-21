@@ -83,6 +83,30 @@ public:
 
     double open() const;
 
+    double getM1MinunteSMA200Percent() const;
+    double getM5MinunteSMA200Percent() const;
+    double getM15MinunteSMA200Percent() const;
+    double getM1HinunteSMA200Percent() const;
+    double getM4HinunteSMA200Percent() const;
+    double getM12HinunteSMA200Percent() const;
+    double getM1DinunteSMA200Percent() const;
+
+    double getM1MinunteEMA200Percent() const;
+    double getM5MinunteEMA200Percent() const;
+    double getM15MinunteEMA200Percent() const;
+    double getM1HinunteEMA200Percent() const;
+    double getM4HinunteEMA200Percent() const;
+    double getM12HinunteEMA200Percent() const;
+    double getM1DinunteEMA200Percent() const;
+
+    double getM1MinunteEMA20Percent() const;
+    double getM5MinunteEMA20Percent() const;
+    double getM15MinunteEMA20Percent() const;
+    double getM1HinunteEMA20Percent() const;
+    double getM4HinunteEMA20Percent() const;
+    double getM12HinunteEMA20Percent() const;
+    double getM1DinunteEMA20Percent() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -140,6 +164,33 @@ private:
     double mAllBarPercentSum{0};
     int mAllBarGreenCount{0};
     int mAllBarRedCount{0};
+
+    int m_length { 21 };
+    double m1MinunteSMA200Percent{0};
+    double m5MinunteSMA200Percent{0};
+    double m15MinunteSMA200Percent{0};
+    double m1HinunteSMA200Percent{0};
+    double m4HinunteSMA200Percent{0};
+    double m12HinunteSMA200Percent{0};
+    double m1DinunteSMA200Percent{0};
+
+    double m1MinunteEMA200Percent{0};
+    double m5MinunteEMA200Percent{0};
+    double m15MinunteEMA200Percent{0};
+    double m1HinunteEMA200Percent{0};
+    double m4HinunteEMA200Percent{0};
+    double m12HinunteEMA200Percent{0};
+    double m1DinunteEMA200Percent{0};
+
+
+
+    double m1MinunteEMA20Percent{0};
+    double m5MinunteEMA20Percent{0};
+    double m15MinunteEMA20Percent{0};
+    double m1HinunteEMA20Percent{0};
+    double m4HinunteEMA20Percent{0};
+    double m12HinunteEMA20Percent{0};
+    double m1DinunteEMA20Percent{0};
 
 
 };

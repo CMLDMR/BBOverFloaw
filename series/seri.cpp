@@ -6,7 +6,7 @@ namespace Series {
 Seri::Seri(const QString &pair, const QString &interval, QObject *parent)
     : QObject{parent},mPair(pair),mInterval(interval)
 {
-    mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,160);
+    mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,250);
 //    qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();
 
     const qint64 baseDuration = 60000;

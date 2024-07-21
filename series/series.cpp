@@ -2,10 +2,12 @@
 
 #include "binance/kline.h"
 #include "indicator/bollinger.h"
+#include "indicator/Sma.h"
 #include "global/utility.h"
 #include "global/alarmwidget.h"
 
 #include <QMutex>
+#include <QMutexLocker>
 
 namespace Series {
 
@@ -15,7 +17,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage(464,155,QImage::Format_RGB888);
+    mImage = new QImage(464,200,QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -183,6 +185,7 @@ double Series::open() const
 
 QImage *Series::image() const
 {
+    QMutexLocker locker(&mutex);  // Mutex kilitlenir
     return mImage;
 }
 
@@ -235,6 +238,10 @@ void Series::prePareImage(QPainter *painter)
         painter->drawText(5, 30+90 ,"D% 3.18");
         painter->drawText(5, 30+105 ,"D% 5.00");
         painter->drawText(5, 30+120 ,"D% 6.18");
+        painter->drawText(5, 30+135 ,"SMA 200 %");
+        painter->drawText(5, 30+150 ,"EMA 200 %");
+        painter->drawText(5, 30+165 ,"EMA 20 %");
+
 
     }
 
@@ -285,14 +292,15 @@ void Series::prePareImage(QPainter *painter)
 
             {// Bollinger Percent 2.38
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,2.38);
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
+
                 if( seri->interval() == "5m" ){
                     m5MinuntePercent = seri->percentLastBar();
                     m5MinunteUpperPercent = upper;
                     m5MDownPercent = down;
-                    auto [u,m,d] = Indicator::Bollinger::bollinger(*seri,60,2.38);
-                    painter->drawText(5, 30+75 ,"2.38 "+Global::getFixedPrecision(d));
-                    painter->drawText(5, 30+15 ,"2.38 "+Global::getFixedPrecision(u));
+                    auto [u,m,d] = Indicator::Bollinger::bollinger(*seri,60,2.00);
+                    painter->drawText(5, 30+75 ,"2.00 "+Global::getFixedPrecision(d));
+                    painter->drawText(5, 30+15 ,"2.00 "+Global::getFixedPrecision(u));
                 }
 
                 if( seri->interval() == "15m" ){
@@ -352,7 +360,7 @@ void Series::prePareImage(QPainter *painter)
 
             {// Bollinger Percent 3.82
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,3.82);
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,3.00);
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
                     mAlarmActivated = true;
@@ -373,7 +381,7 @@ void Series::prePareImage(QPainter *painter)
 
             {// Bollinger Percent 5
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,5);
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,4);
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
                     mAlarmActivated = true;
@@ -394,7 +402,7 @@ void Series::prePareImage(QPainter *painter)
 
             {// Bollinger Percent 6.18
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,60,6.18);
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,5);
 
                 if( upper > 0 ){
                     painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
@@ -414,6 +422,173 @@ void Series::prePareImage(QPainter *painter)
                 painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision(down));
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision(upper)); yPos += 15;
             }
+
+
+            {// SMA 200
+
+                // calculate SMA
+                const auto smaValue = Indicator::Sma::value( *seri , 200 );
+                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+                if ( percent > 0 ) {
+                    if( percent > 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
+                    }                }
+                else if( percent < 0 ) {
+                    if( percent < -1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
+                    }
+                }
+                if( seri->interval() == "1m" ){
+                    m1MinunteSMA200Percent = percent;
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinunteSMA200Percent = percent;
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinunteSMA200Percent = percent;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HinunteSMA200Percent = percent;
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HinunteSMA200Percent = percent;
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HinunteSMA200Percent = percent;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DinunteSMA200Percent = percent;
+                }
+
+
+                painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision( percent ) );
+                yPos += 15;
+            }
+
+            {// EMA 200
+
+                // calculate SMA
+                const auto smaValue = Indicator::Ema::value( *seri , 200 );
+                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+                if ( percent > 0 ) {
+                    if( percent > 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
+                    }                }
+                else if( percent < 0 ) {
+                    if( percent < -1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
+                    }
+                }
+                if( seri->interval() == "1m" ){
+                    m1MinunteEMA200Percent = percent;
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinunteEMA200Percent = percent;
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinunteEMA200Percent = percent;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HinunteEMA200Percent = percent;
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HinunteEMA200Percent = percent;
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HinunteEMA200Percent = percent;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DinunteEMA200Percent = percent;
+                }
+
+
+                painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision( percent ) );
+                yPos += 15;
+            }
+
+
+            {// EMA 20
+
+                // calculate SMA
+                const auto smaValue = Indicator::Ema::value( *seri , 20 );
+                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+                if ( percent > 0 ) {
+                    if( percent > 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
+                    }
+                }
+                else if( percent < 0 ) {
+                    if( percent < -1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+60,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
+                    }
+                }
+
+                if( seri->interval() == "1m" ){
+                    m1MinunteEMA20Percent = percent;
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinunteEMA20Percent = percent;
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinunteEMA20Percent = percent;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HinunteEMA20Percent = percent;
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HinunteEMA20Percent = percent;
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HinunteEMA20Percent = percent;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DinunteEMA20Percent = percent;
+                }
+
+
+                painter->drawText(xPos, yPos+75 ,Global::getFixedPrecision( percent ) );
+                yPos += 15;
+            }
+
 
 
             pen = painter->pen();
@@ -435,6 +610,111 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+double Series::getM1MinunteEMA20Percent() const
+{
+    return m1MinunteEMA20Percent;
+}
+
+double Series::getM5MinunteEMA20Percent() const
+{
+    return m5MinunteEMA20Percent;
+}
+
+double Series::getM15MinunteEMA20Percent() const
+{
+    return m15MinunteEMA20Percent;
+}
+
+double Series::getM1HinunteEMA20Percent() const
+{
+    return m1HinunteEMA20Percent;
+}
+
+double Series::getM4HinunteEMA20Percent() const
+{
+    return m4HinunteEMA20Percent;
+}
+
+double Series::getM12HinunteEMA20Percent() const
+{
+    return m12HinunteEMA20Percent;
+}
+
+double Series::getM1DinunteEMA20Percent() const
+{
+    return m1DinunteEMA20Percent;
+}
+
+double Series::getM1MinunteEMA200Percent() const
+{
+    return m1MinunteEMA200Percent;
+}
+
+double Series::getM5MinunteEMA200Percent() const
+{
+    return m5MinunteEMA200Percent;
+}
+
+double Series::getM15MinunteEMA200Percent() const
+{
+    return m15MinunteEMA200Percent;
+}
+
+double Series::getM1HinunteEMA200Percent() const
+{
+    return m1HinunteEMA200Percent;
+}
+
+double Series::getM4HinunteEMA200Percent() const
+{
+    return m4HinunteEMA200Percent;
+}
+
+double Series::getM12HinunteEMA200Percent() const
+{
+    return m12HinunteEMA200Percent;
+}
+
+double Series::getM1DinunteEMA200Percent() const
+{
+    return m1DinunteEMA200Percent;
+}
+
+double Series::getM1MinunteSMA200Percent() const
+{
+    return m1MinunteSMA200Percent;
+}
+
+double Series::getM5MinunteSMA200Percent() const
+{
+    return m5MinunteSMA200Percent;
+}
+
+double Series::getM15MinunteSMA200Percent() const
+{
+    return m15MinunteSMA200Percent;
+}
+
+double Series::getM1HinunteSMA200Percent() const
+{
+    return m1HinunteSMA200Percent;
+}
+
+double Series::getM4HinunteSMA200Percent() const
+{
+    return m4HinunteSMA200Percent;
+}
+
+double Series::getM12HinunteSMA200Percent() const
+{
+    return m12HinunteSMA200Percent;
+}
+
+double Series::getM1DinunteSMA200Percent() const
+{
+    return m1DinunteSMA200Percent;
 }
 
 double Series::getM12HDownPercent() const
@@ -587,7 +867,7 @@ std::optional<Seri *> Series::getSeri(const QString &interval)
         }
     }
 
-    if( !exist ){
+    if( exist ){
         return seri;
     }else{
         return std::nullopt;

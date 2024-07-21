@@ -49,7 +49,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 
     auto mTimer = new QTimer();
-    QObject::connect(mTimer,&QTimer::timeout,[=](){
+    QObject::connect(mTimer,&QTimer::timeout,[=, this](){
 
         if( mAlarmActivated ){
             colorGradient += 1;
@@ -82,7 +82,7 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 QRectF Graphic::PairItem::boundingRect() const
 {
-    return QRectF(0,0,mWidth,mHeight);
+    return QRectF(0,0,mWidth,mSeries->image()->height() );
 }
 
 void Graphic::PairItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -109,23 +109,23 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
         if( mSelected ){
-            menu.addAction("UnSelect",[=](){
+            menu.addAction("UnSelect",this,[=, this](){
                 mSelected = false;
             });
         }else{
-            menu.addAction("Select",[=](){
+            menu.addAction("Select",[=, this](){
                 mSelected = true;
             });
         }
-        menu.addAction("Open Custom Url",[=](){
+        menu.addAction("Open Custom Url",[=, this](){
             emit openUrlCliked();
         });
 
-        menu.addAction("Open in TradingView",[=](){
+        menu.addAction("Open in TradingView",[=, this](){
             emit openInTradingView();
         });
 
-        menu.addAction("Open Candle Stick",[=](){
+        menu.addAction("Open Candle Stick",[=, this](){
             emit openCandles(event->screenPos());
         });
 
@@ -140,11 +140,11 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         menu.addSeparator();
 
         auto ViewMenu = menu.addMenu("View Options");
-        ViewMenu->addAction("View Only Positive",[=](){
+        ViewMenu->addAction("View Only Positive",[=, this](){
             emit viewOnlyPositive(true);
         });
 
-        ViewMenu->addAction("View Full Values",[=](){
+        ViewMenu->addAction("View Full Values",[=, this](){
             emit viewOnlyPositive(false);
         });
 
@@ -156,57 +156,57 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         auto sortMenuBar = menu.addMenu("Sort By Bars");
 
-        sortMenuBar->addAction("Full Green",[=](){
+        sortMenuBar->addAction("Full Green",[=, this](){
             emit sort("fullgreen");
         });
 
-        sortMenuBar->addAction("Full Red",[=](){
+        sortMenuBar->addAction("Full Red",[=, this](){
             emit sort("fullred");
         });
 
-        sortMenuBar->addAction("Full Bar Percent Ascending",[=](){
+        sortMenuBar->addAction("Full Bar Percent Ascending",[=, this](){
             emit sort("fullbarpercentA");
         });
-        sortMenuBar->addAction("Full Bar Percent Descending",[=](){
+        sortMenuBar->addAction("Full Bar Percent Descending",[=, this](){
             emit sort("fullbarpercentD");
         });
 
 
         auto sortMenuUpper = menu.addMenu("Sort Upper");
 
-        sortMenuUpper->addAction("Sort by Abs Sum",[=](){
+        sortMenuUpper->addAction("Sort by Abs Sum",[=, this](){
             emit sort("U");
         });
 
-        sortMenuUpper->addAction("Sort by Total Sum",[=](){
+        sortMenuUpper->addAction("Sort by Total Sum",[=, this](){
             emit sort("TSU");
         });
 
-        sortMenuUpper->addAction("Sort Green Count",[=](){
+        sortMenuUpper->addAction("Sort Green Count",[=, this](){
             emit sort("GUC");
         });
 
-        sortMenuUpper->addAction("Sort 5M",[=](){
+        sortMenuUpper->addAction("Sort 5M",[=, this](){
             emit sort("5mu");
         });
 
-        sortMenuUpper->addAction("Sort 15M",[=](){
+        sortMenuUpper->addAction("Sort 15M",[=, this](){
             emit sort("15mu");
         });
 
-        sortMenuUpper->addAction("Sort 1H",[=](){
+        sortMenuUpper->addAction("Sort 1H",[=, this](){
             emit sort("1hu");
         });
 
-        sortMenuUpper->addAction("Sort 4H",[=](){
+        sortMenuUpper->addAction("Sort 4H",[=, this](){
             emit sort("4hu");
         });
 
-        sortMenuUpper->addAction("Sort 12H",[=](){
+        sortMenuUpper->addAction("Sort 12H",[=, this](){
             emit sort("12hu");
         });
 
-        sortMenuUpper->addAction("Sort 1D",[=](){
+        sortMenuUpper->addAction("Sort 1D",[=, this](){
             emit sort("1du");
         });
 
@@ -215,92 +215,216 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         auto sortMenuDown = menu.addMenu("Sort Down");
 
-        sortMenuDown->addAction("Sort by Abs Sum",[=](){
+        sortMenuDown->addAction("Sort by Abs Sum",[=, this](){
             emit sort("D");
         });
 
-        sortMenuDown->addAction("Sort by Total Sum",[=](){
+        sortMenuDown->addAction("Sort by Total Sum",[=, this](){
             emit sort("TSD");
         });
 
-        sortMenuDown->addAction("Sort Green Count",[=](){
+        sortMenuDown->addAction("Sort Green Count",[=, this](){
             emit sort("GDC");
         });
-        sortMenuDown->addAction("Sort 5M",[=](){
+        sortMenuDown->addAction("Sort 5M",[=, this](){
             emit sort("5md");
         });
 
-        sortMenuDown->addAction("Sort 15M",[=](){
+        sortMenuDown->addAction("Sort 15M",[=, this](){
             emit sort("15md");
         });
 
-        sortMenuDown->addAction("Sort 1H",[=](){
+        sortMenuDown->addAction("Sort 1H",[=, this](){
             emit sort("1hd");
         });
 
-        sortMenuDown->addAction("Sort 4H",[=](){
+        sortMenuDown->addAction("Sort 4H",[=, this](){
             emit sort("4hd");
         });
 
-        sortMenuDown->addAction("Sort 12H",[=](){
+        sortMenuDown->addAction("Sort 12H",[=, this](){
             emit sort("12hd");
         });
 
-        sortMenuDown->addAction("Sort 1D",[=](){
+        sortMenuDown->addAction("Sort 1D",[=, this](){
             emit sort("1dd");
         });
 
 
         auto sortMenuPercentAscending = menu.addMenu("Sort Percent Ascending");
 
-        sortMenuPercentAscending->addAction("5M %",[=](){
+        sortMenuPercentAscending->addAction("5M %",[=, this](){
             emit sort("5mu%");
         });
 
-        sortMenuPercentAscending->addAction("15M %",[=](){
+        sortMenuPercentAscending->addAction("15M %",[=, this](){
             emit sort("15mu%");
         });
 
-        sortMenuPercentAscending->addAction("1H %",[=](){
+        sortMenuPercentAscending->addAction("1H %",[=, this](){
             emit sort("1hu%");
         });
 
-        sortMenuPercentAscending->addAction("4H %",[=](){
+        sortMenuPercentAscending->addAction("4H %",[=, this](){
             emit sort("4hu%");
         });
 
-        sortMenuPercentAscending->addAction("12H %",[=](){
+        sortMenuPercentAscending->addAction("12H %",[=, this](){
             emit sort("12hu%");
         });
 
-        sortMenuPercentAscending->addAction("1D %",[=](){
+        sortMenuPercentAscending->addAction("1D %",[=, this](){
             emit sort("1du%");
         });
 
         auto sortMenuPercentDescending = menu.addMenu("Sort Percent Descending");
 
-        sortMenuPercentDescending->addAction("5M %",[=](){
+        sortMenuPercentDescending->addAction("5M %",[=, this](){
             emit sort("5md%");
         });
 
-        sortMenuPercentDescending->addAction("15M %",[=](){
+        sortMenuPercentDescending->addAction("15M %",[=, this](){
             emit sort("15md%");
         });
 
-        sortMenuPercentDescending->addAction("1H %",[=](){
+        sortMenuPercentDescending->addAction("1H %",[=, this](){
             emit sort("1hd%");
         });
 
-        sortMenuPercentDescending->addAction("4H %",[=](){
+        sortMenuPercentDescending->addAction("4H %",[=, this](){
             emit sort("4hd%");
         });
 
-        sortMenuPercentDescending->addAction("12H %",[=](){
+        sortMenuPercentDescending->addAction("12H %",[=, this](){
             emit sort("12hd%");
         });
 
-        sortMenuPercentDescending->addAction("1D %",[=](){
+        sortMenuPercentDescending->addAction("1D %",[=, this](){
             emit sort("1dd%");
+        });
+
+
+        auto sortMenuSMADascending = menu.addMenu("Sort SMA Percent Ascending");
+
+        // sortMenuSMADascending->addAction("1M %",[=, this](){
+        //     emit sort("1smaa%");
+        // });
+
+        sortMenuSMADascending->addAction("5M %",[=, this](){
+            emit sort("5smaa%");
+        });
+
+        sortMenuSMADascending->addAction("15M %",[=, this](){
+            emit sort("15smaa%");
+        });
+
+        sortMenuSMADascending->addAction("1H %",[=, this](){
+            emit sort("1hsmaa%");
+        });
+
+        sortMenuSMADascending->addAction("4H %",[=, this](){
+            emit sort("4hsmaa%");
+        });
+
+        sortMenuSMADascending->addAction("12H %",[=, this](){
+            emit sort("12hsmaa%");
+        });
+
+        sortMenuSMADascending->addAction("1D %",[=, this](){
+            emit sort("1dsmaa%");
+        });
+
+
+
+        auto sortMenuSMADescending = menu.addMenu("Sort SMA Percent Descending");
+
+        // sortMenuSMADescending->addAction("1M %",[=, this](){
+        //     emit sort("1sma%");
+        // });
+
+        sortMenuSMADescending->addAction("5M %",[=, this](){
+            emit sort("5sma%");
+        });
+
+        sortMenuSMADescending->addAction("15M %",[=, this](){
+            emit sort("15sma%");
+        });
+
+        sortMenuSMADescending->addAction("1H %",[=, this](){
+            emit sort("1hsma%");
+        });
+
+        sortMenuSMADescending->addAction("4H %",[=, this](){
+            emit sort("4hsma%");
+        });
+
+        sortMenuSMADescending->addAction("12H %",[=, this](){
+            emit sort("12hsma%");
+        });
+
+        sortMenuSMADescending->addAction("1D %",[=, this](){
+            emit sort("1dsma%");
+        });
+
+        auto sortMenuEMA20Descending = menu.addMenu("Sort EMA 20 Percent Descending");
+
+        // sortMenuSMADescending->addAction("1M %",[=, this](){
+        //     emit sort("1sma%");
+        // });
+
+        sortMenuEMA20Descending->addAction("5M %",[=, this](){
+            emit sort("5ema20%");
+        });
+
+        sortMenuEMA20Descending->addAction("15M %",[=, this](){
+            emit sort("15ema20%");
+        });
+
+        sortMenuEMA20Descending->addAction("1H %",[=, this](){
+            emit sort("1hema20%");
+        });
+
+        sortMenuEMA20Descending->addAction("4H %",[=, this](){
+            emit sort("4hema20%");
+        });
+
+        sortMenuEMA20Descending->addAction("12H %",[=, this](){
+            emit sort("12hema20%");
+        });
+
+        sortMenuEMA20Descending->addAction("1D %",[=, this](){
+            emit sort("1dema20%");
+        });
+
+
+        auto sortMenuEMA20Ascending = menu.addMenu("Sort EMA 20 Percent Ascending");
+
+        // sortMenuSMADescending->addAction("1M %",[=, this](){
+        //     emit sort("1sma%");
+        // });
+
+        sortMenuEMA20Ascending->addAction("5M %",[=, this](){
+            emit sort("5ema20A%");
+        });
+
+        sortMenuEMA20Ascending->addAction("15M %",[=, this](){
+            emit sort("15ema20A%");
+        });
+
+        sortMenuEMA20Ascending->addAction("1H %",[=, this](){
+            emit sort("1hema20A%");
+        });
+
+        sortMenuEMA20Ascending->addAction("4H %",[=, this](){
+            emit sort("4hema20A%");
+        });
+
+        sortMenuEMA20Ascending->addAction("12H %",[=, this](){
+            emit sort("12hema20A%");
+        });
+
+        sortMenuEMA20Ascending->addAction("1D %",[=, this](){
+            emit sort("1dema20A%");
         });
 
 

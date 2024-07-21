@@ -411,6 +411,97 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
         painter->restore();
     }
 
+    // Draw High Pivot
+    {
+        int lastHighIndex = 0;
+        double lastHighPrice = mSeri->at( 0 ).highPrice();
+
+        int lastLowIndex = 0;
+        double lastLowPrice = mSeri->at( 0 ).lowPrice();
+
+        const int minPadding = 14;
+        const int inSearch = 5;
+        std::vector<QPointF> pivotsPoint;
+        int it = 0;
+
+        while( it < mSeri->size() ) {
+
+            // önce en yüksek tepe, gelecekteki 7 bar içerisinde
+            int i = it;
+            int counter = 0;
+            while ( i < it + minPadding ) {
+                if( lastHighPrice < mSeri->at( i ).highPrice() && counter > inSearch ) {
+                    lastHighPrice = mSeri->at( i ).highPrice();
+                    lastHighIndex = i;
+                    lastLowIndex = lastHighIndex;
+                    it = i;
+                }else{
+                    i++;
+                }
+                counter++;
+            }
+
+            // önce en düşük tepe, gelecekteki 7 bar içerisinde
+            i = it;
+            counter = 0;
+            while ( i < it + minPadding ) {
+                if( lastLowPrice > mSeri->at( i ).lowPrice() && counter > inSearch ) {
+                    lastLowPrice = mSeri->at( i ).lowPrice();
+                    lastLowIndex = i;
+                    it = i;
+                }else{
+                    i++;
+                }
+                counter++;
+
+            }
+
+
+            double x1 = 0, y1 = 0 , x2 = 0 , y2 = 0;
+            {
+                auto [rect,line,color] = candle(lastHighIndex);
+                x1 = line.x1();
+                y1 = line.y1();
+                pivotsPoint.push_back( QPointF( x1 , y1 ) );
+                painter->drawText( x1  , y1 - 5 ,"H");
+            }
+            {
+                auto [rect,line,color] = candle(lastLowIndex);
+
+                x2 = line.x1();
+                y2 = line.y2();
+                pivotsPoint.push_back( QPointF( x2 , y2 ) );
+                painter->drawText( x2  , y2-5 ,"L");
+
+                // painter->drawText(line.x1()-rect.width()/2 , line.y2()+10 ,"L");
+
+            }
+
+            // pivots.push_back( QLineF( x1 , y1 , x2 , y2 ) );
+            // painter->drawLine( QLineF( x1 , y1 , x2 , y2 ) );
+
+            lastLowPrice = 9999999;
+            lastHighPrice = 0;
+
+            it++;
+
+        }
+
+        if( pivotsPoint.size() > 1 ) {
+            for( int i = 1 ; i < pivotsPoint.size()-1 ; i++ ) {
+                if( pivotsPoint[i].x() > 0 && pivotsPoint[i].y() > 0  )
+                    painter->drawLine( QLineF( pivotsPoint[i-1] , pivotsPoint[i] ) );
+            }
+        }
+
+        // for( const auto &lineItem : pivots ) {
+
+        // }
+    }
+
+
+
+
 
     if( enableVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));

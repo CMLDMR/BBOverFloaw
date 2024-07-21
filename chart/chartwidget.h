@@ -33,8 +33,6 @@ private:
 
     Series::Series* mSeries;
 
-    void addChart(const int row , const int column , Series::Seri* _mSeri);
-
 };
 
 

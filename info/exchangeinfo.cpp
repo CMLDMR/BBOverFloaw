@@ -3,7 +3,8 @@
 
 #include "exchangemodel.h"
 
-
+#include <QThread>
+#include <QTest>
 
 
 
@@ -25,14 +26,28 @@ ExchangeInfo::ExchangeInfo::ExchangeInfo(QWidget *parent) :
     mTableViewDelegate = new TableViewDelegateWritable(ui->tableView);
 
 
-    QObject::connect(ui->tableView,&QTableView::doubleClicked,[=]( const QModelIndex &index){
+    QObject::connect(ui->tableView,&QTableView::doubleClicked,[=, this]( const QModelIndex &index){
         if( index.data(ExchangeModel::status).toString() == "TRADING" ){
             emit selectedPair(index.data(ExchangeModel::pair).toString());
             mTableViewDelegate->append(index.data().toString());
         }
     });
 
-    QObject::connect(ui->lineEdit_filter,&QLineEdit::textChanged,[=](const QString &text){
+    QObject::connect(ui->pushButton_addALL,&QPushButton::clicked , this ,[=,this](){
+
+        for( int i = 0 ; i < mModel->rowCount() ; i++ ) {
+            const auto &index = mModel->index( i  , 0 );
+            if( index.data(ExchangeModel::status).toString() == "TRADING" ){
+                emit selectedPair(index.data(ExchangeModel::pair).toString());
+                mTableViewDelegate->append(index.data().toString());
+                QTest::qWait( 500 );
+            }
+        }
+
+
+    });
+
+    QObject::connect(ui->lineEdit_filter,&QLineEdit::textChanged,[=, this](const QString &text){
         mModel->setFilter(text);
     });
 

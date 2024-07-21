@@ -21,6 +21,8 @@
 #include "chart/VolumeGraph.h"
 #include "OrderBookViewWidget.h"
 
+#include "indicator/Sma.h"
+
 namespace Main {
 
 ViewPort::ViewPort()
@@ -57,16 +59,18 @@ ViewPort::ViewPort()
     addItem("BTCUSDT");
     addItem("ETHUSDT");
     addItem("SOLUSDT");
+    addItem("XRPUSDT");
 
-//    addItem("BCHUSDT");
-//    addItem("LTCUSDT");
-//    addItem("ETCUSDT");
-//    addItem("LINKUSDT");
-//    addItem("ADAUSDT");
-//    addItem("DASHUSDT");
-//    addItem("XMRUSDT");
-//    addItem("ZECUSDT");
-//    addItem("BNBUSDT");
+   addItem("BCHUSDT");
+   addItem("LTCUSDT");
+   addItem("ETCUSDT");
+   addItem("LINKUSDT");
+   addItem("ADAUSDT");
+   addItem("DASHUSDT");
+   addItem("XMRUSDT");
+   addItem("ZECUSDT");
+   addItem("BNBUSDT");
+   addItem("ONTUSDT");
 
 
 
@@ -198,6 +202,98 @@ void ViewPort::addItem(const QString &pairName)
             }else if( interval == "5md%"){
                 return a->series()->getM5MinuntePercent() < b->series()->getM5MinuntePercent();
             }
+
+
+           else if( interval == "1dsma%"){
+                return a->series()->getM1DinunteSMA200Percent() < b->series()->getM1MinunteSMA200Percent();
+
+            }else if( interval == "12hsma%"){
+                return a->series()->getM12HinunteSMA200Percent() < b->series()->getM12HinunteSMA200Percent();
+
+            }else if( interval == "4hsma%"){
+                return a->series()->getM4HinunteSMA200Percent() < b->series()->getM4HinunteSMA200Percent();
+
+            }else if( interval == "1hsma%"){
+                return a->series()->getM1HinunteSMA200Percent() < b->series()->getM1HinunteSMA200Percent();
+
+            }else if( interval == "15sma%"){
+                return a->series()->getM15MinunteSMA200Percent() < b->series()->getM15MinunteSMA200Percent();
+
+            }else if( interval == "5sma%"){
+                return a->series()->getM5MinunteSMA200Percent() < b->series()->getM5MinunteSMA200Percent();
+
+            }else if( interval == "1sma%"){
+                return a->series()->getM1MinunteSMA200Percent() < b->series()->getM1MinunteSMA200Percent();
+            }
+
+            else if( interval == "1dsmaa%"){
+                return a->series()->getM1DinunteSMA200Percent() > b->series()->getM1MinunteSMA200Percent();
+
+            }else if( interval == "12hsmaa%"){
+                return a->series()->getM12HinunteSMA200Percent() > b->series()->getM12HinunteSMA200Percent();
+
+            }else if( interval == "4hsmaa%"){
+                return a->series()->getM4HinunteSMA200Percent() > b->series()->getM4HinunteSMA200Percent();
+
+            }else if( interval == "1hsmaa%"){
+                return a->series()->getM1HinunteSMA200Percent() > b->series()->getM1HinunteSMA200Percent();
+
+            }else if( interval == "15smaa%"){
+                return a->series()->getM15MinunteSMA200Percent() > b->series()->getM15MinunteSMA200Percent();
+
+            }else if( interval == "5smaa%"){
+                return a->series()->getM5MinunteSMA200Percent() > b->series()->getM5MinunteSMA200Percent();
+
+            }else if( interval == "1smaa%"){
+                return a->series()->getM1MinunteSMA200Percent() > b->series()->getM1MinunteSMA200Percent();
+            }
+
+
+            else if( interval == "1dema20%"){
+                return a->series()->getM1DinunteEMA20Percent() > b->series()->getM1MinunteEMA20Percent();
+
+            }else if( interval == "12hema20%"){
+                return a->series()->getM12HinunteEMA20Percent() > b->series()->getM12HinunteEMA20Percent();
+
+            }else if( interval == "4hema20%"){
+                return a->series()->getM4HinunteEMA20Percent() > b->series()->getM4HinunteEMA20Percent();
+
+            }else if( interval == "1hema20%"){
+                return a->series()->getM1HinunteEMA200Percent() > b->series()->getM1HinunteEMA20Percent();
+
+            }else if( interval == "15ema20%"){
+                return a->series()->getM15MinunteEMA20Percent() > b->series()->getM15MinunteEMA20Percent();
+
+            }else if( interval == "5ema20%"){
+                return a->series()->getM5MinunteEMA20Percent() > b->series()->getM5MinunteEMA20Percent();
+
+            }else if( interval == "1ema20%"){
+                return a->series()->getM1MinunteEMA20Percent() > b->series()->getM1MinunteEMA20Percent();
+            }
+
+
+            else if( interval == "1dema20A%"){
+                return a->series()->getM1DinunteEMA20Percent() < b->series()->getM1MinunteEMA20Percent();
+
+            }else if( interval == "12hema20A%"){
+                return a->series()->getM12HinunteEMA20Percent() < b->series()->getM12HinunteEMA20Percent();
+
+            }else if( interval == "4hema20A%"){
+                return a->series()->getM4HinunteEMA20Percent() < b->series()->getM4HinunteEMA20Percent();
+
+            }else if( interval == "1hema20A%"){
+                return a->series()->getM1HinunteEMA200Percent() < b->series()->getM1HinunteEMA20Percent();
+
+            }else if( interval == "15ema20A%"){
+                return a->series()->getM15MinunteEMA20Percent() < b->series()->getM15MinunteEMA20Percent();
+
+            }else if( interval == "5ema20A%"){
+                return a->series()->getM5MinunteEMA20Percent() < b->series()->getM5MinunteEMA20Percent();
+
+            }else if( interval == "1ema20A%"){
+                return a->series()->getM1MinunteEMA20Percent() < b->series()->getM1MinunteEMA20Percent();
+            }
+
 
             else if( interval == "fullgreen"){
                 auto [percenta,greenCounta,redCounta] = a->series()->getAllBarPercentAndColorCount();

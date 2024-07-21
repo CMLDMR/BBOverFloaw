@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 13.0.2, 2024-07-08T08:22:33. -->
+<!-- Written by QtCreator 13.0.84, 2024-07-17T18:02:25. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -92,6 +92,15 @@
    <valuemap type="QVariantMap" key="CppEditor.QuickFix">
     <value type="bool" key="UseGlobalSettings">true</value>
    </valuemap>
+   <valuemap type="QVariantMap" key="CppcheckManual">
+    <value type="QString" key="binary"></value>
+    <value type="bool" key="guessArguments">false</value>
+    <value type="bool" key="information">false</value>
+    <value type="bool" key="performance">false</value>
+    <value type="bool" key="portability">false</value>
+    <value type="bool" key="style">false</value>
+    <value type="bool" key="warning">false</value>
+   </valuemap>
   </valuemap>
  </data>
  <data>
@@ -109,13 +118,13 @@
     <value type="int" key="CMake.Configure.BaseEnvironment">2</value>
     <value type="bool" key="CMake.Configure.ClearSystemEnvironment">false</value>
     <valuelist type="QVariantList" key="CMake.Configure.UserEnvironmentChanges"/>
-    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
--DCMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
--DQT_QMAKE_EXECUTABLE:STRING=%{Qt:qmakeExecutable}
+    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
 -DCMAKE_CXX_COMPILER:STRING=%{Compiler:Executable:Cxx}
--DCMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=%{buildDir}/.qtc/package-manager/auto-setup.cmake
--DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG}
 -DCMAKE_GENERATOR:STRING=Ninja
+-DCMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=%{buildDir}/.qtc/package-manager/auto-setup.cmake
+-DQT_QMAKE_EXECUTABLE:STRING=%{Qt:qmakeExecutable}
+-DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG}
+-DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
 -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CMLDMR\Documents\build-BBOverFloaw-Desktop_Qt_6_2_4_MSVC2022_64bitt-RelWithDebInfo</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
@@ -165,13 +174,13 @@
     <value type="int" key="CMake.Configure.BaseEnvironment">2</value>
     <value type="bool" key="CMake.Configure.ClearSystemEnvironment">false</value>
     <valuelist type="QVariantList" key="CMake.Configure.UserEnvironmentChanges"/>
-    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
--DCMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
--DQT_QMAKE_EXECUTABLE:STRING=%{Qt:qmakeExecutable}
+    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_C_COMPILER:STRING=%{Compiler:Executable:C}
 -DCMAKE_CXX_COMPILER:STRING=%{Compiler:Executable:Cxx}
--DCMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=%{buildDir}/.qtc/package-manager/auto-setup.cmake
--DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG}
 -DCMAKE_GENERATOR:STRING=Ninja
+-DCMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=%{buildDir}/.qtc/package-manager/auto-setup.cmake
+-DQT_QMAKE_EXECUTABLE:STRING=%{Qt:qmakeExecutable}
+-DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG}
+-DCMAKE_PREFIX_PATH:STRING=%{Qt:QT_INSTALL_PREFIX}
 -DCMAKE_BUILD_TYPE:STRING=Debug</value>
     <value type="int" key="EnableQmlDebugging">0</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\CMLDMR\Documents\build-BBOverFloaw-Desktop_Qt_6_2_4_MSVC2022_64bitt-Debug</value>
