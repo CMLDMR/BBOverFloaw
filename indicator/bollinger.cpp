@@ -71,8 +71,11 @@ std::tuple<double, double> Indicator::Bollinger::bollingerPercent(const Series::
 {
     auto [upper,middle,down] = Bollinger::bollinger(seri,mLength,stdDev);
 
-    auto upperPercent = (seri.close() - upper)/seri.close()*100;
-    auto downPercent = (down - seri.close())/seri.close()*100;
+    // fiyat upper üstündeyse pozitif upperPercent
+    auto upperPercent = ( seri.close() - upper )/ upper * 100;
+
+    // fiyat down altındaysa pozitif downPercent
+    auto downPercent = ( down - seri.close() )/ down * 100;
 
     if( upper == 0 ) upperPercent = 0;
 

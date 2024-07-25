@@ -6,10 +6,14 @@ namespace Series {
 Seri::Seri(const QString &pair, const QString &interval, QObject *parent)
     : QObject{parent},mPair(pair),mInterval(interval)
 {
-    mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,250);
+
+    if( interval != "15ms" ) {
+        mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,201);
+    }
 //    qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();
 
     const qint64 baseDuration = 60000;
+    if( interval == "15ms" ) mDuration = baseDuration/4;
     if( interval == "1m" ) mDuration = baseDuration;
     if( interval == "3m" ) mDuration = baseDuration*3;
     if( interval == "5m" ) mDuration = baseDuration*5;

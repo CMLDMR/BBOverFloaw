@@ -372,6 +372,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //     emit sort("1sma%");
         // });
 
+        sortMenuEMA20Descending->addAction("1M %",[=, this](){
+            emit sort("1ema20%");
+        });
+
         sortMenuEMA20Descending->addAction("5M %",[=, this](){
             emit sort("5ema20%");
         });
@@ -402,6 +406,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         // sortMenuSMADescending->addAction("1M %",[=, this](){
         //     emit sort("1sma%");
         // });
+
+        sortMenuEMA20Ascending->addAction("1M %",[=, this](){
+            emit sort("1ema20A%");
+        });
 
         sortMenuEMA20Ascending->addAction("5M %",[=, this](){
             emit sort("5ema20A%");

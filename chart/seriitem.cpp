@@ -29,7 +29,6 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
     mWidth = mSeri->size() * tickerAreaWidth +100;
     QObject::connect(mSeri,&Series::Seri::updated,[=, this](){
         this->update();
-        //        this->scene()->update(this->scene()->itemsBoundingRect());
     });
 
 
@@ -75,10 +74,6 @@ std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::candle(const int &index) c
 
         return std::make_tuple(QRectF(xPos,yPos,width,height),QLineF(xPos+tickerAreaWidth/2-1,_high,xPos+tickerAreaWidth/2-1,_low),Qt::red);
     }
-
-
-
-
 }
 
 std::tuple<QRectF, QLineF, Qt::GlobalColor> SeriItem::volumeCandle(const int &index) const
@@ -245,8 +240,9 @@ QString SeriItem::countDown()
 void SeriItem::drawGrid(QPainter *painter)
 {
 
-    auto min = mSeri->minPrice();
-    auto max = mSeri->maxPrice();
+    const auto Padding = ( mSeri->maxPrice() - mSeri->minPrice() );
+    auto min = mSeri->minPrice() - Padding * .1 ;
+    auto max = mSeri->maxPrice() + Padding * .1 ;
 
     auto dif = max - min;
     auto step = dif/5.;

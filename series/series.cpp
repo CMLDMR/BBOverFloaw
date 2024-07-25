@@ -17,7 +17,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage(504,113,QImage::Format_RGB888);
+    mImage = new QImage( 420 , 113 , QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -50,13 +50,17 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->drawText(20,40,this->pair()+" Loading...");
 
+    // bu 15 saniye mumbar tamamlanmadı
+    // mSeriList.append(new Seri(mPair,"15ms"));
+
+
     mSeriList.append(new Seri(mPair,"1m"));
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
 
     mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
 
-//    emit dataUpdated(false);
-//    mSeriList.append(new Seri(mPair,"3m"));
+   emit dataUpdated(false);
+   mSeriList.append(new Seri(mPair,"3m"));
 
 
     mSeriList.append(new Seri(mPair,"5m"));
@@ -79,15 +83,15 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
 
-    mSeriList.append(new Seri(mPair,"12h"));
-    emit dataUpdated(false);
+    // mSeriList.append(new Seri(mPair,"12h"));
+    // emit dataUpdated(false);
 
     mPainter->fillRect(0,60,5*mImage->width()/7,20,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
 //    emit dataUpdated(false);
     mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
 
-    mSeriList.append(new Seri(mPair,"1w"));
+    // mSeriList.append(new Seri(mPair,"1w"));
 
     mPainter->fillRect(0,60,mImage->width(),20,Qt::darkGreen);
 
@@ -96,7 +100,7 @@ void Series::SocketWorker()
 
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
 
-    QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedAggregate,[=](const Binance::Public::WebSocketAPI::Aggregate aggregate ){
+    QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedAggregate,[=, this](const Binance::Public::WebSocketAPI::Aggregate aggregate ){
         mClose = aggregate.price();
         mTimeStr = QDateTime::fromMSecsSinceEpoch(aggregate.eventTime()).time().toString("hh:mm:ss");
 
@@ -231,7 +235,8 @@ void Series::prePareImage(QPainter *painter)
 //    this->calcAllBollingerValues();
 
     {// intervals
-        int xPos = 144;
+        int xPos = 110;
+        const int indNameWidth = xPos-3;
         mUpperGreenCount = 0;
         mDownGreenCount = 0;
 
@@ -270,7 +275,7 @@ void Series::prePareImage(QPainter *painter)
             int yPos = rect.height()+18;
 
             {// Bollinger Percent 2.38
-                painter->fillRect(1,yPos + 3,141,16,QColor(235,235,235));
+                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
@@ -321,7 +326,13 @@ void Series::prePareImage(QPainter *painter)
 
 
                 if( upper > 0 ){
-                    painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+                    if( upper < 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 150 , 255 ,150 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+                    }
+                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
 
                     mAlarmActivated = true;
                     mUpperGreenCount++;
@@ -329,7 +340,15 @@ void Series::prePareImage(QPainter *painter)
 
                 }
                 if( down > 0 ){
-                    painter->fillRect(QRectF(xPos+1,yPos+2+60,cellWidth,rect.height()),Qt::green);
+
+                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+
+                    if( down < 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 150 , 255 , 150 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+                    }
                     mAlarmActivated = true;
                     mDownGreenCount++;
                     mAllDownPercent += down;
@@ -348,7 +367,7 @@ void Series::prePareImage(QPainter *painter)
 
             {// SMA 200
 
-                painter->fillRect(1,yPos + 3,141,16,QColor(235,235,235));
+                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
                 painter->drawText(5, yPos+15 ,"SMA 200 %");
                 // calculate SMA
@@ -461,7 +480,7 @@ void Series::prePareImage(QPainter *painter)
 
             {// EMA 20
 
-                painter->fillRect(1,yPos + 3,141,16,QColor(235,235,235));
+                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
                 painter->drawText(5, yPos+15 ,"EMA 20 %");
 

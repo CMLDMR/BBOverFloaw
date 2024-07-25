@@ -104,12 +104,13 @@ void ViewPort::addItem(const QString &pairName)
 
 
 
-
+    const int leftRightMargin = 15;
+    const int topBottomMargin = 3;
 
     auto pairItem = new Graphic::PairItem(pairName);
     mItemList.push_back(pairItem);
     mScene->addItem(pairItem);
-    pairItem->setPos(rowCount*(pairItem->boundingRect().width()+3),mAddedInternal*(pairItem->boundingRect().height()+3));
+    pairItem->setPos(rowCount*(pairItem->boundingRect().width()+leftRightMargin),mAddedInternal*(pairItem->boundingRect().height()+topBottomMargin));
     QObject::connect(pairItem,&Graphic::PairItem::openUrlCliked,[=](){
         QDesktopServices::openUrl(QUrl("http://91.151.84.201:8893/?trade="+pairItem->pair()));
     });
@@ -334,8 +335,9 @@ void ViewPort::addItem(const QString &pairName)
 
         int i = 0;
         int j = 0;
+
         for( const auto &item : mItemList ){
-            item->setPos(i*(item->boundingRect().width()+3),j*(item->boundingRect().height()+3));
+            item->setPos(i*(item->boundingRect().width()+leftRightMargin),j*(item->boundingRect().height()+topBottomMargin));
             j++;
             if( j >= mMaxRowCount ){
                 i++;
