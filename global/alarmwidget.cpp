@@ -63,7 +63,7 @@ void AlarmWidget::popUpMessage(const QString &msg)
 AlarmWidget::AlarmWidget(QWidget *parent)
     : QWidget{parent}
 {
-    mWidth = 200;
+    mWidth = 300;
     mHeight = 100;
     counterToClose = 0;
 

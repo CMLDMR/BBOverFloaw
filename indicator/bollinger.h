@@ -13,9 +13,9 @@ class Bollinger{
 
 public:
 
-    static std::tuple<double, double, double> bollinger( const Series::Seri &seri, const int mLength = 21 , const double stdDev = 2.1 );
+    static std::tuple<double, double, double> bollinger( const Series::Seri &seri, const int mLength = 20 , const double stdDev = 2 );
 
-    static std::tuple<double, double> bollingerPercent( const Series::Seri &seri, const int mLength = 21 , const double stdDev = 2.1 );
+    static std::tuple<double, double> bollingerPercent( const Series::Seri &seri, const int mLength = 20 , const double stdDev = 2 );
 
 };
 

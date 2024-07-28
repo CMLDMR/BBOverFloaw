@@ -284,15 +284,18 @@ void Series::prePareImage(QPainter *painter)
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
 
+                const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
+                const QString alarmLowString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
+
                 if( seri->interval() == "1m" ){
                     m1MinuntePercent = seri->percentLastBar();
                     m1MinunteUpperPercent = upper;
                     m1MDownPercent = down;
                     if( upper > 0 && m_enableBBD1minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Minute" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD1minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Minute" );
+                        emit alarmed( alarmLowString );
                     }
                 }
 
@@ -301,10 +304,10 @@ void Series::prePareImage(QPainter *painter)
                     m5MinunteUpperPercent = upper;
                     m5MDownPercent = down;
                     if( upper > 0 && m_enableBBD5minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 5 Minute" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD5minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 5 Minute" );
+                        emit alarmed( alarmLowString );
                     }
                 }
 
@@ -313,10 +316,10 @@ void Series::prePareImage(QPainter *painter)
                     m15MinunteUpperPercent = upper;
                     m15MDownPercent = down;
                     if( upper > 0 && m_enableBBD15minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 15 Minute" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD15minuteAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 15 Minute" );
+                        emit alarmed( alarmLowString );
                     }
 
                     // bool  { true };
@@ -328,10 +331,10 @@ void Series::prePareImage(QPainter *painter)
                     m1HinunteUpperPercent = upper;
                     m1HDownPercent = down;
                     if( upper > 0 && m_enableBBD1hourAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Hour" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD1hourAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Hour" );
+                        emit alarmed( alarmLowString );
                     }
                 }
 
@@ -346,10 +349,10 @@ void Series::prePareImage(QPainter *painter)
                     }
 
                     if( upper > 0 && m_enableBBD4hourAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 4 Hour" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD4hourAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 4 Hour" );
+                        emit alarmed( alarmLowString );
                     }
                 }
 
@@ -366,10 +369,10 @@ void Series::prePareImage(QPainter *painter)
                     m1DDownPercent = down;
 
                     if( upper > 0 && m_enableBBD1dayAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Day" );
+                        emit alarmed( alarmHighString );
                     }
                     if( down > 0 && m_enableBBD1dayAlarm ) {
-                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Day" );
+                        emit alarmed( alarmLowString );
                     }
                 }
 
