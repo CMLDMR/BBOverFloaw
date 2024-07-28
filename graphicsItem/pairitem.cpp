@@ -45,10 +45,18 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 //        this->update(boundingRect());
 //    });
 
+    // QObject::connect(mSeries,&Series::Series::alarmed,[=](const QString &alarmMsg){
+    //     QTimer::singleShot(0,[=](){
+    //         Global::Alarm::AlarmWidget::instance()->popUpMessage(alarmMsg);
+    //         // Global::Alarm::AlarmWidget::instance().
+    //     });
+    //     // Global::Alarm::AlarmWidget::instance()->popUpMessage(alarmMsg);
+    // });
+
     this->setAcceptHoverEvents(true);
 
 
-    auto mTimer = new QTimer();
+    auto mTimer = new QTimer(this);
     QObject::connect(mTimer,&QTimer::timeout,[=, this](){
 
         if( mAlarmActivated ){
@@ -72,6 +80,8 @@ PairItem::PairItem(const QString &_pair, QObject *parent)
 
 
     QTimer::singleShot(1000,[=](){
+        // Global::Alarm::AlarmWidget::instance()->popUpMessage("Added");
+
         mTimer->start(100);
     });
 
@@ -106,6 +116,12 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if( event->button() == Qt::RightButton ){
         QMenu menu;
+
+        menu.setWindowTitle("Menu");
+
+        // menu.addAction("UnSelect",this,[=, this](){
+        //     mSelected = false;
+        // });
 
 
         if( mSelected ){
@@ -174,6 +190,12 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
         auto sortMenuUpper = menu.addMenu("Sort Upper");
 
+        auto autoSortMenuUpper = sortMenuUpper->addMenu("Auto ");
+
+        createAction( autoSortMenuUpper , "Sort 1M","1mu");
+        createAction( autoSortMenuUpper , "Sort 5M","5mu");
+
+
         sortMenuUpper->addAction("Sort by Abs Sum",[=, this](){
             emit sort("U");
         });
@@ -186,8 +208,12 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit sort("GUC");
         });
 
+        sortMenuUpper->addAction("Sort 1M",[=, this](){
+            emit autoSort( false , "1mu" );
+        });
+
         sortMenuUpper->addAction("Sort 5M",[=, this](){
-            emit sort("5mu");
+            emit autoSort( false , "5mu" );
         });
 
         sortMenuUpper->addAction("Sort 15M",[=, this](){
@@ -214,6 +240,53 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 
         auto sortMenuDown = menu.addMenu("Sort Down");
+
+
+        // Enable Disable Alarm Menu
+        auto alarmMenuDown = menu.addMenu("BB Alarm");
+
+        for( int i = 0 ; i < this->series()->seriList().size() ; i++ ) {
+            auto seriItem = this->series()->seriList()[i];
+
+
+            if( seriItem->interval() == "1m" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD1minuteAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD1minuteAlarm( ! this->series()->enableBBD1minuteAlarm() );
+                });
+            }
+
+            if( seriItem->interval() == "5m" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD5minuteAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD5minuteAlarm( ! this->series()->enableBBD5minuteAlarm() );
+                });
+            }
+
+            if( seriItem->interval() == "15m" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD15minuteAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD15minuteAlarm( ! this->series()->enableBBD15minuteAlarm() );
+                });
+            }
+
+            if( seriItem->interval() == "1h" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD1hourAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD1hourAlarm( ! this->series()->enableBBD1hourAlarm() );
+                });
+            }
+
+            if( seriItem->interval() == "4h" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD4hourAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD4hourAlarm( ! this->series()->enableBBD4hourAlarm() );
+                });
+            }
+
+            if( seriItem->interval() == "1d" ) {
+                alarmMenuDown->addAction( QString("%1 %2 Alarm").arg( seriItem->interval() ).arg( this->series()->enableBBD1dayAlarm() ? "Disable" : "Enable"),[=, this](){
+                    this->series()->setEnableBBD1dayAlarm( ! this->series()->enableBBD1dayAlarm() );
+                });
+            }
+        }
+
+
 
         sortMenuDown->addAction("Sort by Abs Sum",[=, this](){
             emit sort("D");
@@ -407,8 +480,23 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         //     emit sort("1sma%");
         // });
 
+        auto autoSortMenuEMA20Ascending = sortMenuEMA20Ascending->addMenu("Auto");
+
+        m_ema20AutoSort1m = createAction( autoSortMenuEMA20Ascending , "Auto 1M %" , "1ema20A%" );
+        m_ema20AutoSort5m = createAction( autoSortMenuEMA20Ascending , "Auto 5M %" , "5ema20A%" );
+        m_ema20AutoSort15m = createAction( autoSortMenuEMA20Ascending , "Auto 15M %" , "15ema20A%" );
+        m_ema20AutoSort15m = createAction( autoSortMenuEMA20Ascending , "Auto 15M %" , "15ema20A%" );
+
+        m_ema20AutoSort1h = createAction( autoSortMenuEMA20Ascending , "Auto 1H %"  ,"1hema20A%");
+        m_ema20AutoSort4h = createAction( autoSortMenuEMA20Ascending , "Auto 4H %"  ,"4hema20A%");
+        m_ema20AutoSort1d = createAction( autoSortMenuEMA20Ascending , "Auto 1D %"  ,"1dema20A%");
+        m_ema20AutoSort1w = createAction( autoSortMenuEMA20Ascending , "Auto 1W %"  ,"1wema20A%");
+
+
+
+
         sortMenuEMA20Ascending->addAction("1M %",[=, this](){
-            emit sort("1ema20A%");
+            emit autoSort( false , "1ema20A%");
         });
 
         sortMenuEMA20Ascending->addAction("5M %",[=, this](){
@@ -456,4 +544,14 @@ void Graphic::PairItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     mHovered = false;
     QApplication::restoreOverrideCursor();
     QGraphicsItem::hoverLeaveEvent(event);
+}
+
+QAction *Graphic::PairItem::createAction(QMenu *menu, const QString &title, const QString &interval)
+{
+    auto action = menu->addAction( title );
+    action->setCheckable( true );
+    connect( action , &QAction::toggled , [=,this]( const bool toggled ){
+        emit autoSort( true , interval );
+    });
+    return action;
 }

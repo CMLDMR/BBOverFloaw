@@ -6,7 +6,12 @@
 #include <QScreen>
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QDateTime>
+#include <QThread>
 
+#include <QDebug>
+
+#define LOG qDebug() << __LINE__ << __FILE__
 
 
 namespace Global {
@@ -14,10 +19,11 @@ namespace Alarm {
 
 AlarmWidget* AlarmWidget::mAlarmWidget{nullptr};
 std::once_flag mAlarmOnceFlag;
-AlarmWidget *AlarmWidget::instance()
+AlarmWidget *AlarmWidget::instance( QWidget * parent )
 {
     std::call_once(mAlarmOnceFlag,[=](){
         mAlarmWidget = new AlarmWidget();
+        mAlarmWidget->moveToThread( QThread::currentThread() );
         mAlarmWidget->setWindowFlag(Qt::WindowStaysOnTopHint);
     });
 
@@ -26,7 +32,12 @@ AlarmWidget *AlarmWidget::instance()
 
 void AlarmWidget::popUpMessage(const QString &msg)
 {
-    if( counterToClose > 0 ) return;
+
+    if( ! this->isHidden() )
+        return;
+
+    m_enableAlarm = true;
+
     counterToClose++;
 
     this->mMessageLabel->setText(msg);
@@ -34,11 +45,19 @@ void AlarmWidget::popUpMessage(const QString &msg)
     auto height = QApplication::screens().first()->geometry().height();
 
     this->setGeometry(width-mWidth,height-mHeight-40,mWidth,mHeight);
+
     this->show();
-    this->mTimer->start(200);
-
-
     this->playSound();
+
+
+    // this->startTimer( 10000 );
+    // QTimer::singleShot( 100 , this , [=, this](){
+    // });
+    // LOG;
+    QTimer::singleShot( 10000 , this , [=, this](){
+        mPlaySound->stop();
+        this->hide();
+    });
 }
 
 AlarmWidget::AlarmWidget(QWidget *parent)
@@ -48,20 +67,7 @@ AlarmWidget::AlarmWidget(QWidget *parent)
     mHeight = 100;
     counterToClose = 0;
 
-    mTimer = new QTimer(parent);
-    QObject::connect(mTimer,&QTimer::timeout,[=](){
-
-        counterToClose++;
-        if( counterToClose >= 25 ){
-            if( counterToClose == 25 ){
-                this->close();
-            }
-            if( counterToClose > 10*5 ){
-                counterToClose = 0;
-                this->mTimer->stop();
-            }
-        }
-    });
+    mPlaySound = new QSoundEffect( this );
 
     mLayout = new QVBoxLayout(this);
     this->setLayout(mLayout);
@@ -71,15 +77,38 @@ AlarmWidget::AlarmWidget(QWidget *parent)
 
     setWindowFlags(Qt::FramelessWindowHint|Qt::WindowStaysOnTopHint);
 
+    hide();
+
 }
 
 void AlarmWidget::playSound()
 {
-    mPlaySound.setLoopCount(1);
-    mPlaySound.setVolume(1.0);
-    mPlaySound.setSource(QUrl::fromLocalFile(QString("info.wav")));
-    mPlaySound.play();
+    m_lastAlarmed = QDateTime::currentMSecsSinceEpoch();
+
+    if ( mPlaySound->status() == QSoundEffect::Error ) {
+        qDebug() << __LINE__ << "Error Sound Effect" << mPlaySound->status();
+        return;
+    }
+
+    if( mPlaySound->isPlaying() ) {
+        LOG << "is Playing";
+        return;
+    }
+    mPlaySound->setLoopCount(1);
+    mPlaySound->setVolume(1.0);
+    mPlaySound->setSource(QUrl::fromLocalFile(QString("info.wav")));
+    mPlaySound->play();
+
 }
 
 } // namespace Alarm
 } // namespace Global
+
+
+void Global::Alarm::AlarmWidget::timerEvent(QTimerEvent *event)
+{
+    if ( mPlaySound->isPlaying() )
+        mPlaySound->stop();
+
+    this->hide();
+}

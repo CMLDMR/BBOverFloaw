@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QGraphicsItem>
+#include <QAction>
 #include "series/series.h"
 
 
@@ -22,6 +23,8 @@ signals:
     void openInTradingView();
 
     void sort(const QString &);
+    void autoSort( const bool , const QString &);
+    void alarmed( const QString &);
 
     void viewOnlyPositive( const bool );
 
@@ -67,6 +70,22 @@ protected:
 protected:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event) override;
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event) override;
+
+
+private:
+    QAction* createAction( QMenu* menu, const QString &title , const QString &interval );
+
+    QAction* m_ema20AutoSort1m { nullptr };
+    QAction* m_ema20AutoSort5m { nullptr };
+    QAction* m_ema20AutoSort15m { nullptr };
+    QAction* m_ema20AutoSort1h { nullptr };
+    QAction* m_ema20AutoSort4h { nullptr };
+    QAction* m_ema20AutoSort1d { nullptr };
+    QAction* m_ema20AutoSort1w { nullptr };
+
+
+
+
 };
 
 } // namespace Graphic

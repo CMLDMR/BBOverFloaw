@@ -19,7 +19,7 @@ class Series : public QObject
 public:
     explicit Series(const QString &_mPair, QObject *parent = nullptr);
 
-    QVector<Seri *> seriList() const;
+    QVector<Seri*> seriList() const;
 
     const double &close() const;
 
@@ -107,14 +107,45 @@ public:
     double getM12HinunteEMA20Percent() const;
     double getM1DinunteEMA20Percent() const;
 
+    double getM1WinunteEMA20Percent() const;
+
+    double getM1MinunteUpperPercent() const;
+
+    double getM1MinuntePercent() const;
+
+    double getM1MDownPercent() const;
+
+    void setEnableBBD1minuteAlarm(bool newEnableBBD1minuteAlarm);
+
+    bool enableBBD1minuteAlarm() const;
+
+    bool enableBBD5minuteAlarm() const;
+    void setEnableBBD5minuteAlarm(bool newEnableBBD5minuteAlarm);
+
+    bool enableBBD15minuteAlarm() const;
+    void setEnableBBD15minuteAlarm(bool newEnableBBD15minuteAlarm);
+
+    bool enableBBD1hourAlarm() const;
+    void setEnableBBD1hourAlarm(bool newEnableBBD1hourAlarm);
+
+    bool enableBBD4hourAlarm() const;
+    void setEnableBBD4hourAlarm(bool newEnableBBD4hourAlarm);
+
+    bool enableBBD1dayAlarm() const;
+    void setEnableBBD1dayAlarm(bool newEnableBBD1dayAlarm);
+
 signals:
     void dataUpdated(const bool&);
+
+    void alarmed( const QString &);
 
 
 private:
     QString mPair;
     QVector<Seri*> mSeriList;
     Binance::Public::WebSocketAPI::WebSocketAPI* mSocket;
+
+    QImage m_alarmImage;
 
     bool mViewOnlyPositive{true};
 
@@ -131,6 +162,7 @@ private:
     void prePareImage( QPainter* painter );
     bool mAlarmActivated{false};
 
+    double m1MinunteUpperPercent{0};
     double m5MinunteUpperPercent{0};
     double m15MinunteUpperPercent{0};
     double m1HinunteUpperPercent{0};
@@ -142,7 +174,7 @@ private:
 
     int mUpperGreenCount{0};
 
-
+    double m1MDownPercent{0};
     double m5MDownPercent{0};
     double m15MDownPercent{0};
     double m1HDownPercent{0};
@@ -153,7 +185,7 @@ private:
     double mAllDownSumPercent{0};
     int mDownGreenCount{0};
 
-
+    double m1MinuntePercent{0};
     double m5MinuntePercent{0};
     double m15MinuntePercent{0};
     double m1HinuntePercent{0};
@@ -191,6 +223,14 @@ private:
     double m4HinunteEMA20Percent{0};
     double m12HinunteEMA20Percent{0};
     double m1DinunteEMA20Percent{0};
+    double m1WinunteEMA20Percent{0};
+
+    bool m_enableBBD1minuteAlarm { false };
+    bool m_enableBBD5minuteAlarm { false };
+    bool m_enableBBD15minuteAlarm { false };
+    bool m_enableBBD1hourAlarm { false };
+    bool m_enableBBD4hourAlarm { false };
+    bool m_enableBBD1dayAlarm { false };
 
 
 };

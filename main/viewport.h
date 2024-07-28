@@ -4,6 +4,10 @@
 #include <QGraphicsView>
 #include <QObject>
 #include <vector>
+#include <QMetaObject>
+
+#include "global/alarmwidget.h"
+
 
 class QGraphicsScene;
 namespace Screen{
@@ -24,7 +28,7 @@ class ViewPort : public QGraphicsView
 {
     Q_OBJECT
 public:
-    ViewPort();
+    ViewPort( QWidget *parent = nullptr );
 
     void addItem( const QString &pairName );
 
@@ -44,6 +48,21 @@ private:
 
     const int mMaxRowCount{10};
 
+
+    QTimer * m_autoSortTimer { nullptr };
+    bool m_autoSortEnabled = false;
+    QString m_sortParameter;
+
+private slots:
+    void autoSort();
+
+private:
+    void sortPairs(const QString &interval );
+
+    const int m_leftRightMargin = 15;
+    const int m_topBottomMargin = 3;
+
+    Global::Alarm::AlarmWidget* m_alarmWidget { nullptr };
 
 
 

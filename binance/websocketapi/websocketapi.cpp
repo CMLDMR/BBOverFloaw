@@ -39,7 +39,7 @@ void WebSocketAPI::startedSocket()
     });
 
     QObject::connect(mSocket,&QWebSocket::connected,[=](){
-        qDebug() << __FILE__ << __LINE__ <<"Socket Connected" << mPair;
+        // qDebug() << __FILE__ << __LINE__ <<"Socket Connected" << mPair;
     });
 
     QObject::connect(mSocket,&QWebSocket::disconnected,[=](){

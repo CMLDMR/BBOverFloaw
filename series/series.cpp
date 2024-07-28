@@ -24,6 +24,10 @@ Series::Series(const QString &_mPair, QObject *parent)
     this->moveToThread(mThread);
     QObject::connect(mThread,&QThread::started,this,&Series::SocketWorker);
     mThread->start(QThread::LowPriority);
+
+    if( ! m_alarmImage.load("alarmicon.png") ){
+        qDebug() << "alarm Image Not Loaded";
+    }
 }
 
 
@@ -60,7 +64,7 @@ void Series::SocketWorker()
     mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
 
    emit dataUpdated(false);
-   mSeriList.append(new Seri(mPair,"3m"));
+   // mSeriList.append(new Seri(mPair,"3m"));
 
 
     mSeriList.append(new Seri(mPair,"5m"));
@@ -91,7 +95,7 @@ void Series::SocketWorker()
 //    emit dataUpdated(false);
     mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
 
-    // mSeriList.append(new Seri(mPair,"1w"));
+    mSeriList.append(new Seri(mPair,"1w"));
 
     mPainter->fillRect(0,60,mImage->width(),20,Qt::darkGreen);
 
@@ -274,37 +278,79 @@ void Series::prePareImage(QPainter *painter)
 
             int yPos = rect.height()+18;
 
-            {// Bollinger Percent 2.38
+            { // Bollinger Percent 2.38
                 painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
 
                 auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
 
+                if( seri->interval() == "1m" ){
+                    m1MinuntePercent = seri->percentLastBar();
+                    m1MinunteUpperPercent = upper;
+                    m1MDownPercent = down;
+                    if( upper > 0 && m_enableBBD1minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Minute" );
+                    }
+                    if( down > 0 && m_enableBBD1minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Minute" );
+                    }
+                }
+
                 if( seri->interval() == "5m" ){
                     m5MinuntePercent = seri->percentLastBar();
                     m5MinunteUpperPercent = upper;
                     m5MDownPercent = down;
-                    // auto [u,m,d] = Indicator::Bollinger::bollinger(*seri,m_length,2.00);
-                    // painter->drawText(5, 30+75 ,"2.00 "+Global::getFixedPrecision(d));
-                    // painter->drawText(5, 30+15 ,"2.00 "+Global::getFixedPrecision(u));
+                    if( upper > 0 && m_enableBBD5minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 5 Minute" );
+                    }
+                    if( down > 0 && m_enableBBD5minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 5 Minute" );
+                    }
                 }
 
                 if( seri->interval() == "15m" ){
                     m15MinuntePercent = seri->percentLastBar();
                     m15MinunteUpperPercent = upper;
                     m15MDownPercent = down;
+                    if( upper > 0 && m_enableBBD15minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 15 Minute" );
+                    }
+                    if( down > 0 && m_enableBBD15minuteAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 15 Minute" );
+                    }
+
+                    // bool  { true };
+
                 }
 
                 if( seri->interval() == "1h" ){
                     m1HinuntePercent = seri->percentLastBar();
                     m1HinunteUpperPercent = upper;
                     m1HDownPercent = down;
+                    if( upper > 0 && m_enableBBD1hourAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Hour" );
+                    }
+                    if( down > 0 && m_enableBBD1hourAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Hour" );
+                    }
                 }
 
                 if( seri->interval() == "4h" ){
                     m4HinuntePercent = seri->percentLastBar();
                     m4HinunteUpperPercent = upper;
                     m4HDownPercent = down;
+
+                    if( m_enableBBD4hourAlarm ) {
+                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    }
+
+                    if( upper > 0 && m_enableBBD4hourAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 4 Hour" );
+                    }
+                    if( down > 0 && m_enableBBD4hourAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 4 Hour" );
+                    }
                 }
 
                 if( seri->interval() == "12h" ){
@@ -318,6 +364,13 @@ void Series::prePareImage(QPainter *painter)
                     m1DinuntePercent = seri->percentLastBar();
                     m1DinunteUpperPercent = upper;
                     m1DDownPercent = down;
+
+                    if( upper > 0 && m_enableBBD1dayAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Over 1 Day" );
+                    }
+                    if( down > 0 && m_enableBBD1dayAlarm ) {
+                        emit alarmed( seri->pair() + " " + seri->interval() + " Down 1 Day" );
+                    }
                 }
 
                 mAllDownSumPercent += down;
@@ -354,6 +407,37 @@ void Series::prePareImage(QPainter *painter)
                     mAllDownPercent += down;
 
                 }
+
+                if( seri->interval() == "1m" && m_enableBBD1minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "5m" && m_enableBBD5minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "15m" && m_enableBBD15minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "1h" && m_enableBBD1hourAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "4h" && m_enableBBD4hourAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "1d" && m_enableBBD1dayAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
 
                 yPos += 15;
                 painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
@@ -533,6 +617,10 @@ void Series::prePareImage(QPainter *painter)
                     m1DinunteEMA20Percent = percent;
                 }
 
+                if( seri->interval() == "1w" ){
+                    m1WinunteEMA20Percent = percent;
+                }
+
 
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
                 yPos += 15;
@@ -559,6 +647,86 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+bool Series::enableBBD1dayAlarm() const
+{
+    return m_enableBBD1dayAlarm;
+}
+
+void Series::setEnableBBD1dayAlarm(bool newEnableBBD1dayAlarm)
+{
+    m_enableBBD1dayAlarm = newEnableBBD1dayAlarm;
+}
+
+bool Series::enableBBD4hourAlarm() const
+{
+    return m_enableBBD4hourAlarm;
+}
+
+void Series::setEnableBBD4hourAlarm(bool newEnableBBD4hourAlarm)
+{
+    m_enableBBD4hourAlarm = newEnableBBD4hourAlarm;
+}
+
+bool Series::enableBBD1hourAlarm() const
+{
+    return m_enableBBD1hourAlarm;
+}
+
+void Series::setEnableBBD1hourAlarm(bool newEnableBBD1hourAlarm)
+{
+    m_enableBBD1hourAlarm = newEnableBBD1hourAlarm;
+}
+
+bool Series::enableBBD15minuteAlarm() const
+{
+    return m_enableBBD15minuteAlarm;
+}
+
+void Series::setEnableBBD15minuteAlarm(bool newEnableBBD15minuteAlarm)
+{
+    m_enableBBD15minuteAlarm = newEnableBBD15minuteAlarm;
+}
+
+bool Series::enableBBD5minuteAlarm() const
+{
+    return m_enableBBD5minuteAlarm;
+}
+
+void Series::setEnableBBD5minuteAlarm(bool newEnableBBD5minuteAlarm)
+{
+    m_enableBBD5minuteAlarm = newEnableBBD5minuteAlarm;
+}
+
+bool Series::enableBBD1minuteAlarm() const
+{
+    return m_enableBBD1minuteAlarm;
+}
+
+void Series::setEnableBBD1minuteAlarm(bool newEnableBBD1minuteAlarm)
+{
+    m_enableBBD1minuteAlarm = newEnableBBD1minuteAlarm;
+}
+
+double Series::getM1MDownPercent() const
+{
+    return m1MDownPercent;
+}
+
+double Series::getM1MinuntePercent() const
+{
+    return m1MinuntePercent;
+}
+
+double Series::getM1MinunteUpperPercent() const
+{
+    return m1MinunteUpperPercent;
+}
+
+double Series::getM1WinunteEMA20Percent() const
+{
+    return m1WinunteEMA20Percent;
 }
 
 double Series::getM1MinunteEMA20Percent() const
