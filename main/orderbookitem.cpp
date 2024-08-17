@@ -99,7 +99,7 @@ double Orders::maxVol() const
 
 QRectF Main::OrderBookItem::boundingRect() const
 {
-    return QRectF(0,0,500,350);
+    return QRectF( 0 , 0 , 500 , m_height );
 }
 
 void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
@@ -150,6 +150,9 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
         painter->drawText(65-fontMetric.boundingRect(bidText).width(),(i+1)*height-3+yOffset,bidText);
 
         totalBuySideDollar += bidObj.price( i ) * bidObj.qty( i );
+
+        if( (i+1)*height-3+yOffset > m_height )
+            m_height = (i+1)*height-3+yOffset;
     }
 
 
@@ -169,6 +172,9 @@ void Main::OrderBookItem::paint(QPainter *painter, const QStyleOptionGraphicsIte
         painter->drawText(406,(i+1)*height-3+yOffset,bidText);
 
         totalSellSideDollar += askObj.price( i ) * askObj.qty( i );
+
+        if( (i+1)*height-3+yOffset > m_height )
+            m_height = (i+1)*height-3+yOffset;
     }
 
 

@@ -34,6 +34,8 @@ private:
 
     QString mPair;
 
+    qreal m_height{350};
+
 
 };
 

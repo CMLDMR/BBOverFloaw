@@ -149,6 +149,10 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
             emit openVolumeGraph();
         });
 
+        menu.addAction("Open Volume Percent Graph",[=, this](){
+            emit openVolumePercent();
+        });
+
         menu.addAction("Open OrderBook",[=, this](){
             emit openOrderTimeLineBook();
         });
@@ -522,6 +526,29 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         sortMenuEMA20Ascending->addAction("1D %",[=, this](){
             emit sort("1dema20A%");
         });
+
+
+        auto SortMenuRSI = menu.addMenu("RSI");
+
+        auto autoSortMenuRSIAscending = SortMenuRSI->addMenu("RSI +");
+        autoSortMenuRSIAscending->addAction("1M %",[=, this](){ emit sort("1rsi20A%"); });
+        autoSortMenuRSIAscending->addAction("5M %",[=, this](){ emit sort("5rsi20A%"); });
+        autoSortMenuRSIAscending->addAction("15M %",[=, this](){ emit sort("15rsi20A%"); });
+        autoSortMenuRSIAscending->addAction("1H %",[=, this](){ emit sort("1hrsi20A%"); });
+        autoSortMenuRSIAscending->addAction("4H %",[=, this](){ emit sort("4hrsi20A%"); });
+        autoSortMenuRSIAscending->addAction("12H %",[=, this](){ emit sort("12hrsi20A%"); });
+        autoSortMenuRSIAscending->addAction("1D %",[=, this](){ emit sort("1drsi20A%"); });
+        autoSortMenuRSIAscending->addAction("1W %",[=, this](){ emit sort("1wrsi20A%"); });
+
+        auto autoSortMenuRSIDescending = SortMenuRSI->addMenu("RSI -");
+        autoSortMenuRSIDescending->addAction("1M %",[=, this](){ emit sort("1rsi20D%"); });
+        autoSortMenuRSIDescending->addAction("5M %",[=, this](){ emit sort("5rsi20D%"); });
+        autoSortMenuRSIDescending->addAction("15M %",[=, this](){ emit sort("15rsi20D%"); });
+        autoSortMenuRSIDescending->addAction("1H %",[=, this](){ emit sort("1hrsi20D%"); });
+        autoSortMenuRSIDescending->addAction("4H %",[=, this](){ emit sort("4hrsi20D%"); });
+        autoSortMenuRSIDescending->addAction("12H %",[=, this](){ emit sort("12hrsi20D%"); });
+        autoSortMenuRSIDescending->addAction("1D %",[=, this](){ emit sort("1drsi20D%"); });
+        autoSortMenuRSIDescending->addAction("1W %",[=, this](){ emit sort("1wrsi20D%"); });
 
 
         menu.exec( event->screenPos() );

@@ -17,7 +17,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage( 420 , 113 , QImage::Format_RGB888);
+    mImage = new QImage( 420 , 143 , QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -44,7 +44,18 @@ const double &Series::close() const
 
 void Series::SocketWorker()
 {
-//    qDebug() << "Start Series";
+    //    qDebug() << "Start Series";
+
+    // if( ! mSeriList.size() ) {
+    //     qDebug() << __LINE__ << __FILE__ << "mSeriList Empty";
+    //     return;
+    // }
+
+
+    // if( ! mSeriList.last()->kLineContainer().size() ) {
+    //     qDebug() << __LINE__ << __FILE__ << "KLineCOntainer Empty";
+    //     return;
+    // }
 
 
     mPainter = new QPainter();
@@ -54,46 +65,57 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->drawText(20,40,this->pair()+" Loading...");
 
+    // qDebug() << __LINE__<< __FILE__;
     // bu 15 saniye mumbar tamamlanmadı
     // mSeriList.append(new Seri(mPair,"15ms"));
 
 
-    mSeriList.append(new Seri(mPair,"1m"));
+    mSeriList.append(new Seri(mPair,"1m")); qDebug() << __LINE__<< __FILE__;
+    if( ! mSeriList.last()->kLineContainer().size() ) {
+        qDebug() << __LINE__ << __FILE__ << "KLineCOntainer Empty";
+        return;
+    }
+
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
-
+    // qDebug() << __LINE__ << __FILE__;
     mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
-
-   emit dataUpdated(false);
-   // mSeriList.append(new Seri(mPair,"3m"));
-
+    // qDebug() << __LINE__<< __FILE__;
+    emit dataUpdated(false);
+    // mSeriList.append(new Seri(mPair,"3m"));
+    // qDebug() << __LINE__<< __FILE__;
 
     mSeriList.append(new Seri(mPair,"5m"));
     mClose = mSeriList.last()->close();
     mOpen = mSeriList.last()->open();
     mPainter->fillRect(0,60,2*mImage->width()/7,20,Qt::darkGreen);
     emit dataUpdated(false);
-
+    // qDebug() << __LINE__<< __FILE__;
     mSeriList.append(new Seri(mPair,"15m"));
     mPainter->fillRect(0,60,3*mImage->width()/7,20,Qt::darkGreen);
     emit dataUpdated(false);
-
-//    mSeriList.append(new Seri(mPair,"30m"));
-//    emit dataUpdated(false);
+    // qDebug() << __LINE__<< __FILE__;
+    //    mSeriList.append(new Seri(mPair,"30m"));
+    //    emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
-
+    // qDebug() << __LINE__<< __FILE__;
     mPainter->fillRect(0,60,4*mImage->width()/7,20,Qt::darkGreen);
 
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
-
-    // mSeriList.append(new Seri(mPair,"12h"));
+    // qDebug() << __LINE__<< __FILE__;
+    // mSeriList.append(new Seri(mPair,"6h"));
+    //     mSeriList.append(new Seri(mPair,"8h"));
+    //     mSeriList.append(new Seri(mPair,"12h"));
     // emit dataUpdated(false);
 
     mPainter->fillRect(0,60,5*mImage->width()/7,20,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
-//    emit dataUpdated(false);
+    //    emit dataUpdated(false);
     mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
+
+    // mSeriList.append(new Seri(mPair,"3d"));
+
 
     mSeriList.append(new Seri(mPair,"1w"));
 
@@ -103,8 +125,9 @@ void Series::SocketWorker()
     mPainter->end();
 
     mSocket = Binance::Public::WebSocketAPI::WebSocketAPI::createSocket(mPair);
-
     QObject::connect(mSocket,&Binance::Public::WebSocketAPI::WebSocketAPI::receivedAggregate,[=, this](const Binance::Public::WebSocketAPI::Aggregate aggregate ){
+
+        emit aggregateSignal( aggregate );
         mClose = aggregate.price();
         mTimeStr = QDateTime::fromMSecsSinceEpoch(aggregate.eventTime()).time().toString("hh:mm:ss");
 
@@ -173,7 +196,7 @@ void Series::SocketWorker()
                 prePareImage(mPainter);
             }
 
-//            emit item->updated();
+            //            emit item->updated();
 
         }
 
@@ -236,7 +259,7 @@ void Series::prePareImage(QPainter *painter)
     const int cellWidth{45};
 
     ///TODO: Önceden Hesaplanıp Sadece Positif Değer yazılacak
-//    this->calcAllBollingerValues();
+    //    this->calcAllBollingerValues();
 
     {// intervals
         int xPos = 110;
@@ -457,24 +480,17 @@ void Series::prePareImage(QPainter *painter)
                 painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
                 painter->drawText(5, yPos+15 ,"SMA 200 %");
-                // calculate SMA
+                // calculate RSI
                 const auto smaValue = Indicator::Sma::value( *seri , 200 );
                 const auto percent =( seri->close() - smaValue )/smaValue*100 ;
-                if ( percent > 0 ) {
-                    if( percent > 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
-                    }                }
-                else if( percent < 0 ) {
-                    if( percent < -1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
-
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
-                    }
+                if ( percent > 70 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
                 }
+                else if( percent < 30 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+                }
+
                 if( seri->interval() == "1m" ){
                     m1MinunteSMA200Percent = percent;
                 }
@@ -555,7 +571,6 @@ void Series::prePareImage(QPainter *painter)
                     m12HinunteEMA200Percent = percent;
                 }
 
-
                 if( seri->interval() == "1d" ){
                     m1DinunteEMA200Percent = percent;
                 }
@@ -630,6 +645,119 @@ void Series::prePareImage(QPainter *painter)
             }
 
 
+            {// RSI 14
+
+                // painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+
+                painter->drawText(5, yPos+15 ,"RSI 14 %");
+
+                // calculate SMA
+                const auto smaValue = Indicator::RSI::value( *seri , 20 );
+                const auto percent = smaValue ;
+
+                if ( percent > 70 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+                }
+                else if( percent < 30 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+                }
+
+                if( seri->interval() == "1m" ){
+                    m1MinunteRSI = percent;
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinunteRSI = percent;
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinunteRSI = percent;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HourRSI = percent;
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HourRSI = percent;
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HourRSI = percent;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DayRSI = percent;
+                }
+
+                if( seri->interval() == "1w" ){
+                    m1WeekRSI = percent;
+                }
+
+
+                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
+                yPos += 15;
+            }
+
+
+
+            {// RSI 14
+
+                // painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+
+                painter->drawText(5, yPos+15 ,"ADX 14 %");
+
+                // calculate SMA
+                const auto adxValue = Indicator::ADX::value( *seri , 14 );
+                const auto percent = adxValue ;
+
+                if ( adxValue > 50 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+                }
+                else if( adxValue < 10 ) {
+                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+                }
+
+                if( seri->interval() == "1m" ){
+                    m1MinunteRSI = adxValue;
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinunteRSI = adxValue;
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinunteRSI = adxValue;
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HourRSI = adxValue;
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HourRSI = adxValue;
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HourRSI = adxValue;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DayRSI = adxValue;
+                }
+
+                if( seri->interval() == "1w" ){
+                    m1WeekRSI = adxValue;
+                }
+
+
+                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( adxValue ) );
+                yPos += 15;
+            }
+
+
 
             pen = painter->pen();
             painter->setPen(QPen(Qt::gray,1,Qt::DotLine));
@@ -650,6 +778,46 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+double Series::getM1MinunteRSI() const
+{
+    return m1MinunteRSI;
+}
+
+double Series::getM5MinunteRSI() const
+{
+    return m5MinunteRSI;
+}
+
+double Series::getM1HourRSI() const
+{
+    return m1HourRSI;
+}
+
+double Series::getM4HourRSI() const
+{
+    return m4HourRSI;
+}
+
+double Series::getM12HourRSI() const
+{
+    return m12HourRSI;
+}
+
+double Series::getM1DayRSI() const
+{
+    return m1DayRSI;
+}
+
+double Series::getM1WeekRSI() const
+{
+    return m1WeekRSI;
+}
+
+double Series::getM15MinunteRSI() const
+{
+    return m15MinunteRSI;
 }
 
 bool Series::enableBBD1dayAlarm() const

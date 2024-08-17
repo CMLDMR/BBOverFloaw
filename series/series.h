@@ -134,10 +134,22 @@ public:
     bool enableBBD1dayAlarm() const;
     void setEnableBBD1dayAlarm(bool newEnableBBD1dayAlarm);
 
+    double getM15MinunteRSI() const;
+
+    double getM1MinunteRSI() const;
+    double getM5MinunteRSI() const;
+    double getM1HourRSI() const;
+    double getM4HourRSI() const;
+    double getM12HourRSI() const;
+    double getM1DayRSI() const;
+    double getM1WeekRSI() const;
+
 signals:
     void dataUpdated(const bool&);
 
     void alarmed( const QString &);
+
+    void aggregateSignal( const Binance::Public::WebSocketAPI::Aggregate &);
 
 
 private:
@@ -224,6 +236,15 @@ private:
     double m12HinunteEMA20Percent{0};
     double m1DinunteEMA20Percent{0};
     double m1WinunteEMA20Percent{0};
+
+    double m1MinunteRSI{0};
+    double m5MinunteRSI{0};
+    double m15MinunteRSI{0};
+    double m1HourRSI{0};
+    double m4HourRSI{0};
+    double m12HourRSI{0};
+    double m1DayRSI{0};
+    double m1WeekRSI{0};
 
     bool m_enableBBD1minuteAlarm { false };
     bool m_enableBBD5minuteAlarm { false };

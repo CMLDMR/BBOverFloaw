@@ -37,7 +37,7 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
         this->update();
     });
 
-    mTimer->start(40);
+    mTimer->start(100);
 
 }
 
@@ -381,6 +381,11 @@ QRectF Chart::SeriItem::boundingRect() const
 void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
 {
 
+    if( mSeri->size() < 1 ) {
+        qDebug() << __LINE__ << __FILE__ << "Seri Size: " << mSeri->size();
+        return;
+    }
+
     painter->save();
     painter->fillRect(QRectF(0,0,mWidth,mInfoHeight),QColor(25,25,25));
     painter->setPen(QPen(Qt::white));
@@ -468,7 +473,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
                     pivotsPoint.push_back( QPointF( x1 , y1 ) );
                     painter->drawText( x1  , y1 - 5 ,QString("H"));
                 }
-                {
+                if( lastHighIndex != lastLowIndex ){
                     auto [rect,line,color] = candle(lastLowIndex);
 
                     x2 = line.x1();
@@ -518,7 +523,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     if( enableVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
-        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
+        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " B:" + Readable(mSeri->takerVolume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
 
         for( int i = 0 ; i < mSeri->size() ; i++ ){
             auto [rect,rectbuy,rectsell,color] = this->volume(i);

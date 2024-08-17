@@ -3,6 +3,24 @@
 
 #include <QJsonObject>
 
+#include <string>
+
+inline std::string formatLargeNumber(double num) {
+    const char* suffixes[] = {"", "K", "M", "G", "T", "P", "E"};
+    int suffixIndex = 0;
+
+    // Sayı 1000'den büyükse uygun kısaltmayı bulmak için döngü
+    while (num >= 1000 && suffixIndex < 6) {
+        num /= 1000;
+        ++suffixIndex;
+    }
+
+    // Sonucu string'e çevir ve kısaltmayı ekle
+    char formattedNumber[20];
+    snprintf(formattedNumber, sizeof(formattedNumber), "%.2f%s", num, suffixes[suffixIndex]);
+    return std::string(formattedNumber);
+}
+
 namespace Binance {
 namespace Public {
 namespace WebSocketAPI {

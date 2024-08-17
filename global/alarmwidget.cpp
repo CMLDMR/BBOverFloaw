@@ -54,7 +54,7 @@ void AlarmWidget::popUpMessage(const QString &msg)
     // QTimer::singleShot( 100 , this , [=, this](){
     // });
     // LOG;
-    QTimer::singleShot( 10000 , this , [=, this](){
+    QTimer::singleShot( 60*1000 , this , [=, this](){
         mPlaySound->stop();
         this->hide();
     });

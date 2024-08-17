@@ -36,9 +36,9 @@ private:
     const qreal mVolumeCandleStickHeight{mHeight};
 
     bool enableVolume     { true };
-    bool enableQuotaVolume{ false };
+    bool enableQuotaVolume{ true };
     bool enableNumberTrade{ false };
-    bool enableVolumeCandle { false };
+    bool enableVolumeCandle { true };
 
 
     const qreal tickerAreaWidth{7};

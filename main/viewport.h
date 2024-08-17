@@ -46,7 +46,7 @@ private:
 
     std::vector<Graphic::PairItem*> mItemList;
 
-    const int mMaxRowCount{10};
+    const int mMaxRowCount{8};
 
 
     QTimer * m_autoSortTimer { nullptr };

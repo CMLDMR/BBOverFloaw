@@ -21,6 +21,7 @@ signals:
     void openCandles(const QPoint &);
     void openUrlCliked();
     void openInTradingView();
+    void openVolumePercent();
 
     void sort(const QString &);
     void autoSort( const bool , const QString &);

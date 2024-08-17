@@ -124,13 +124,19 @@ const QVector<Binance::Public::KLine> RestAPI::getCandles(const QString &pair, c
 {
     auto manager = new QNetworkAccessManager();
 
-    auto reply = manager->get(QNetworkRequest(QUrl("https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit="+QString::number(size))));
+    const QString urlString = "https://fapi.binance.com/fapi/v1/continuousKlines?pair="+pair+"&contractType=PERPETUAL&interval="+interval+"&limit="+QString::number(size);
+
+    // qDebug() << __LINE__ << __FILE__ << urlString;
+    auto reply = manager->get(QNetworkRequest(QUrl( urlString )));
 
     QEventLoop loop;
     QAbstractSocket::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
     loop.exec();
 
-    auto ar = QJsonDocument::fromJson(reply->readAll()).array();
+    const auto replyAr = reply->readAll();
+    auto ar = QJsonDocument::fromJson(replyAr).array();
+
+    // qDebug() << __LINE__ << __FILE__ << ar << replyAr;
 
     reply->deleteLater();
     manager->deleteLater();

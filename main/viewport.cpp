@@ -21,8 +21,13 @@
 #include "chart/chartwidget.h"
 #include "chart/VolumeGraph.h"
 #include "OrderBookViewWidget.h"
+#include "chart/VolumePercentGraph.h"
 
 #include "indicator/Sma.h"
+
+#include <QDebug>
+
+#define LOG qDebug() << __LINE__ << __FILE__
 
 namespace Main {
 
@@ -68,11 +73,11 @@ ViewPort::ViewPort( QWidget *parent )
 
 
     addItem("BTCUSDT");
-    addItem("ETHUSDT");
+    // addItem("ETHUSDT");
     // addItem("SOLUSDT");
     // addItem("XRPUSDT");
-    addItem("1000RATSUSDT");
-    addItem("STMXUSDT");
+    // addItem("1000RATSUSDT");
+    // addItem("STMXUSDT");
 
     // addItem("BCHUSDT");
     // addItem("LTCUSDT");
@@ -92,7 +97,6 @@ ViewPort::ViewPort( QWidget *parent )
 void ViewPort::addItem(const QString &pairName)
 {
 
-
     bool exist = false;
     Graphic::PairItem* _item;
     for( const auto &item : mScene->items() ){
@@ -109,12 +113,12 @@ void ViewPort::addItem(const QString &pairName)
 
     }
 
+
     if( exist ) {
         this->centerOn(_item);
         _item->setFocusIndicate(true);
         return;
     }
-
 
 
 
@@ -131,24 +135,25 @@ void ViewPort::addItem(const QString &pairName)
         mWidget->show();
     });
 
+    QObject::connect(pairItem,&Graphic::PairItem::openVolumePercent,[=](){
+        VolumePercentGraphWidget* mWidget = new VolumePercentGraphWidget(pairItem->series());
+        mWidget->show();
+    });
+
+
     QObject::connect(pairItem,&Graphic::PairItem::openVolumeGraph,[=](){
         Chart::VolumeGraph* mWidget = new Chart::VolumeGraph(pairItem->series());
         mWidget->show();
     });
 
     QObject::connect( pairItem , &Graphic::PairItem::openOrderTimeLineBook , [=](){
-        qDebug() << __LINE__ << __func__ ;
         auto orderBookViewWidget = new OrderBookViewWidget( );
         orderBookViewWidget->setPair( pairItem->pair() );
         orderBookViewWidget->show();
     });
 
     QObject::connect(pairItem->series(),&Series::Series::alarmed,[=, this](const QString &alarmMsg){
-
-
         QMetaObject::invokeMethod( m_alarmWidget , "popUpMessage", Qt::ConnectionType::QueuedConnection , Q_ARG(const QString &, alarmMsg) );
-
-
     });
 
 
@@ -179,14 +184,6 @@ void ViewPort::addItem(const QString &pairName)
     }
 
     Session::SessionManager::instance()->addPair(pairName);
-
-
-
-    return;
-
-//    this->setPairItem(pairName);
-
-
 }
 
 void ViewPort::autoSort()
@@ -276,7 +273,7 @@ void ViewPort::sortPairs(const QString &interval)
 
 
         else if( interval == "1dsma%"){
-            return a->series()->getM1DinunteSMA200Percent() < b->series()->getM1MinunteSMA200Percent();
+            return a->series()->getM1DinunteSMA200Percent() < b->series()->getM1DinunteSMA200Percent();
 
         }else if( interval == "12hsma%"){
             return a->series()->getM12HinunteSMA200Percent() < b->series()->getM12HinunteSMA200Percent();
@@ -298,7 +295,7 @@ void ViewPort::sortPairs(const QString &interval)
         }
 
         else if( interval == "1dsmaa%"){
-            return a->series()->getM1DinunteSMA200Percent() > b->series()->getM1MinunteSMA200Percent();
+            return a->series()->getM1DinunteSMA200Percent() > b->series()->getM1DinunteSMA200Percent();
 
         }else if( interval == "12hsmaa%"){
             return a->series()->getM12HinunteSMA200Percent() > b->series()->getM12HinunteSMA200Percent();
@@ -321,7 +318,7 @@ void ViewPort::sortPairs(const QString &interval)
 
 
         else if( interval == "1dema20%"){
-            return a->series()->getM1DinunteEMA20Percent() > b->series()->getM1MinunteEMA20Percent();
+            return a->series()->getM1DinunteEMA20Percent() > b->series()->getM1DinunteEMA20Percent();
 
         }else if( interval == "12hema20%"){
             return a->series()->getM12HinunteEMA20Percent() > b->series()->getM12HinunteEMA20Percent();
@@ -347,23 +344,19 @@ void ViewPort::sortPairs(const QString &interval)
             return a->series()->getM1WinunteEMA20Percent() < b->series()->getM1WinunteEMA20Percent();
         }
         else if( interval == "1dema20A%"){
-            return a->series()->getM1DinunteEMA20Percent() < b->series()->getM1MinunteEMA20Percent();
+            return a->series()->getM1DinunteEMA20Percent() < b->series()->getM1DinunteEMA20Percent();
         }
         else if( interval == "12hema20A%"){
             return a->series()->getM12HinunteEMA20Percent() < b->series()->getM12HinunteEMA20Percent();
-
         }
         else if( interval == "4hema20A%"){
             return a->series()->getM4HinunteEMA20Percent() < b->series()->getM4HinunteEMA20Percent();
-
         }
         else if( interval == "1hema20A%"){
             return a->series()->getM1HinunteEMA200Percent() < b->series()->getM1HinunteEMA20Percent();
-
         }
         else if( interval == "15ema20A%"){
             return a->series()->getM15MinunteEMA20Percent() < b->series()->getM15MinunteEMA20Percent();
-
         }
         else if( interval == "5ema20A%"){
             return a->series()->getM5MinunteEMA20Percent() < b->series()->getM5MinunteEMA20Percent();
@@ -371,6 +364,58 @@ void ViewPort::sortPairs(const QString &interval)
         }else if( interval == "1ema20A%"){
 
             return a->series()->getM1MinunteEMA20Percent() < b->series()->getM1MinunteEMA20Percent();
+        }
+
+        /// RSI ascending
+        else if( interval == "1rsi20A%"){
+            return a->series()->getM1MinunteRSI() < b->series()->getM1MinunteRSI();
+        }
+        else if( interval == "5rsi20A%"){
+            return a->series()->getM5MinunteRSI() < b->series()->getM5MinunteRSI();
+        }
+        else if( interval == "15rsi20A%"){
+            return a->series()->getM15MinunteRSI() < b->series()->getM15MinunteRSI();
+        }
+        else if( interval == "1hrsi20A%"){
+            return a->series()->getM1HourRSI() < b->series()->getM1HourRSI();
+        }
+        else if( interval == "4hrsi20A%"){
+            return a->series()->getM4HourRSI() < b->series()->getM4HourRSI();
+        }
+        else if( interval == "12hrsi20A%"){
+            return a->series()->getM12HourRSI() < b->series()->getM12HourRSI();
+        }
+        else if( interval == "1drsi20A%"){
+            return a->series()->getM1DayRSI() < b->series()->getM1DayRSI();
+
+        }else if( interval == "1wrsi20A%"){
+            return a->series()->getM1WeekRSI() < b->series()->getM1WeekRSI();
+        }
+
+        // RSI Descending
+        else if( interval == "1rsi20D%"){
+            return a->series()->getM1MinunteRSI() > b->series()->getM1MinunteRSI();
+        }
+        else if( interval == "5rsi20D%"){
+            return a->series()->getM5MinunteRSI() > b->series()->getM5MinunteRSI();
+        }
+        else if( interval == "15rsi20D%"){
+            return a->series()->getM15MinunteRSI() > b->series()->getM15MinunteRSI();
+        }
+        else if( interval == "1hrsi20D%"){
+            return a->series()->getM1HourRSI() > b->series()->getM1HourRSI();
+        }
+        else if( interval == "4hrsi20D%"){
+            return a->series()->getM4HourRSI() > b->series()->getM4HourRSI();
+        }
+        else if( interval == "12hrsi20D%"){
+            return a->series()->getM12HourRSI() > b->series()->getM12HourRSI();
+        }
+        else if( interval == "1drsi20D%"){
+            return a->series()->getM1DayRSI() > b->series()->getM1DayRSI();
+
+        }else if( interval == "1wrsi20D%"){
+            return a->series()->getM1WeekRSI() > b->series()->getM1WeekRSI();
         }
 
 
