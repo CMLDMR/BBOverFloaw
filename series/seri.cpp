@@ -8,7 +8,7 @@ Seri::Seri(const QString &pair, const QString &interval, QObject *parent)
 {
 
     // if( interval != "15ms" ) {
-        mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,201);
+        mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,200);
     // }
         if( mKLineContainer.size() )
             qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();

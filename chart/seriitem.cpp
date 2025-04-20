@@ -26,7 +26,7 @@ SeriItem::SeriItem(Series::Seri *_seri, QObject *parent)
 
     setAcceptHoverEvents( true );
 
-    mWidth = mSeri->size() * tickerAreaWidth +100;
+    mWidth = mSeri->size() * tickerAreaWidth + 100;
     QObject::connect(mSeri,&Series::Seri::updated,[=, this](){
         this->update();
     });
@@ -356,8 +356,9 @@ void SeriItem::drawVolumeCandle(QPainter *painter)
     }
 
     painter->setPen(Qt::black);
+
     const QString str = QString("Volume $: %1").arg( Utility::humanReadable(mSeri->quotaClose() - mSeri->quotaOpen()).data());
-    painter->drawText(0, mInfoHeight + mHeight + mQuotaVolumeHeight + mVolumeHeight+14, str );
+    painter->drawText(mWidth-200, mInfoHeight + mHeight + mQuotaVolumeHeight + mVolumeHeight+14, str );
     painter->drawText(mSeri->size() * tickerAreaWidth+10, yposClose , QString("%1").arg( Utility::humanReadable(mSeri->quotaClose()).data()) );
 
 
@@ -523,7 +524,7 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     if( enableVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight,mWidth,mVolumeHeight),QColor(220,220,220));
-        painter->drawText(0,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " B:" + Readable(mSeri->takerVolume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
+        painter->drawText( mWidth-300 ,mInfoHeight+mHeight+14,"Volume Base: " + Readable(mSeri->volume()) + " B:" + Readable(mSeri->takerVolume()) + " S:"+Readable(mSeri->volume()-mSeri->takerVolume()));
 
         for( int i = 0 ; i < mSeri->size() ; i++ ){
             auto [rect,rectbuy,rectsell,color] = this->volume(i);
@@ -535,7 +536,10 @@ void Chart::SeriItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o
 
     if( enableQuotaVolume ){
         painter->fillRect(QRectF(0,mInfoHeight+mHeight+mVolumeHeight,mWidth,mVolumeHeight),Qt::GlobalColor::lightGray);
-        painter->drawText(0,mInfoHeight+mHeight+mVolumeHeight+14,"Volume Dif :" + Readable(mSeri->takerVolume() - (mSeri->volume() - mSeri->takerVolume())));
+            const auto basePrice = QString("Volume Dif : %1 / %2")
+                                   .arg(Readable(mSeri->takerVolume() - (mSeri->volume() - mSeri->takerVolume())))
+                                   .arg( ( mSeri->quotaClose() - mSeri->quotaOpen() ) / (mSeri->takerVolume() - (mSeri->volume() - mSeri->takerVolume())) ) ;
+        painter->drawText( mWidth-250 , mInfoHeight+mHeight+mVolumeHeight+14 , basePrice );
 
         for( int i = 1 ; i < mSeri->size() ; i++ ){
             painter->drawLine(QLineF(this->volumeDif(i-1),this->volumeDif(i)));

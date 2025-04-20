@@ -44,43 +44,51 @@ double Ema::value(const Series::Seri &seri, const int length)
     return lastEma;
 }
 
+double calcRSI(double avgGain, double avgLoss) {
+    if (avgLoss == 0.0) return 100.0;
+    double rs = avgGain / avgLoss;
+    return 100.0 - (100.0 / (1.0 + rs));
+}
+
 double RSI::value(const Series::Seri &seri, const int length)
 {
-    double gain = 0.0, loss = 0.0;
+    std::vector<double> rsi(std::vector<double>(seri.size(), 0 ) );
+
     const double period = static_cast<double>(length);
 
-    const int startPos = seri.size() - length;
+    double gains = 0.0, losses = 0.0;
 
-    // İlk dönem için kazanç ve kayıpları hesaplayın
-    for (int i = startPos; i < seri.size(); ++i) {
+    for (int i = 1; i <= period; ++i) {
         double change = seri.at(i).closePrice() - seri.at(i-1).closePrice();
-        if (change > 0) {
-            gain += change;
-        } else {
-            loss -= change;
-        }
+        if (change > 0) gains += change;
+        else losses -= change;
     }
 
-    // Ortalama kazanç ve kayıp
-    gain /= period;
-    loss /= period;
+    double avgGain = gains / period;
+    double avgLoss = losses / period;
+    rsi[period] = calcRSI(avgGain, avgLoss);
 
-    // // RMA'yı periyottan sonra hesapla
-    // for (int i = period; i < data.size(); i++) {
-    //     rma[i] = (rma[i - 1] * (period - 1) + data[i]) / period;
-    // }
+    for (size_t i = period + 1; i < seri.size(); ++i) {
+        double change = seri.at(i).closePrice() - seri.at(i-1).closePrice();
+        double gain = (change > 0) ? change : 0.0;
+        double loss = (change < 0) ? -change : 0.0;
 
-    // RS ve RSI hesaplama
-    double RS = gain / loss;
-    double RSI = 100 - (100 / (1 + RS));
+        avgGain = (avgGain * (period - 1) + gain) / period;
+        avgLoss = (avgLoss * (period - 1) + loss) / period;
 
-    return RSI;
+        rsi[i] = calcRSI(avgGain, avgLoss);
+    }
+
+    return rsi[rsi.size()-1];
 }
 
 double ADX::value(const Series::Seri &seri, const int period)
 {
-    if( seri.size() <= period )
+
+    if( seri.size() < period )
         return 0;
+
+
 
     std::vector<double> tr(period), plusDM(period), minusDM(period);
     std::vector<double> smoothedTR, smoothedPlusDM, smoothedMinusDM, plusDI, minusDI, dx, adx;
@@ -126,8 +134,11 @@ double ADX::value(const Series::Seri &seri, const int period)
         }
     }
 
+    if( adx.size() )
+        return adx.back();
 
-    return adx.back();
+
+    return 0;
 }
 
 double ADX::calcTrueRange(double high, double low, double prevClose)

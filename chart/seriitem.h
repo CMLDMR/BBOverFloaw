@@ -28,7 +28,7 @@ private:
 
 
     qreal mWidth{50};
-    const qreal mHeight{250};
+    const qreal mHeight{200};
     qreal mInfoHeight{16};
     const qreal mVolumeHeight{75};
     const qreal mQuotaVolumeHeight{75};

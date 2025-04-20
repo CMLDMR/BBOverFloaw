@@ -13,6 +13,11 @@
 
 #include <QDebug>
 
+
+#define SPOTEXCHANGE "https://api.binance.com/api/v3/exchangeInfo"
+#define FUTUREEXCHANGE "https://fapi.binance.com/fapi/v1/exchangeInfo"
+
+
 namespace Binance {
 namespace Public {
 namespace RestAPI {

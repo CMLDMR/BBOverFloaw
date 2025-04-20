@@ -17,7 +17,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage( 420 , 143 , QImage::Format_RGB888);
+    mImage = new QImage( 750 , 143 , QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -81,7 +81,7 @@ void Series::SocketWorker()
     mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
     // qDebug() << __LINE__<< __FILE__;
     emit dataUpdated(false);
-    // mSeriList.append(new Seri(mPair,"3m"));
+    mSeriList.append(new Seri(mPair,"3m"));
     // qDebug() << __LINE__<< __FILE__;
 
     mSeriList.append(new Seri(mPair,"5m"));
@@ -94,27 +94,30 @@ void Series::SocketWorker()
     mPainter->fillRect(0,60,3*mImage->width()/7,20,Qt::darkGreen);
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
-    //    mSeriList.append(new Seri(mPair,"30m"));
-    //    emit dataUpdated(false);
+       mSeriList.append(new Seri(mPair,"30m"));
+       emit dataUpdated(false);
+
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
     mPainter->fillRect(0,60,4*mImage->width()/7,20,Qt::darkGreen);
+    mSeriList.append(new Seri(mPair,"2h"));
+    // mSeriList.append(new Seri(mPair,"3h"));
 
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
-    // mSeriList.append(new Seri(mPair,"6h"));
-    //     mSeriList.append(new Seri(mPair,"8h"));
-    //     mSeriList.append(new Seri(mPair,"12h"));
-    // emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"6h"));
+        mSeriList.append(new Seri(mPair,"8h"));
+        mSeriList.append(new Seri(mPair,"12h"));
+    emit dataUpdated(false);
 
     mPainter->fillRect(0,60,5*mImage->width()/7,20,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
     //    emit dataUpdated(false);
     mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
 
-    // mSeriList.append(new Seri(mPair,"3d"));
+    mSeriList.append(new Seri(mPair,"3d"));
 
 
     mSeriList.append(new Seri(mPair,"1w"));
@@ -467,10 +470,10 @@ void Series::prePareImage(QPainter *painter)
 
                 yPos += 15;
                 painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
-                painter->drawText(5, yPos ,QString("BBU 20/2.0  %"));
+                painter->drawText(5, yPos ,QString("BBU %1/2.0  %").arg(m_length));
 
                 yPos += 15;
-                painter->drawText(5, yPos ,QString("BBD 20/2.0 %"));
+                painter->drawText(5, yPos ,QString("BBD %1/2.0 %").arg(m_length));
                 painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
 
             }
@@ -710,7 +713,6 @@ void Series::prePareImage(QPainter *painter)
 
                 // calculate SMA
                 const auto adxValue = Indicator::ADX::value( *seri , 14 );
-                const auto percent = adxValue ;
 
                 if ( adxValue > 50 ) {
                     painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
@@ -719,42 +721,41 @@ void Series::prePareImage(QPainter *painter)
                     painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
                 }
 
-                if( seri->interval() == "1m" ){
-                    m1MinunteRSI = adxValue;
-                }
+                // if( seri->interval() == "1m" ){
+                //     m1MinunteRSI = adxValue;
+                // }
 
-                if( seri->interval() == "5m" ){
-                    m5MinunteRSI = adxValue;
-                }
+                // if( seri->interval() == "5m" ){
+                //     m5MinunteRSI = adxValue;
+                // }
 
-                if( seri->interval() == "15m" ){
-                    m15MinunteRSI = adxValue;
-                }
+                // if( seri->interval() == "15m" ){
+                //     m15MinunteRSI = adxValue;
+                // }
 
-                if( seri->interval() == "1h" ){
-                    m1HourRSI = adxValue;
-                }
+                // if( seri->interval() == "1h" ){
+                //     m1HourRSI = adxValue;
+                // }
 
-                if( seri->interval() == "4h" ){
-                    m4HourRSI = adxValue;
-                }
+                // if( seri->interval() == "4h" ){
+                //     m4HourRSI = adxValue;
+                // }
 
-                if( seri->interval() == "12h" ){
-                    m12HourRSI = adxValue;
-                }
+                // if( seri->interval() == "12h" ){
+                //     m12HourRSI = adxValue;
+                // }
 
+                // if( seri->interval() == "1d" ){
+                //     m1DayRSI = adxValue;
+                // }
 
-                if( seri->interval() == "1d" ){
-                    m1DayRSI = adxValue;
-                }
-
-                if( seri->interval() == "1w" ){
-                    m1WeekRSI = adxValue;
-                }
-
+                // if( seri->interval() == "1w" ){
+                //     m1WeekRSI = adxValue;
+                // }
 
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( adxValue ) );
                 yPos += 15;
+
             }
 
 

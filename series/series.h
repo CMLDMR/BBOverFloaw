@@ -209,7 +209,7 @@ private:
     int mAllBarGreenCount{0};
     int mAllBarRedCount{0};
 
-    int m_length { 20 };
+    int m_length { 41 };
     double m1MinunteSMA200Percent{0};
     double m5MinunteSMA200Percent{0};
     double m15MinunteSMA200Percent{0};
