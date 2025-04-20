@@ -1,4 +1,7 @@
 #include "Sma.h"
+#include <cmath>
+#include <limits>
+
 
 namespace Indicator {
 
@@ -82,13 +85,108 @@ double RSI::value(const Series::Seri &seri, const int length)
     return rsi[rsi.size()-1];
 }
 
+
+struct ADXResult {
+    std::vector<double> plusDI;
+    std::vector<double> minusDI;
+    std::vector<double> adx;
+};
+struct Candle {
+    double high;
+    double low;
+    double close;
+};
+
+ADXResult calculateADX_DI(const std::vector<Candle>& data, int len = 14) {
+    std::vector<double> diPlusArr;
+    std::vector<double> diMinusArr;
+    std::vector<double> adxArr;
+    std::vector<double> dxArr;
+
+    double smTR = 0.0, smDMPlus = 0.0, smDMMinus = 0.0;
+
+    for (size_t i = 1; i < data.size(); ++i) {
+        double high = data[i].high;
+        double low = data[i].low;
+        double prevClose = data[i - 1].close;
+        double prevHigh = data[i - 1].high;
+        double prevLow = data[i - 1].low;
+
+        double trueRange = std::max({
+            high - low,
+            std::fabs(high - prevClose),
+            std::fabs(low - prevClose)
+        });
+
+        double upMove = high - prevHigh;
+        double downMove = prevLow - low;
+
+        double plusDM = (upMove > downMove && upMove > 0) ? upMove : 0.0;
+        double minusDM = (downMove > upMove && downMove > 0) ? downMove : 0.0;
+
+        if (i == 1) {
+            smTR = trueRange;
+            smDMPlus = plusDM;
+            smDMMinus = minusDM;
+        } else {
+            smTR = smTR - (smTR / len) + trueRange;
+            smDMPlus = smDMPlus - (smDMPlus / len) + plusDM;
+            smDMMinus = smDMMinus - (smDMMinus / len) + minusDM;
+        }
+
+        double diPlus = (smDMPlus / smTR) * 100.0;
+        double diMinus = (smDMMinus / smTR) * 100.0;
+
+        diPlusArr.push_back(diPlus);
+        diMinusArr.push_back(diMinus);
+
+        double dx = (diPlus + diMinus == 0.0) ? 0.0 : std::fabs(diPlus - diMinus) / (diPlus + diMinus) * 100.0;
+        dxArr.push_back(dx);
+
+        if (dxArr.size() >= static_cast<size_t>(len)) {
+            double sum = 0.0;
+            for (size_t j = dxArr.size() - len; j < dxArr.size(); ++j) {
+                sum += dxArr[j];
+            }
+            double adx = sum / len;
+            adxArr.push_back(adx);
+        } else {
+            adxArr.push_back(std::numeric_limits<double>::quiet_NaN());
+        }
+    }
+
+    return { diPlusArr, diMinusArr, adxArr };
+}
+
+
 double ADX::value(const Series::Seri &seri, const int period)
 {
 
     if( seri.size() < period )
         return 0;
+    std::vector<double> highs;
+    std::vector<double> lows;
+    std::vector<double> closs;
+
+    std::vector<Candle> vcandle;
+
+    for( int i = 0 ; i < seri.size() ; i++ ) {
+        // highs.push_back( seri.at(i).highPrice() );
+        // lows.push_back( seri.at(i).lowPrice() );
+        // closs.push_back( seri.at(i).closePrice() );
+
+        Candle candle;
+        candle.close = seri.at(i).closePrice();
+        candle.low = seri.at(i).lowPrice();
+        candle.high = seri.at(i).highPrice();
+
+        vcandle.push_back( candle );
+    }
 
 
+    const auto val = calculateADX_DI( vcandle );
+
+    return val.adx[val.adx.size() - 1 ];
 
     std::vector<double> tr(period), plusDM(period), minusDM(period);
     std::vector<double> smoothedTR, smoothedPlusDM, smoothedMinusDM, plusDI, minusDI, dx, adx;
