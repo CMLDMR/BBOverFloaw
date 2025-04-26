@@ -42,6 +42,399 @@ const double &Series::close() const
     return mClose;
 }
 
+QString Series::timeStr() const
+{
+    return mTimeStr;
+}
+
+QString Series::pair() const
+{
+    return mPair;
+}
+
+std::optional<Seri *> Series::getSeri(const QString &interval)
+{
+    Seri* seri{nullptr};
+    bool exist = false;
+
+    for( const auto &item : mSeriList ){
+        if( item->interval() == interval ){
+            seri = item;
+            exist = true;
+            break;
+        }
+    }
+
+    if( exist ){
+        return seri;
+    }else{
+        return std::nullopt;
+    }
+}
+
+QImage *Series::image() const
+{
+    QMutexLocker locker(&mutex);  // Mutex kilitlenir
+    return mImage;
+}
+
+double Series::getM5MinunteUpperPercent() const
+{
+    return m5MinunteUpperPercent;
+}
+
+double Series::allUpperPercent() const
+{
+    return mAllUpperPercent;
+}
+
+double Series::getM15MinunteUpperPercent() const
+{
+    return m15MinunteUpperPercent;
+}
+
+double Series::getM1HinunteUpperPercent() const
+{
+    return m1HinunteUpperPercent;
+}
+
+double Series::getM4HinunteUpperPercent() const
+{
+    return m4HinunteUpperPercent;
+}
+
+double Series::getM1DinunteUpperPercent() const
+{
+    return m1DinunteUpperPercent;
+}
+
+double Series::getM5MDownPercent() const
+{
+    return m5MDownPercent;
+}
+
+double Series::getM15MDownPercent() const
+{
+    return m15MDownPercent;
+}
+
+double Series::getM1HDownPercent() const
+{
+    return m1HDownPercent;
+}
+
+double Series::getM4HDownPercent() const
+{
+    return m4HDownPercent;
+}
+
+double Series::getM1DDownPercent() const
+{
+    return m1DDownPercent;
+}
+
+double Series::allDownPercent() const
+{
+    return mAllDownPercent;
+}
+
+int Series::upperGreenCount() const
+{
+    return mUpperGreenCount;
+}
+
+int Series::downGreenCount() const
+{
+    return mDownGreenCount;
+}
+
+double Series::allUpperSumPercent() const
+{
+    return mAllUpperSumPercent;
+}
+
+double Series::allDownSumPercent() const
+{
+    return mAllDownSumPercent;
+}
+
+double Series::getM5MinuntePercent() const
+{
+    return m5MinuntePercent;
+}
+
+double Series::getM15MinuntePercent() const
+{
+    return m15MinuntePercent;
+}
+
+double Series::getM1HinuntePercent() const
+{
+    return m1HinuntePercent;
+}
+
+double Series::getM4HinuntePercent() const
+{
+    return m4HinuntePercent;
+}
+
+double Series::getM1DinuntePercent() const
+{
+    return m1DinuntePercent;
+}
+
+double Series::getM12HinuntePercent() const
+{
+    return m12HinuntePercent;
+}
+
+double Series::getM12HinunteUpperPercent() const
+{
+    return m12HinunteUpperPercent;
+}
+
+double Series::getM12HDownPercent() const
+{
+    return m12HDownPercent;
+}
+
+std::tuple<double, double, double> Series::getAllBarPercentAndColorCount()
+{
+    return std::make_tuple(mAllBarPercentSum,static_cast<double>(mAllBarGreenCount),static_cast<double>(mAllBarRedCount));
+}
+
+double Series::open() const
+{
+    return mOpen;
+}
+
+double Series::getM1MinunteSMA200Percent() const
+{
+    return m1MinunteSMA200Percent;
+}
+
+double Series::getM5MinunteSMA200Percent() const
+{
+    return m5MinunteSMA200Percent;
+}
+
+double Series::getM15MinunteSMA200Percent() const
+{
+    return m15MinunteSMA200Percent;
+}
+
+double Series::getM1HinunteSMA200Percent() const
+{
+    return m1HinunteSMA200Percent;
+}
+
+double Series::getM4HinunteSMA200Percent() const
+{
+    return m4HinunteSMA200Percent;
+}
+
+double Series::getM12HinunteSMA200Percent() const
+{
+    return m12HinunteSMA200Percent;
+}
+
+double Series::getM1DinunteSMA200Percent() const
+{
+    return m1DinunteSMA200Percent;
+}
+
+double Series::getM1MinunteEMA200Percent() const
+{
+    return m1MinunteEMA200Percent;
+}
+
+double Series::getM5MinunteEMA200Percent() const
+{
+    return m5MinunteEMA200Percent;
+}
+
+double Series::getM15MinunteEMA200Percent() const
+{
+    return m15MinunteEMA200Percent;
+}
+
+double Series::getM1HinunteEMA200Percent() const
+{
+    return m1HinunteEMA200Percent;
+}
+
+double Series::getM4HinunteEMA200Percent() const
+{
+    return m4HinunteEMA200Percent;
+}
+
+double Series::getM12HinunteEMA200Percent() const
+{
+    return m12HinunteEMA200Percent;
+}
+
+double Series::getM1DinunteEMA200Percent() const
+{
+    return m1DinunteEMA200Percent;
+}
+
+double Series::getM1MinunteEMA20Percent() const
+{
+    return m1MinunteEMA20Percent;
+}
+
+double Series::getM5MinunteEMA20Percent() const
+{
+    return m5MinunteEMA20Percent;
+}
+
+double Series::getM15MinunteEMA20Percent() const
+{
+    return m15MinunteEMA20Percent;
+}
+
+double Series::getM1HinunteEMA20Percent() const
+{
+    return m1HinunteEMA20Percent;
+}
+
+double Series::getM4HinunteEMA20Percent() const
+{
+    return m4HinunteEMA20Percent;
+}
+
+double Series::getM12HinunteEMA20Percent() const
+{
+    return m12HinunteEMA20Percent;
+}
+
+double Series::getM1DinunteEMA20Percent() const
+{
+    return m1DinunteEMA20Percent;
+}
+
+double Series::getM1WinunteEMA20Percent() const
+{
+    return m1WinunteEMA20Percent;
+}
+
+double Series::getM1MinunteUpperPercent() const
+{
+    return m1MinunteUpperPercent;
+}
+
+double Series::getM1MinuntePercent() const
+{
+    return m1MinuntePercent;
+}
+
+double Series::getM1MDownPercent() const
+{
+    return m1MDownPercent;
+}
+
+void Series::setEnableBBD1minuteAlarm(bool newEnableBBD1minuteAlarm)
+{
+    m_enableBBD1minuteAlarm = newEnableBBD1minuteAlarm;
+}
+
+bool Series::enableBBD1minuteAlarm() const
+{
+    return m_enableBBD1minuteAlarm;
+}
+
+bool Series::enableBBD5minuteAlarm() const
+{
+    return m_enableBBD5minuteAlarm;
+}
+
+void Series::setEnableBBD5minuteAlarm(bool newEnableBBD5minuteAlarm)
+{
+    m_enableBBD5minuteAlarm = newEnableBBD5minuteAlarm;
+}
+
+bool Series::enableBBD15minuteAlarm() const
+{
+    return m_enableBBD15minuteAlarm;
+}
+
+void Series::setEnableBBD15minuteAlarm(bool newEnableBBD15minuteAlarm)
+{
+    m_enableBBD15minuteAlarm = newEnableBBD15minuteAlarm;
+}
+
+bool Series::enableBBD1hourAlarm() const
+{
+    return m_enableBBD1hourAlarm;
+}
+
+void Series::setEnableBBD1hourAlarm(bool newEnableBBD1hourAlarm)
+{
+    m_enableBBD1hourAlarm = newEnableBBD1hourAlarm;
+}
+
+
+
+bool Series::enableBBD4hourAlarm() const
+{
+    return m_enableBBD4hourAlarm;
+}
+
+void Series::setEnableBBD4hourAlarm(bool newEnableBBD4hourAlarm)
+{
+    m_enableBBD4hourAlarm = newEnableBBD4hourAlarm;
+}
+
+bool Series::enableBBD1dayAlarm() const
+{
+    return m_enableBBD1dayAlarm;
+}
+
+void Series::setEnableBBD1dayAlarm(bool newEnableBBD1dayAlarm)
+{
+    m_enableBBD1dayAlarm = newEnableBBD1dayAlarm;
+}
+
+double Series::getM15MinunteRSI() const
+{
+    return m15MinunteRSI;
+}
+
+double Series::getM1MinunteRSI() const
+{
+    return m1MinunteRSI;
+}
+
+double Series::getM5MinunteRSI() const
+{
+    return m5MinunteRSI;
+}
+
+double Series::getM1HourRSI() const
+{
+    return m1HourRSI;
+}
+
+double Series::getM4HourRSI() const
+{
+    return m4HourRSI;
+}
+
+double Series::getM12HourRSI() const
+{
+    return m12HourRSI;
+}
+
+double Series::getM1DayRSI() const
+{
+    return m1DayRSI;
+}
+
+double Series::getM1WeekRSI() const
+{
+    return m1WeekRSI;
+}
+
 void Series::SocketWorker()
 {
     //    qDebug() << "Start Series";
@@ -210,17 +603,6 @@ void Series::SocketWorker()
     });
 
     mSocket->startAggregateStream();
-}
-
-double Series::open() const
-{
-    return mOpen;
-}
-
-QImage *Series::image() const
-{
-    QMutexLocker locker(&mutex);  // Mutex kilitlenir
-    return mImage;
 }
 
 void Series::prePareImage(QPainter *painter)
@@ -478,109 +860,109 @@ void Series::prePareImage(QPainter *painter)
 
             }
 
-            {// SMA 200
+            // {// SMA 200
 
-                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+            //     painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
-                painter->drawText(5, yPos+15 ,"SMA 200 %");
-                // calculate RSI
-                const auto smaValue = Indicator::Sma::value( *seri , 200 );
-                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+            //     painter->drawText(5, yPos+15 ,"SMA 200 %");
+            //     // calculate RSI
+            //     const auto smaValue = Indicator::Sma::value( *seri , 200 );
+            //     const auto percent =( seri->close() - smaValue )/smaValue*100 ;
 
-                if ( percent > 70 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
-                }
-                else if( percent < 30 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
-                }
+            //     if ( percent > 70 ) {
+            //         painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+            //     }
+            //     else if( percent < 30 ) {
+            //         painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+            //     }
 
-                if( seri->interval() == "1m" ){
-                    m1MinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "1m" ){
+            //         m1MinunteSMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "5m" ){
-                    m5MinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "5m" ){
+            //         m5MinunteSMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "15m" ){
-                    m15MinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "15m" ){
+            //         m15MinunteSMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "1h" ){
-                    m1HinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "1h" ){
+            //         m1HinunteSMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "4h" ){
-                    m4HinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "4h" ){
+            //         m4HinunteSMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "12h" ){
-                    m12HinunteSMA200Percent = percent;
-                }
-
-
-                if( seri->interval() == "1d" ){
-                    m1DinunteSMA200Percent = percent;
-                }
+            //     if( seri->interval() == "12h" ){
+            //         m12HinunteSMA200Percent = percent;
+            //     }
 
 
-                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
-                yPos += 15;
-            }
+            //     if( seri->interval() == "1d" ){
+            //         m1DinunteSMA200Percent = percent;
+            //     }
 
-            {// EMA 200
 
-                painter->drawText(5, yPos+15 ,"EMA 200 %");
+            //     painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
+            //     yPos += 15;
+            // }
 
-                // calculate SMA
-                const auto smaValue = Indicator::Ema::value( *seri , 200 );
-                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
-                if ( percent > 0 ) {
-                    if( percent > 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+            // {// EMA 200
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
-                    }                }
-                else if( percent < 0 ) {
-                    if( percent < -1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+            //     painter->drawText(5, yPos+15 ,"EMA 200 %");
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
-                    }
-                }
-                if( seri->interval() == "1m" ){
-                    m1MinunteEMA200Percent = percent;
-                }
+            //     // calculate SMA
+            //     const auto smaValue = Indicator::Ema::value( *seri , 200 );
+            //     const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+            //     if ( percent > 0 ) {
+            //         if( percent > 1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
 
-                if( seri->interval() == "5m" ){
-                    m5MinunteEMA200Percent = percent;
-                }
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
+            //         }                }
+            //     else if( percent < 0 ) {
+            //         if( percent < -1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
 
-                if( seri->interval() == "15m" ){
-                    m15MinunteEMA200Percent = percent;
-                }
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
+            //         }
+            //     }
+            //     if( seri->interval() == "1m" ){
+            //         m1MinunteEMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "1h" ){
-                    m1HinunteEMA200Percent = percent;
-                }
+            //     if( seri->interval() == "5m" ){
+            //         m5MinunteEMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "4h" ){
-                    m4HinunteEMA200Percent = percent;
-                }
+            //     if( seri->interval() == "15m" ){
+            //         m15MinunteEMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "12h" ){
-                    m12HinunteEMA200Percent = percent;
-                }
+            //     if( seri->interval() == "1h" ){
+            //         m1HinunteEMA200Percent = percent;
+            //     }
 
-                if( seri->interval() == "1d" ){
-                    m1DinunteEMA200Percent = percent;
-                }
+            //     if( seri->interval() == "4h" ){
+            //         m4HinunteEMA200Percent = percent;
+            //     }
 
-                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
-                yPos += 15;
-            }
+            //     if( seri->interval() == "12h" ){
+            //         m12HinunteEMA200Percent = percent;
+            //     }
+
+            //     if( seri->interval() == "1d" ){
+            //         m1DinunteEMA200Percent = percent;
+            //     }
+
+            //     painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
+            //     yPos += 15;
+            // }
 
 
             {// EMA 20
@@ -704,8 +1086,183 @@ void Series::prePareImage(QPainter *painter)
             }
 
 
+            { // Bollinger Percent 2.38
+                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
-            {// RSI 14
+
+                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
+
+                const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
+                const QString alarmLowString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
+
+                if( seri->interval() == "1m" ){
+                    m1MinuntePercent = seri->percentLastBar();
+                    m1MinunteUpperPercent = upper;
+                    m1MDownPercent = down;
+                    if( upper > 0 && m_enableBBD1minuteAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD1minuteAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+                }
+
+                if( seri->interval() == "5m" ){
+                    m5MinuntePercent = seri->percentLastBar();
+                    m5MinunteUpperPercent = upper;
+                    m5MDownPercent = down;
+                    if( upper > 0 && m_enableBBD5minuteAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD5minuteAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+                }
+
+                if( seri->interval() == "15m" ){
+                    m15MinuntePercent = seri->percentLastBar();
+                    m15MinunteUpperPercent = upper;
+                    m15MDownPercent = down;
+                    if( upper > 0 && m_enableBBD15minuteAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD15minuteAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+
+                    // bool  { true };
+
+                }
+
+                if( seri->interval() == "1h" ){
+                    m1HinuntePercent = seri->percentLastBar();
+                    m1HinunteUpperPercent = upper;
+                    m1HDownPercent = down;
+                    if( upper > 0 && m_enableBBD1hourAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD1hourAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+                }
+
+                if( seri->interval() == "4h" ){
+                    m4HinuntePercent = seri->percentLastBar();
+                    m4HinunteUpperPercent = upper;
+                    m4HDownPercent = down;
+
+                    if( m_enableBBD4hourAlarm ) {
+                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    }
+
+                    if( upper > 0 && m_enableBBD4hourAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD4hourAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+                }
+
+                if( seri->interval() == "12h" ){
+                    m12HinuntePercent = seri->percentLastBar();
+                    m12HinunteUpperPercent = upper;
+                    m12HDownPercent = down;
+                }
+
+
+                if( seri->interval() == "1d" ){
+                    m1DinuntePercent = seri->percentLastBar();
+                    m1DinunteUpperPercent = upper;
+                    m1DDownPercent = down;
+
+                    if( upper > 0 && m_enableBBD1dayAlarm ) {
+                        emit alarmed( alarmHighString );
+                    }
+                    if( down > 0 && m_enableBBD1dayAlarm ) {
+                        emit alarmed( alarmLowString );
+                    }
+                }
+
+                mAllDownSumPercent += down;
+                mAllUpperSumPercent += upper;
+
+
+
+                if( upper > 0 ){
+                    if( upper < 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 150 , 255 ,150 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+                    }
+                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+
+                    mAlarmActivated = true;
+                    mUpperGreenCount++;
+                    mAllUpperPercent += upper;
+
+                }
+                if( down > 0 ){
+
+                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+
+                    if( down < 1 ) {
+                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 150 , 255 , 150 ));
+
+                    }else{
+                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+                    }
+                    mAlarmActivated = true;
+                    mDownGreenCount++;
+                    mAllDownPercent += down;
+
+                }
+
+                if( seri->interval() == "1m" && m_enableBBD1minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "5m" && m_enableBBD5minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "15m" && m_enableBBD15minuteAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "1h" && m_enableBBD1hourAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "4h" && m_enableBBD4hourAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+                if( seri->interval() == "1d" && m_enableBBD1dayAlarm ) {
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+                }
+
+
+                yPos += 15;
+                painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
+                painter->drawText(5, yPos ,QString("BBU %1/2.0  %").arg(m_length));
+
+                yPos += 15;
+                painter->drawText(5, yPos ,QString("BBD %1/2.0 %").arg(m_length));
+                painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
+
+            }
+
+
+
+            {// ADX 14
 
                 // painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
@@ -781,386 +1338,5 @@ void Series::prePareImage(QPainter *painter)
 
 }
 
-double Series::getM1MinunteRSI() const
-{
-    return m1MinunteRSI;
-}
-
-double Series::getM5MinunteRSI() const
-{
-    return m5MinunteRSI;
-}
-
-double Series::getM1HourRSI() const
-{
-    return m1HourRSI;
-}
-
-double Series::getM4HourRSI() const
-{
-    return m4HourRSI;
-}
-
-double Series::getM12HourRSI() const
-{
-    return m12HourRSI;
-}
-
-double Series::getM1DayRSI() const
-{
-    return m1DayRSI;
-}
-
-double Series::getM1WeekRSI() const
-{
-    return m1WeekRSI;
-}
-
-double Series::getM15MinunteRSI() const
-{
-    return m15MinunteRSI;
-}
-
-bool Series::enableBBD1dayAlarm() const
-{
-    return m_enableBBD1dayAlarm;
-}
-
-void Series::setEnableBBD1dayAlarm(bool newEnableBBD1dayAlarm)
-{
-    m_enableBBD1dayAlarm = newEnableBBD1dayAlarm;
-}
-
-bool Series::enableBBD4hourAlarm() const
-{
-    return m_enableBBD4hourAlarm;
-}
-
-void Series::setEnableBBD4hourAlarm(bool newEnableBBD4hourAlarm)
-{
-    m_enableBBD4hourAlarm = newEnableBBD4hourAlarm;
-}
-
-bool Series::enableBBD1hourAlarm() const
-{
-    return m_enableBBD1hourAlarm;
-}
-
-void Series::setEnableBBD1hourAlarm(bool newEnableBBD1hourAlarm)
-{
-    m_enableBBD1hourAlarm = newEnableBBD1hourAlarm;
-}
-
-bool Series::enableBBD15minuteAlarm() const
-{
-    return m_enableBBD15minuteAlarm;
-}
-
-void Series::setEnableBBD15minuteAlarm(bool newEnableBBD15minuteAlarm)
-{
-    m_enableBBD15minuteAlarm = newEnableBBD15minuteAlarm;
-}
-
-bool Series::enableBBD5minuteAlarm() const
-{
-    return m_enableBBD5minuteAlarm;
-}
-
-void Series::setEnableBBD5minuteAlarm(bool newEnableBBD5minuteAlarm)
-{
-    m_enableBBD5minuteAlarm = newEnableBBD5minuteAlarm;
-}
-
-bool Series::enableBBD1minuteAlarm() const
-{
-    return m_enableBBD1minuteAlarm;
-}
-
-void Series::setEnableBBD1minuteAlarm(bool newEnableBBD1minuteAlarm)
-{
-    m_enableBBD1minuteAlarm = newEnableBBD1minuteAlarm;
-}
-
-double Series::getM1MDownPercent() const
-{
-    return m1MDownPercent;
-}
-
-double Series::getM1MinuntePercent() const
-{
-    return m1MinuntePercent;
-}
-
-double Series::getM1MinunteUpperPercent() const
-{
-    return m1MinunteUpperPercent;
-}
-
-double Series::getM1WinunteEMA20Percent() const
-{
-    return m1WinunteEMA20Percent;
-}
-
-double Series::getM1MinunteEMA20Percent() const
-{
-    return m1MinunteEMA20Percent;
-}
-
-double Series::getM5MinunteEMA20Percent() const
-{
-    return m5MinunteEMA20Percent;
-}
-
-double Series::getM15MinunteEMA20Percent() const
-{
-    return m15MinunteEMA20Percent;
-}
-
-double Series::getM1HinunteEMA20Percent() const
-{
-    return m1HinunteEMA20Percent;
-}
-
-double Series::getM4HinunteEMA20Percent() const
-{
-    return m4HinunteEMA20Percent;
-}
-
-double Series::getM12HinunteEMA20Percent() const
-{
-    return m12HinunteEMA20Percent;
-}
-
-double Series::getM1DinunteEMA20Percent() const
-{
-    return m1DinunteEMA20Percent;
-}
-
-double Series::getM1MinunteEMA200Percent() const
-{
-    return m1MinunteEMA200Percent;
-}
-
-double Series::getM5MinunteEMA200Percent() const
-{
-    return m5MinunteEMA200Percent;
-}
-
-double Series::getM15MinunteEMA200Percent() const
-{
-    return m15MinunteEMA200Percent;
-}
-
-double Series::getM1HinunteEMA200Percent() const
-{
-    return m1HinunteEMA200Percent;
-}
-
-double Series::getM4HinunteEMA200Percent() const
-{
-    return m4HinunteEMA200Percent;
-}
-
-double Series::getM12HinunteEMA200Percent() const
-{
-    return m12HinunteEMA200Percent;
-}
-
-double Series::getM1DinunteEMA200Percent() const
-{
-    return m1DinunteEMA200Percent;
-}
-
-double Series::getM1MinunteSMA200Percent() const
-{
-    return m1MinunteSMA200Percent;
-}
-
-double Series::getM5MinunteSMA200Percent() const
-{
-    return m5MinunteSMA200Percent;
-}
-
-double Series::getM15MinunteSMA200Percent() const
-{
-    return m15MinunteSMA200Percent;
-}
-
-double Series::getM1HinunteSMA200Percent() const
-{
-    return m1HinunteSMA200Percent;
-}
-
-double Series::getM4HinunteSMA200Percent() const
-{
-    return m4HinunteSMA200Percent;
-}
-
-double Series::getM12HinunteSMA200Percent() const
-{
-    return m12HinunteSMA200Percent;
-}
-
-double Series::getM1DinunteSMA200Percent() const
-{
-    return m1DinunteSMA200Percent;
-}
-
-double Series::getM12HDownPercent() const
-{
-    return m12HDownPercent;
-}
-
-std::tuple<double, double, double> Series::getAllBarPercentAndColorCount()
-{
-    return std::make_tuple(mAllBarPercentSum,static_cast<double>(mAllBarGreenCount),static_cast<double>(mAllBarRedCount));
-}
-
-double Series::getM12HinunteUpperPercent() const
-{
-    return m12HinunteUpperPercent;
-}
-
-double Series::getM12HinuntePercent() const
-{
-    return m12HinuntePercent;
-}
-
-double Series::getM1DinuntePercent() const
-{
-    return m1DinuntePercent;
-}
-
-double Series::getM4HinuntePercent() const
-{
-    return m4HinuntePercent;
-}
-
-double Series::getM1HinuntePercent() const
-{
-    return m1HinuntePercent;
-}
-
-double Series::getM15MinuntePercent() const
-{
-    return m15MinuntePercent;
-}
-
-double Series::getM5MinuntePercent() const
-{
-    return m5MinuntePercent;
-}
-
-double Series::allDownSumPercent() const
-{
-    return mAllDownSumPercent;
-}
-
-double Series::allUpperSumPercent() const
-{
-    return mAllUpperSumPercent;
-}
-
-int Series::downGreenCount() const
-{
-    return mDownGreenCount;
-}
-
-int Series::upperGreenCount() const
-{
-    return mUpperGreenCount;
-}
-
-
-
-double Series::getM15MDownPercent() const
-{
-    return m15MDownPercent;
-}
-
-double Series::getM1HDownPercent() const
-{
-    return m1HDownPercent;
-}
-
-double Series::getM4HDownPercent() const
-{
-    return m4HDownPercent;
-}
-
-double Series::getM1DDownPercent() const
-{
-    return m1DDownPercent;
-}
-
-double Series::allDownPercent() const
-{
-    return mAllDownPercent;
-}
-
-double Series::getM5MDownPercent() const
-{
-    return m5MDownPercent;
-}
-
-double Series::getM1DinunteUpperPercent() const
-{
-    return m1DinunteUpperPercent;
-}
-
-double Series::getM4HinunteUpperPercent() const
-{
-    return m4HinunteUpperPercent;
-}
-
-double Series::getM1HinunteUpperPercent() const
-{
-    return m1HinunteUpperPercent;
-}
-
-double Series::getM15MinunteUpperPercent() const
-{
-    return m15MinunteUpperPercent;
-}
-
-double Series::allUpperPercent() const
-{
-    return mAllUpperPercent;
-}
-
-double Series::getM5MinunteUpperPercent() const
-{
-    return m5MinunteUpperPercent;
-}
-
-QString Series::timeStr() const
-{
-    return mTimeStr;
-}
-
-QString Series::pair() const
-{
-    return mPair;
-}
-
-std::optional<Seri *> Series::getSeri(const QString &interval)
-{
-    Seri* seri{nullptr};
-    bool exist = false;
-
-    for( const auto &item : mSeriList ){
-        if( item->interval() == interval ){
-            seri = item;
-            exist = true;
-            break;
-        }
-    }
-
-    if( exist ){
-        return seri;
-    }else{
-        return std::nullopt;
-    }
-}
 
 } // namespace Series

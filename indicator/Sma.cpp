@@ -2,6 +2,8 @@
 #include <cmath>
 #include <limits>
 
+#include "bollinger.h"
+
 
 namespace Indicator {
 
@@ -62,6 +64,9 @@ double RSI::value(const Series::Seri &seri, const int length)
     double gains = 0.0, losses = 0.0;
 
     for (int i = 1; i <= period; ++i) {
+        if( i >= seri.size() ) {
+            continue;
+        }
         double change = seri.at(i).closePrice() - seri.at(i-1).closePrice();
         if (change > 0) gains += change;
         else losses -= change;
@@ -72,6 +77,9 @@ double RSI::value(const Series::Seri &seri, const int length)
     rsi[period] = calcRSI(avgGain, avgLoss);
 
     for (size_t i = period + 1; i < seri.size(); ++i) {
+        if( i >= seri.size() ) {
+            continue;
+        }
         double change = seri.at(i).closePrice() - seri.at(i-1).closePrice();
         double gain = (change > 0) ? change : 0.0;
         double loss = (change < 0) ? -change : 0.0;
@@ -86,18 +94,7 @@ double RSI::value(const Series::Seri &seri, const int length)
 }
 
 
-struct ADXResult {
-    std::vector<double> plusDI;
-    std::vector<double> minusDI;
-    std::vector<double> adx;
-};
-struct Candle {
-    double high;
-    double low;
-    double close;
-};
-
-ADXResult calculateADX_DI(const std::vector<Candle>& data, int len = 14) {
+ADX::ADXResult calculateADX_DI(const std::vector<ADX::Candle>& data, int len = 14) {
     std::vector<double> diPlusArr;
     std::vector<double> diMinusArr;
     std::vector<double> adxArr;

@@ -29,6 +29,10 @@ public:
     RSI(){}
 
     static double value( const Series::Seri &seri , const int length = 14 );
+
+private:
+
+
 };
 
 
@@ -37,6 +41,18 @@ class ADX
 {
 public:
     ADX(){}
+
+    struct ADXResult {
+        std::vector<double> plusDI;
+        std::vector<double> minusDI;
+        std::vector<double> adx;
+    };
+    struct Candle {
+        double high;
+        double low;
+        double close;
+    };
+
 
     static double value( const Series::Seri &seri , const int length = 14 );
 

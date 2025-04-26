@@ -254,6 +254,8 @@ private:
     bool m_enableBBD1dayAlarm { false };
 
 
+
+
 };
 
 } // namespace Series
