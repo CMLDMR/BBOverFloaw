@@ -29,6 +29,8 @@ public:
     RSI(){}
 
     static double value( const Series::Seri &seri , const int length = 14 );
+    static double value( const std::vector<double> &priceList , const int length = 14 );
+
 
 private:
 

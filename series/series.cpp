@@ -8,6 +8,7 @@
 
 #include <QMutex>
 #include <QMutexLocker>
+#include <iostream>
 
 namespace Series {
 
@@ -1037,7 +1038,7 @@ void Series::prePareImage(QPainter *painter)
                 painter->drawText(5, yPos+15 ,"RSI 14 %");
 
                 // calculate SMA
-                const auto smaValue = Indicator::RSI::value( *seri , 20 );
+                const auto smaValue = Indicator::RSI::value( *seri , 14 );
                 const auto percent = smaValue ;
 
                 if ( percent > 70 ) {
@@ -1086,14 +1087,53 @@ void Series::prePareImage(QPainter *painter)
             }
 
 
-            { // Bollinger Percent 2.38
+            { // RSI Bollinger Band 2.38
                 painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
+                std::vector<double> openList;
+                std::vector<double> closeList;
+                std::vector<double> highList;
+                std::vector<double> lowList;
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
+                for( int i = 0 ; i < seri->size() ; i++ ) {
+                    openList.push_back( seri->open( i ) );
+                    closeList.push_back( seri->close( i ) );
+                    highList.push_back( seri->high( i ) );
+                    lowList.push_back( seri->low( i ) );
+                }
+                std::vector<double> rsiOpenList;
+                std::vector<double> rsiCloseList;
+                std::vector<double> rsiHighList;
+                std::vector<double> rsiLowList;
+
+
+                auto tempOpenList = openList;
+                auto tempCloseList = closeList;
+                auto tempHighList = highList;
+                auto tempLowList = lowList;
+
+                for( int i = 0 ; i < 125 ; i++ ) {
+                    rsiCloseList.insert( rsiCloseList.begin() , Indicator::RSI::value( tempCloseList ) );
+                    tempCloseList.pop_back();// tempCloseList.begin() );
+                }
+
+                auto [upper,middle,down] = Indicator::calculateBollingerBands( rsiCloseList , 60 );
+
+                // auto [upper,middle,down] = Indicator::Bollinger::bollinger( rsiCloseList , 60 );
+
+                if( seri->interval() == "15m" ){
+                    for( int i = rsiCloseList.size()-14 ; i < rsiCloseList.size() ; i++ ) {
+                        std::cout << i << ". " << seri->interval().toStdString() << " - " << rsiCloseList[i] << " - " <<  upper << " - " << middle << " - " << down << "\n";
+                    }
+                    std::cout << "\n";
+                }
+
+
+                // auto upper = Indicator::RSI::value( highList );
+                // auto down = Indicator::RSI::value( lowList );
 
                 const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
-                const QString alarmLowString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
+                const QString alarmLowString  = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
 
                 if( seri->interval() == "1m" ){
                     m1MinuntePercent = seri->percentLastBar();
@@ -1252,10 +1292,10 @@ void Series::prePareImage(QPainter *painter)
 
                 yPos += 15;
                 painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
-                painter->drawText(5, yPos ,QString("BBU %1/2.0  %").arg(m_length));
+                painter->drawText(5, yPos ,QString("RSI UB 60/2.0"));
 
                 yPos += 15;
-                painter->drawText(5, yPos ,QString("BBD %1/2.0 %").arg(m_length));
+                painter->drawText(5, yPos ,QString("RSI DB 60/2.0 "));
                 painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
 
             }

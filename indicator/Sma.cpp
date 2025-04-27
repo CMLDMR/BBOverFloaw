@@ -93,6 +93,44 @@ double RSI::value(const Series::Seri &seri, const int length)
     return rsi[rsi.size()-1];
 }
 
+double RSI::value(const std::vector<double> &priceList, const int length)
+{
+    std::vector<double> rsi(std::vector<double>(priceList.size(), 0 ) );
+
+    const double period = static_cast<double>(length);
+
+    double gains = 0.0, losses = 0.0;
+
+    for (int i = 1; i <= period; ++i) {
+        if( i >= priceList.size() ) {
+            continue;
+        }
+        double change = priceList.at(i) - priceList.at(i-1);
+        if (change > 0) gains += change;
+        else losses -= change;
+    }
+
+    double avgGain = gains / period;
+    double avgLoss = losses / period;
+    rsi[period] = calcRSI(avgGain, avgLoss);
+
+    for (size_t i = period + 1; i < priceList.size(); ++i) {
+        if( i >= priceList.size() ) {
+            continue;
+        }
+        double change = priceList.at(i) - priceList.at(i-1);
+        double gain = (change > 0) ? change : 0.0;
+        double loss = (change < 0) ? -change : 0.0;
+
+        avgGain = (avgGain * (period - 1) + gain) / period;
+        avgLoss = (avgLoss * (period - 1) + loss) / period;
+
+        rsi[i] = calcRSI(avgGain, avgLoss);
+    }
+
+    return rsi[rsi.size()-1];
+}
+
 
 ADX::ADXResult calculateADX_DI(const std::vector<ADX::Candle>& data, int len = 14) {
     std::vector<double> diPlusArr;
