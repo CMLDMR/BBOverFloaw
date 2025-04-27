@@ -10,8 +10,9 @@
 #include <QJsonObject>
 
 #include <QFile>
-
+#include <QDataStream>
 #include <QDebug>
+#include <QEventLoop>
 
 
 #define SPOTEXCHANGE "https://api.binance.com/api/v3/exchangeInfo"

@@ -10,6 +10,7 @@
 #include <QJsonObject>
 
 #include <QFile>
+#include <QDataStream>
 
 #include <mutex>
 

@@ -5,6 +5,7 @@
 
 #include "series/seri.h"
 
+#include <cmath>
 
 
 namespace Indicator {

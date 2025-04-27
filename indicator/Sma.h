@@ -1,6 +1,7 @@
 #ifndef SMA_H
 #define SMA_H
 #include "series/seri.h"
+#include <cmath>
 
 
 namespace Indicator {
@@ -67,8 +68,8 @@ public:
 
     static double calculateTrueRange(double prevClose, double currentHigh, double currentLow) {
         double tr1 = currentHigh - currentLow;
-        double tr2 = fabs(currentHigh - prevClose);
-        double tr3 = fabs(currentLow - prevClose);
+        double tr2 = std::fabs(currentHigh - prevClose);
+        double tr3 = std::fabs(currentLow - prevClose);
         return std::max(tr1, std::max(tr2, tr3));
     }
 

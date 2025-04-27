@@ -9,6 +9,7 @@
 #include "session/sessionmanager.h"
 #include <QUrl>
 #include <QThread>
+#include <iostream>
 
 #include "binance/restapi/restapi.h"
 
@@ -23,6 +24,8 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     this->setWindowTitle("BBOverFloaw");
+
+    std::cout << __FILE__ << " " <<__LINE__ << "\n";
 
     Binance::Public::RestAPI::RestAPI::instance();
 

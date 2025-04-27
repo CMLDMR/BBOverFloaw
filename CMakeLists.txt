@@ -8,15 +8,40 @@ set(CMAKE_AUTORCC ON)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /Zc:__cplusplus")
 
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network WebSockets Gui Multimedia Concurrent Charts Test)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Gui Multimedia Concurrent Charts Test)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets Network WebSockets Gui Multimedia Test)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSockets Gui Multimedia Test)
 
+find_program(CCACHE_PROGRAM ccache)
+
+
+if(CCACHE_PROGRAM)
+    message(STATUS "ccache is available: ${CCACHE_PROGRAM}")
+    set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+    set(CMAKE_CXX_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
+else()
+    message(WARNING "ccache is not installed or not found in PATH.")
+endif()
 
 file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
 file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
 file(GLOB_RECURSE UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
+
+# set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Telegram/lib/cmake/TgBot" ${CMAKE_PREFIX_PATH})
+
+# find_package(TgBot)
+
+
+# include(FetchContent)
+# FetchContent_Declare(TgBot
+#     SYSTEM
+#     GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp
+#     # GIT_TAG a609330e4c6374f741d3b369269f7848255e1954 # v0.14.1
+#     GIT_TAG 1b10d2fb99252027ae65fe782308a27a01adbc19 # v1.9
+#     GIT_SHALLOW TRUE
+#     # SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/tgbot-cpp-1.9
+# )
+# FetchContent_MakeAvailable(TgBot)
 
 
 include_directories("${CMAKE_SOURCE_DIR}")
@@ -60,9 +85,9 @@ target_link_libraries(BBOverFloaw PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::WebSockets
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Multimedia
-    Qt${QT_VERSION_MAJOR}::Concurrent
-    Qt${QT_VERSION_MAJOR}::Charts
-    Qt${QT_VERSION_MAJOR}::Test)
+    Qt${QT_VERSION_MAJOR}::Test
+# TgBot
+)
 
 set_target_properties(BBOverFloaw PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com

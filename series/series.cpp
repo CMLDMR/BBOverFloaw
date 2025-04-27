@@ -6,6 +6,8 @@
 #include "global/utility.h"
 #include "global/alarmwidget.h"
 
+#include "TelegramManager.h"
+
 #include <QMutex>
 #include <QMutexLocker>
 #include <iostream>
@@ -1117,20 +1119,10 @@ void Series::prePareImage(QPainter *painter)
                     tempCloseList.pop_back();// tempCloseList.begin() );
                 }
 
+
+
+
                 auto [upper,middle,down] = Indicator::calculateBollingerBands( rsiCloseList , 60 );
-
-                // auto [upper,middle,down] = Indicator::Bollinger::bollinger( rsiCloseList , 60 );
-
-                if( seri->interval() == "15m" ){
-                    for( int i = rsiCloseList.size()-14 ; i < rsiCloseList.size() ; i++ ) {
-                        std::cout << i << ". " << seri->interval().toStdString() << " - " << rsiCloseList[i] << " - " <<  upper << " - " << middle << " - " << down << "\n";
-                    }
-                    std::cout << "\n";
-                }
-
-
-                // auto upper = Indicator::RSI::value( highList );
-                // auto down = Indicator::RSI::value( lowList );
 
                 const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
                 const QString alarmLowString  = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
@@ -1145,6 +1137,9 @@ void Series::prePareImage(QPainter *painter)
                     if( down > 0 && m_enableBBD1minuteAlarm ) {
                         emit alarmed( alarmLowString );
                     }
+
+                    // TelegramManager::instance()->sendMessage("Bot", std::format("1 min {} {} {}",upper ,rsiCloseList.back() , down ).data() );
+
                 }
 
                 if( seri->interval() == "5m" ){
@@ -1169,6 +1164,9 @@ void Series::prePareImage(QPainter *painter)
                     if( down > 0 && m_enableBBD15minuteAlarm ) {
                         emit alarmed( alarmLowString );
                     }
+
+                    // TelegramManager::instance()->sendMessage("Bot", std::format("{} {} {}",upper ,rsiCloseList.back() , down ).data() );
+
 
                     // bool  { true };
 

@@ -12,7 +12,7 @@
 
 #include <QFuture>
 #include <QFutureWatcher>
-#include <QtConcurrent>
+// #include <QtConcurrent>
 
 
 class QNetworkAccessManager;
