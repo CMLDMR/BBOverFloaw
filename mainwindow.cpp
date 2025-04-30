@@ -29,22 +29,12 @@ MainWindow::MainWindow(QWidget *parent)
     LOG_DEBUG("{}" , "." );
     Binance::Public::RestAPI::RestAPI::instance();
 
-//    qDebug() << "Size:: "<<Binance::Public::RestAPI::RestAPI::instance()->symbolList().size();
-//    auto symbol = Binance::Public::RestAPI::RestAPI::instance()->symbolList().first();
-
-//    qDebug() << symbol << "";
-//    auto list = Binance::Public::RestAPI::RestAPI::instance()->getCandles("BTCUSDT","1d",50);
-//    qDebug() << "Thread Worked" << list.size();
-    LOG_DEBUG("{}" , "." );
-
 
     ///////////////////////////
     mExchangeInfo = new ExchangeInfo::ExchangeInfo();
-    LOG_DEBUG("{}" , "." );
     ui->exchangeVLayout->addWidget(mExchangeInfo);
 
     mViewPort = new Main::ViewPort();
-//    mViewPort->setDragMode(QGraphicsView::ScrollHandDrag);
 
     ui->verticalGraphLayout->addWidget(mViewPort);
 

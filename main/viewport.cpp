@@ -72,21 +72,19 @@ ViewPort::ViewPort( QWidget *parent )
     m_autoSortTimer->start();
 
 
-    // addItem("BTCUSDT");
-    // addItem("ETHUSDT");
-    // addItem("SOLUSDT");
-    // addItem("XRPUSDT");
-
-    // addItem("BCHUSDT");
-    // addItem("LTCUSDT");
-    // addItem("ETCUSDT");
-    // addItem("LINKUSDT");
-    // addItem("ADAUSDT");
-    // addItem("DASHUSDT");
-    // addItem("XMRUSDT");
-    // addItem("ZECUSDT");
-    // addItem("BNBUSDT");
-    // addItem("ONTUSDT");
+    addItem("BTCUSDT");
+    addItem("ETHUSDT");
+    addItem("SOLUSDT");
+    addItem("XRPUSDT");
+    addItem("BCHUSDT");
+    addItem("LTCUSDT");
+    addItem("ETCUSDT");
+    addItem("LINKUSDT");
+    addItem("ADAUSDT");
+    addItem("DASHUSDT");
+    addItem("XMRUSDT");
+    addItem("ZECUSDT");
+    addItem("BNBUSDT");
 
 
 

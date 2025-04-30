@@ -49,10 +49,7 @@ void RestAPI::updateInfo()
 RestAPI::RestAPI(QObject *parent)
     : QObject{parent}
 {
-    LOG_DEBUG("{}" , "." );
-
     mManager = new QNetworkAccessManager(this);
-    LOG_DEBUG("{}" , "." );
 
     QObject::connect(mManager,&QNetworkAccessManager::finished,[=, this](QNetworkReply* reply ){
 
@@ -68,14 +65,9 @@ RestAPI::RestAPI(QObject *parent)
         }
         this->saveList();
     });
-    LOG_DEBUG("{}" , "." );
-
-    // this->updateInfo();
 
     if( !this->loadList() ){
-        LOG_DEBUG("{}" , "." );
         this->updateInfo();
-        LOG_DEBUG("{}" , "." );
     }
 
 
@@ -85,20 +77,9 @@ bool RestAPI::saveList()
 {
     QFile file("exchangeinfo.dat");
 
-    LOG_DEBUG("{}" , "." );
-
-    // if( file.exists() ){
-    //     LOG_DEBUG("{}" , file.remove() );
-    // }
-
-
-    if( file.open( QIODevice::ReadWrite /*, QIODevice::OpenModeFlag::Truncate*/ ) ){
+    if( file.open( QIODevice::ReadWrite , QIODevice::OpenModeFlag::Truncate ) ){
         QDataStream in(&file);
         in << mSymbolList.size();
-
-        LOG_DEBUG("mSymbolList.size : {}" , mSymbolList.size() );
-
-
         for( const auto &item : mSymbolList ){
             in << item;
         }
@@ -115,25 +96,16 @@ bool RestAPI::saveList()
 
 bool RestAPI::loadList()
 {
-    LOG_DEBUG("{}" , "." );
     if( ! QFile::exists("exchangeinfo.dat") ) {
-        LOG_DEBUG("{}" , "." );
-
         return false;
     }
     QFile file("exchangeinfo.dat");
-
-    if( ! file.exists( ) ) {
-
-        return false;
-    }
 
     if( file.open(QIODevice::ReadOnly ) ){
         QDataStream in(&file);
         int size;
         in >> size;
 
-        LOG_DEBUG("saved Size: {}" , size );
         for( int i = 0 ; i < size ; i++ ){
             Symbol symbol;
             in >> symbol;
