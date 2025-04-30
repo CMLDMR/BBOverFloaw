@@ -27,25 +27,25 @@ namespace TgBot {
 class Bot;
 }
 
-// class TelegramManager : public QObject
-// {
-//     Q_OBJECT
-// public:
-//     static TelegramManager* instance();
+class TelegramManager : public QObject
+{
+    Q_OBJECT
+public:
+    static TelegramManager* instance();
 
 
-// public Q_SLOTS:
-//     void sendMessage( const std::string &from , const std::string &message );
+public Q_SLOTS:
+    void sendMessage( const std::string &from , const std::string &message );
 
-// Q_SIGNALS:
+Q_SIGNALS:
 
-// private:
-//     static TelegramManager* m_instance;
-//     explicit TelegramManager(QObject *parent = nullptr);
+private:
+    static TelegramManager* m_instance;
+    explicit TelegramManager(QObject *parent = nullptr);
 
-//     TgBot::Bot*  m_telegramBot;
-//     const std::int64_t chatId { -4649625421 };
-//     const std::string token{ "8133638457:AAGGzBbJ6FDdvF5JwgDFJg154e0eKpgSKTE" };
-// };
+    TgBot::Bot*  m_telegramBot;
+    const std::int64_t chatId { -4649625421 };
+    const std::string token{ "8133638457:AAGGzBbJ6FDdvF5JwgDFJg154e0eKpgSKTE" };
+};
 
 #endif // TELEGRAMMANAGER_H

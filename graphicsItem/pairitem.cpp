@@ -531,6 +531,7 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         auto SortMenuRSI = menu.addMenu("RSI");
 
         auto autoSortMenuRSIAscending = SortMenuRSI->addMenu("RSI +");
+        autoSortMenuRSIAscending->addAction("Total %",[=, this](){ emit sort("rsitotalA%"); });
         autoSortMenuRSIAscending->addAction("1M %",[=, this](){ emit sort("1rsi20A%"); });
         autoSortMenuRSIAscending->addAction("5M %",[=, this](){ emit sort("5rsi20A%"); });
         autoSortMenuRSIAscending->addAction("15M %",[=, this](){ emit sort("15rsi20A%"); });
@@ -541,6 +542,8 @@ void Graphic::PairItem::mousePressEvent(QGraphicsSceneMouseEvent *event)
         autoSortMenuRSIAscending->addAction("1W %",[=, this](){ emit sort("1wrsi20A%"); });
 
         auto autoSortMenuRSIDescending = SortMenuRSI->addMenu("RSI -");
+        autoSortMenuRSIDescending->addAction("Total %",[=, this](){ emit sort("rsitotalD%"); });
+
         autoSortMenuRSIDescending->addAction("1M %",[=, this](){ emit sort("1rsi20D%"); });
         autoSortMenuRSIDescending->addAction("5M %",[=, this](){ emit sort("5rsi20D%"); });
         autoSortMenuRSIDescending->addAction("15M %",[=, this](){ emit sort("15rsi20D%"); });

@@ -144,6 +144,8 @@ public:
     double getM1DayRSI() const;
     double getM1WeekRSI() const;
 
+    double getMaboveTotalHourRSI() const;
+
 signals:
     void dataUpdated(const bool&);
 
@@ -238,9 +240,13 @@ private:
     double m1WinunteEMA20Percent{0};
 
     double m1MinunteRSI{0};
+    double m3MinunteRSI{0};
     double m5MinunteRSI{0};
     double m15MinunteRSI{0};
+    double m30MinunteRSI{0};
     double m1HourRSI{0};
+    double maboveTotalHourRSI{0};
+
     double m4HourRSI{0};
     double m12HourRSI{0};
     double m1DayRSI{0};

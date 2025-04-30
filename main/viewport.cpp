@@ -72,12 +72,10 @@ ViewPort::ViewPort( QWidget *parent )
     m_autoSortTimer->start();
 
 
-    addItem("BTCUSDT");
+    // addItem("BTCUSDT");
     // addItem("ETHUSDT");
     // addItem("SOLUSDT");
     // addItem("XRPUSDT");
-    // addItem("1000RATSUSDT");
-    // addItem("STMXUSDT");
 
     // addItem("BCHUSDT");
     // addItem("LTCUSDT");
@@ -367,6 +365,13 @@ void ViewPort::sortPairs(const QString &interval)
         }
 
         /// RSI ascending
+        ///
+        else if( interval == "rsitotalA%"){
+            return a->series()->getMaboveTotalHourRSI() < b->series()->getMaboveTotalHourRSI();
+        }
+        else if( interval == "rsitotalD%"){
+            return a->series()->getMaboveTotalHourRSI() > b->series()->getMaboveTotalHourRSI();
+        }
         else if( interval == "1rsi20A%"){
             return a->series()->getM1MinunteRSI() < b->series()->getM1MinunteRSI();
         }

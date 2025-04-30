@@ -16,6 +16,7 @@
 #include "global/alarmwidget.h"
 #include "binance/kline.h"
 #include "series/seri.h"
+#include "Logger.h"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -25,8 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     this->setWindowTitle("BBOverFloaw");
 
-    std::cout << __FILE__ << " " <<__LINE__ << "\n";
-
+    LOG_DEBUG("{}" , "." );
     Binance::Public::RestAPI::RestAPI::instance();
 
 //    qDebug() << "Size:: "<<Binance::Public::RestAPI::RestAPI::instance()->symbolList().size();
@@ -35,11 +35,12 @@ MainWindow::MainWindow(QWidget *parent)
 //    qDebug() << symbol << "";
 //    auto list = Binance::Public::RestAPI::RestAPI::instance()->getCandles("BTCUSDT","1d",50);
 //    qDebug() << "Thread Worked" << list.size();
+    LOG_DEBUG("{}" , "." );
 
 
     ///////////////////////////
     mExchangeInfo = new ExchangeInfo::ExchangeInfo();
-
+    LOG_DEBUG("{}" , "." );
     ui->exchangeVLayout->addWidget(mExchangeInfo);
 
     mViewPort = new Main::ViewPort();
@@ -89,6 +90,7 @@ MainWindow::MainWindow(QWidget *parent)
         }
 
     });
+    std::cout << __FILE__ << " " <<__LINE__ << "\n";
 
     QObject::connect(ui->actionSound_Test,&QAction::triggered,[=](){
 

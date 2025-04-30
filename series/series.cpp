@@ -20,7 +20,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage( 750 , 143 , QImage::Format_RGB888);
+    mImage = new QImage( 650 , 55 , QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -453,13 +453,16 @@ void Series::SocketWorker()
     //     return;
     // }
 
+    const int loadingY = 0;
+    const int loadingHeight = 5;
+
 
     mPainter = new QPainter();
     mPainter->begin(mImage);
     auto tempFont = mPainter->font();
     mPainter->setFont(QFont("Tahoma",16));
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
-    mPainter->drawText(20,40,this->pair()+" Loading...");
+    mPainter->drawText(20,30,this->pair()+" Loading...");
 
     // qDebug() << __LINE__<< __FILE__;
     // bu 15 saniye mumbar tamamlanmadı
@@ -474,7 +477,7 @@ void Series::SocketWorker()
 
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
     // qDebug() << __LINE__ << __FILE__;
-    mPainter->fillRect(0,60,mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,mImage->width()/7,loadingHeight,Qt::darkGreen);
     // qDebug() << __LINE__<< __FILE__;
     emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"3m"));
@@ -483,11 +486,11 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"5m"));
     mClose = mSeriList.last()->close();
     mOpen = mSeriList.last()->open();
-    mPainter->fillRect(0,60,2*mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,2*mImage->width()/7,loadingHeight,Qt::darkGreen);
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
     mSeriList.append(new Seri(mPair,"15m"));
-    mPainter->fillRect(0,60,3*mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,3*mImage->width()/7,loadingHeight,Qt::darkGreen);
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
        mSeriList.append(new Seri(mPair,"30m"));
@@ -496,7 +499,7 @@ void Series::SocketWorker()
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
     // qDebug() << __LINE__<< __FILE__;
-    mPainter->fillRect(0,60,4*mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,4*mImage->width()/7,loadingHeight,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"2h"));
     // mSeriList.append(new Seri(mPair,"3h"));
 
@@ -508,17 +511,17 @@ void Series::SocketWorker()
         mSeriList.append(new Seri(mPair,"12h"));
     emit dataUpdated(false);
 
-    mPainter->fillRect(0,60,5*mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,5*mImage->width()/7,loadingHeight,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
     //    emit dataUpdated(false);
-    mPainter->fillRect(0,60,6*mImage->width()/7,20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,6*mImage->width()/7,loadingHeight,Qt::darkGreen);
 
     mSeriList.append(new Seri(mPair,"3d"));
 
 
     mSeriList.append(new Seri(mPair,"1w"));
 
-    mPainter->fillRect(0,60,mImage->width(),20,Qt::darkGreen);
+    mPainter->fillRect(0,loadingY,mImage->width(),loadingHeight,Qt::darkGreen);
 
     mPainter->setFont(tempFont);
     mPainter->end();
@@ -644,7 +647,7 @@ void Series::prePareImage(QPainter *painter)
 
     }
 
-    const int cellWidth{45};
+    const int cellWidth{38};
 
     ///TODO: Önceden Hesaplanıp Sadece Positif Değer yazılacak
     //    this->calcAllBollingerValues();
@@ -677,191 +680,200 @@ void Series::prePareImage(QPainter *painter)
                 }
             }
 
+            const auto smaValue = Indicator::RSI::value( *seri , 14 );
+            const auto percent = smaValue ;
+
+            QColor color;
+            const auto hue = ( percent - 10 )/100*120;
+            color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
+
 
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
-            painter->setPen(QPen(Qt::white));
-            painter->fillRect(xPos-1,0,cellWidth,rect.height()*2+2,seri->percentLastBar() > 0 ? Qt::darkGreen : ( seri->percentLastBar() == 0 ? Qt::darkGray : Qt::darkRed));
+            painter->setPen(QPen(Qt::black));
+
+            painter->fillRect(xPos-1,0,cellWidth,rect.height()*2+2 , color );
+
             painter->drawText(xPos, rect.height() ,seri->interval());
-            painter->drawText(xPos, rect.height()+15 ,"%"+Global::getFixedPrecision(seri->percentLastBar()));
+            painter->drawText(xPos, rect.height()+15 ,"%"+Global::getFixedPrecision(seri->percentLastBar(),1));
 
             painter->setPen(pen);
 
             int yPos = rect.height()+18;
 
-            { // Bollinger Percent 2.38
-                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+            // { // Bollinger Percent 2.38
+            //     painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
 
-                auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
+            //     auto [upper,down] = Indicator::Bollinger::bollingerPercent(*seri,m_length,2.0);
 
-                const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
-                const QString alarmLowString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
+            //     const QString alarmHighString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Higher");
+            //     const QString alarmLowString = QString("%1 %2 close:%3 %4").arg( seri->pair() ).arg(seri->interval() ).arg( seri->close() ).arg("Lower");
 
-                if( seri->interval() == "1m" ){
-                    m1MinuntePercent = seri->percentLastBar();
-                    m1MinunteUpperPercent = upper;
-                    m1MDownPercent = down;
-                    if( upper > 0 && m_enableBBD1minuteAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD1minuteAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
-                }
+            //     if( seri->interval() == "1m" ){
+            //         m1MinuntePercent = seri->percentLastBar();
+            //         m1MinunteUpperPercent = upper;
+            //         m1MDownPercent = down;
+            //         if( upper > 0 && m_enableBBD1minuteAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD1minuteAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
+            //     }
 
-                if( seri->interval() == "5m" ){
-                    m5MinuntePercent = seri->percentLastBar();
-                    m5MinunteUpperPercent = upper;
-                    m5MDownPercent = down;
-                    if( upper > 0 && m_enableBBD5minuteAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD5minuteAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
-                }
+            //     if( seri->interval() == "5m" ){
+            //         m5MinuntePercent = seri->percentLastBar();
+            //         m5MinunteUpperPercent = upper;
+            //         m5MDownPercent = down;
+            //         if( upper > 0 && m_enableBBD5minuteAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD5minuteAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
+            //     }
 
-                if( seri->interval() == "15m" ){
-                    m15MinuntePercent = seri->percentLastBar();
-                    m15MinunteUpperPercent = upper;
-                    m15MDownPercent = down;
-                    if( upper > 0 && m_enableBBD15minuteAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD15minuteAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
+            //     if( seri->interval() == "15m" ){
+            //         m15MinuntePercent = seri->percentLastBar();
+            //         m15MinunteUpperPercent = upper;
+            //         m15MDownPercent = down;
+            //         if( upper > 0 && m_enableBBD15minuteAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD15minuteAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
 
-                    // bool  { true };
+            //         // bool  { true };
 
-                }
+            //     }
 
-                if( seri->interval() == "1h" ){
-                    m1HinuntePercent = seri->percentLastBar();
-                    m1HinunteUpperPercent = upper;
-                    m1HDownPercent = down;
-                    if( upper > 0 && m_enableBBD1hourAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD1hourAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
-                }
+            //     if( seri->interval() == "1h" ){
+            //         m1HinuntePercent = seri->percentLastBar();
+            //         m1HinunteUpperPercent = upper;
+            //         m1HDownPercent = down;
+            //         if( upper > 0 && m_enableBBD1hourAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD1hourAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
+            //     }
 
-                if( seri->interval() == "4h" ){
-                    m4HinuntePercent = seri->percentLastBar();
-                    m4HinunteUpperPercent = upper;
-                    m4HDownPercent = down;
+            //     if( seri->interval() == "4h" ){
+            //         m4HinuntePercent = seri->percentLastBar();
+            //         m4HinunteUpperPercent = upper;
+            //         m4HDownPercent = down;
 
-                    if( m_enableBBD4hourAlarm ) {
-                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                        painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    }
+            //         if( m_enableBBD4hourAlarm ) {
+            //             painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //             painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         }
 
-                    if( upper > 0 && m_enableBBD4hourAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD4hourAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
-                }
+            //         if( upper > 0 && m_enableBBD4hourAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD4hourAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
+            //     }
 
-                if( seri->interval() == "12h" ){
-                    m12HinuntePercent = seri->percentLastBar();
-                    m12HinunteUpperPercent = upper;
-                    m12HDownPercent = down;
-                }
-
-
-                if( seri->interval() == "1d" ){
-                    m1DinuntePercent = seri->percentLastBar();
-                    m1DinunteUpperPercent = upper;
-                    m1DDownPercent = down;
-
-                    if( upper > 0 && m_enableBBD1dayAlarm ) {
-                        emit alarmed( alarmHighString );
-                    }
-                    if( down > 0 && m_enableBBD1dayAlarm ) {
-                        emit alarmed( alarmLowString );
-                    }
-                }
-
-                mAllDownSumPercent += down;
-                mAllUpperSumPercent += upper;
+            //     if( seri->interval() == "12h" ){
+            //         m12HinuntePercent = seri->percentLastBar();
+            //         m12HinunteUpperPercent = upper;
+            //         m12HDownPercent = down;
+            //     }
 
 
+            //     if( seri->interval() == "1d" ){
+            //         m1DinuntePercent = seri->percentLastBar();
+            //         m1DinunteUpperPercent = upper;
+            //         m1DDownPercent = down;
 
-                if( upper > 0 ){
-                    if( upper < 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 150 , 255 ,150 ));
+            //         if( upper > 0 && m_enableBBD1dayAlarm ) {
+            //             emit alarmed( alarmHighString );
+            //         }
+            //         if( down > 0 && m_enableBBD1dayAlarm ) {
+            //             emit alarmed( alarmLowString );
+            //         }
+            //     }
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
-                    }
-                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
-
-                    mAlarmActivated = true;
-                    mUpperGreenCount++;
-                    mAllUpperPercent += upper;
-
-                }
-                if( down > 0 ){
-
-                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
-
-                    if( down < 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 150 , 255 , 150 ));
-
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
-                    }
-                    mAlarmActivated = true;
-                    mDownGreenCount++;
-                    mAllDownPercent += down;
-
-                }
-
-                if( seri->interval() == "1m" && m_enableBBD1minuteAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
-
-                if( seri->interval() == "5m" && m_enableBBD5minuteAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
-
-                if( seri->interval() == "15m" && m_enableBBD15minuteAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
-
-                if( seri->interval() == "1h" && m_enableBBD1hourAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
-
-                if( seri->interval() == "4h" && m_enableBBD4hourAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
-
-                if( seri->interval() == "1d" && m_enableBBD1dayAlarm ) {
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
-                    painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
-                }
+            //     mAllDownSumPercent += down;
+            //     mAllUpperSumPercent += upper;
 
 
-                yPos += 15;
-                painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
-                painter->drawText(5, yPos ,QString("BBU %1/2.0  %").arg(m_length));
 
-                yPos += 15;
-                painter->drawText(5, yPos ,QString("BBD %1/2.0 %").arg(m_length));
-                painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
+            //     if( upper > 0 ){
+            //         if( upper < 1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 150 , 255 ,150 ));
 
-            }
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+            //         }
+            //         // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+
+            //         mAlarmActivated = true;
+            //         mUpperGreenCount++;
+            //         mAllUpperPercent += upper;
+
+            //     }
+            //     if( down > 0 ){
+
+            //         // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+
+            //         if( down < 1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 150 , 255 , 150 ));
+
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
+            //         }
+            //         mAlarmActivated = true;
+            //         mDownGreenCount++;
+            //         mAllDownPercent += down;
+
+            //     }
+
+            //     if( seri->interval() == "1m" && m_enableBBD1minuteAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+            //     if( seri->interval() == "5m" && m_enableBBD5minuteAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+            //     if( seri->interval() == "15m" && m_enableBBD15minuteAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+            //     if( seri->interval() == "1h" && m_enableBBD1hourAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+            //     if( seri->interval() == "4h" && m_enableBBD4hourAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+            //     if( seri->interval() == "1d" && m_enableBBD1dayAlarm ) {
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //         painter->drawImage( QRectF(xPos-1+33,yPos+4+2+15,cellWidth-35,rect.height()-5) , m_alarmImage );
+            //     }
+
+
+            //     yPos += 15;
+            //     painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
+            //     painter->drawText(5, yPos ,QString("BBU %1/2.0  %").arg(m_length));
+
+            //     yPos += 15;
+            //     painter->drawText(5, yPos ,QString("BBD %1/2.0 %").arg(m_length));
+            //     painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
+
+            // }
 
             // {// SMA 200
 
@@ -968,98 +980,104 @@ void Series::prePareImage(QPainter *painter)
             // }
 
 
-            {// EMA 20
+            // {// EMA 20
 
-                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+            //     painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
-                painter->drawText(5, yPos+15 ,"EMA 20 %");
+            //     painter->drawText(5, yPos+15 ,"EMA 20 %");
 
-                // calculate SMA
-                const auto smaValue = Indicator::Ema::value( *seri , 20 );
-                const auto percent =( seri->close() - smaValue )/smaValue*100 ;
-                if ( percent > 0 ) {
-                    if( percent > 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
+            //     // calculate SMA
+            //     const auto smaValue = Indicator::Ema::value( *seri , 20 );
+            //     const auto percent =( seri->close() - smaValue )/smaValue*100 ;
+            //     if ( percent > 0 ) {
+            //         if( percent > 1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
-                    }
-                }
-                else if( percent < 0 ) {
-                    if( percent < -1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 200 , 255 ,200 ));
+            //         }
+            //     }
+            //     else if( percent < 0 ) {
+            //         if( percent < -1 ) {
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
-                    }
-                }
+            //         }else{
+            //             painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 200 ,200 ));
+            //         }
+            //     }
 
-                if( seri->interval() == "1m" ){
-                    m1MinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "1m" ){
+            //         m1MinunteEMA20Percent = percent;
+            //     }
 
-                if( seri->interval() == "5m" ){
-                    m5MinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "5m" ){
+            //         m5MinunteEMA20Percent = percent;
+            //     }
 
-                if( seri->interval() == "15m" ){
-                    m15MinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "15m" ){
+            //         m15MinunteEMA20Percent = percent;
+            //     }
 
-                if( seri->interval() == "1h" ){
-                    m1HinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "1h" ){
+            //         m1HinunteEMA20Percent = percent;
+            //     }
 
-                if( seri->interval() == "4h" ){
-                    m4HinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "4h" ){
+            //         m4HinunteEMA20Percent = percent;
+            //     }
 
-                if( seri->interval() == "12h" ){
-                    m12HinunteEMA20Percent = percent;
-                }
-
-
-                if( seri->interval() == "1d" ){
-                    m1DinunteEMA20Percent = percent;
-                }
-
-                if( seri->interval() == "1w" ){
-                    m1WinunteEMA20Percent = percent;
-                }
+            //     if( seri->interval() == "12h" ){
+            //         m12HinunteEMA20Percent = percent;
+            //     }
 
 
-                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
-                yPos += 15;
-            }
+            //     if( seri->interval() == "1d" ){
+            //         m1DinunteEMA20Percent = percent;
+            //     }
+
+            //     if( seri->interval() == "1w" ){
+            //         m1WinunteEMA20Percent = percent;
+            //     }
+
+
+            //     painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
+            //     yPos += 15;
+            // }
 
 
             {// RSI 14
 
                 // painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
-                painter->drawText(5, yPos+15 ,"RSI 14 %");
 
                 // calculate SMA
                 const auto smaValue = Indicator::RSI::value( *seri , 14 );
                 const auto percent = smaValue ;
 
-                if ( percent > 70 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
-                }
-                else if( percent < 30 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
-                }
+                QColor color;
+                const auto hue = ( percent - 10 )/100*120;
+                color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
+                painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()) , color );
 
                 if( seri->interval() == "1m" ){
                     m1MinunteRSI = percent;
+                }
+
+                if( seri->interval() == "3m" ){
+                    m3MinunteRSI = percent;
                 }
 
                 if( seri->interval() == "5m" ){
                     m5MinunteRSI = percent;
                 }
 
+
                 if( seri->interval() == "15m" ){
                     m15MinunteRSI = percent;
+                }
+
+                if( seri->interval() == "30m" ){
+                    m30MinunteRSI = percent;
                 }
 
                 if( seri->interval() == "1h" ){
@@ -1083,13 +1101,27 @@ void Series::prePareImage(QPainter *painter)
                     m1WeekRSI = percent;
                 }
 
+                const auto totalRSI = m1MinunteRSI + m3MinunteRSI*3 + m5MinunteRSI*5 + m15MinunteRSI*15 + m30MinunteRSI*30 + m1HourRSI * 60;
+                if( totalRSI != maboveTotalHourRSI ) {
+                    maboveTotalHourRSI = totalRSI;
+                }
+
+
+                if( seri->interval() == "1m" ){
+                    const auto hue = ( maboveTotalHourRSI/114 - 10 )/100*120;
+                    color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
+                    painter->fillRect(QRectF(0,yPos+4, maboveTotalHourRSI/114 ,rect.height()) , color );
+
+                    painter->drawText(5, yPos+15 ,QString("RSI 14 %1").arg(Global::getFixedPrecision( maboveTotalHourRSI/114 )));
+
+                }
 
                 painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
                 yPos += 15;
             }
 
 
-            { // RSI Bollinger Band 2.38
+            if(0){ // RSI Bollinger Band 2.38
                 painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
                 std::vector<double> openList;
@@ -1138,6 +1170,7 @@ void Series::prePareImage(QPainter *painter)
                         emit alarmed( alarmLowString );
                     }
 
+
                     // TelegramManager::instance()->sendMessage("Bot", std::format("1 min {} {} {}",upper ,rsiCloseList.back() , down ).data() );
 
                 }
@@ -1164,12 +1197,6 @@ void Series::prePareImage(QPainter *painter)
                     if( down > 0 && m_enableBBD15minuteAlarm ) {
                         emit alarmed( alarmLowString );
                     }
-
-                    // TelegramManager::instance()->sendMessage("Bot", std::format("{} {} {}",upper ,rsiCloseList.back() , down ).data() );
-
-
-                    // bool  { true };
-
                 }
 
                 if( seri->interval() == "1h" ){
@@ -1225,37 +1252,18 @@ void Series::prePareImage(QPainter *painter)
                 mAllDownSumPercent += down;
                 mAllUpperSumPercent += upper;
 
+                QColor color;
+
+                // color.setHsv( percent/100*120 , 255 , 255 );
 
 
-                if( upper > 0 ){
-                    if( upper < 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 150 , 255 ,150 ));
+                color.setHsv( (rsiCloseList.back() - down) / ( upper - down ) * 120 , 255 , 255 );
+                painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),color);
 
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
-                    }
-                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
+                color.setHsv( 120 - down/100*120 , 255 , 255 );
 
-                    mAlarmActivated = true;
-                    mUpperGreenCount++;
-                    mAllUpperPercent += upper;
+                painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),color);
 
-                }
-                if( down > 0 ){
-
-                    // painter->fillRect(QRectF(xPos+1,yPos+2,cellWidth,rect.height()),Qt::green);
-
-                    if( down < 1 ) {
-                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 150 , 255 , 150 ));
-
-                    }else{
-                        painter->fillRect(QRectF(xPos-1,yPos+4+15,cellWidth,rect.height()),QColor( 0 , 255 , 0 ));
-                    }
-                    mAlarmActivated = true;
-                    mDownGreenCount++;
-                    mAllDownPercent += down;
-
-                }
 
                 if( seri->interval() == "1m" && m_enableBBD1minuteAlarm ) {
                     painter->drawImage( QRectF(xPos-1+33,yPos+4+2,cellWidth-35,rect.height()-5) , m_alarmImage );
@@ -1289,18 +1297,18 @@ void Series::prePareImage(QPainter *painter)
 
 
                 yPos += 15;
-                painter->drawText(xPos, yPos ,Global::getFixedPrecision(upper));
+                painter->drawText(xPos, yPos ,Global::getFixedPrecision( upper ));
                 painter->drawText(5, yPos ,QString("RSI UB 60/2.0"));
 
                 yPos += 15;
                 painter->drawText(5, yPos ,QString("RSI DB 60/2.0 "));
-                painter->drawText(xPos, yPos ,Global::getFixedPrecision(down));
+                painter->drawText(xPos, yPos ,Global::getFixedPrecision( down ));
 
             }
 
 
 
-            {// ADX 14
+            if(0){// ADX 14
 
                 // painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
 
@@ -1309,12 +1317,18 @@ void Series::prePareImage(QPainter *painter)
                 // calculate SMA
                 const auto adxValue = Indicator::ADX::value( *seri , 14 );
 
-                if ( adxValue > 50 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 0 , 255 ,0 ));
-                }
-                else if( adxValue < 10 ) {
-                    painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),QColor( 255 , 0 ,0 ));
-                }
+
+                QColor color;
+                color.setHsv( adxValue / 100 * 120 , 255 , 255 );
+                painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),color);
+
+
+                // if ( adxValue > 50 ) {
+                //     painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),color);
+                // }
+                // else if( adxValue < 10 ) {
+                //     painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()),color);
+                // }
 
                 // if( seri->interval() == "1m" ){
                 //     m1MinunteRSI = adxValue;
@@ -1374,6 +1388,11 @@ void Series::prePareImage(QPainter *painter)
 
     painter->end();
 
+}
+
+double Series::getMaboveTotalHourRSI() const
+{
+    return maboveTotalHourRSI;
 }
 
 

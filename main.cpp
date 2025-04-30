@@ -4,18 +4,20 @@
 #include <iostream>
 #include "TelegramManager.h"
 
+#include "Logger.h"
+
 int main(int argc, char *argv[])
 {
-    std::cout << __FILE__ << " " <<__LINE__ << "\n";
 
     QApplication a(argc, argv);
 
-    std::cout << __FILE__ << " " <<__LINE__ << "\n";
+    setupLogger( a.applicationName().toStdString() , quill::LogLevel::TraceL3 );
+
+    LOG_DEBUG("{}" , "." );
 
     // TelegramManager::instance();
 
     MainWindow w;
-    std::cout << "MainWindow \n";
     w.show();
     return a.exec();
 }

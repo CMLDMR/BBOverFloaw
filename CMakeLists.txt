@@ -15,6 +15,11 @@ find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets Network WebSocket
 find_program(CCACHE_PROGRAM ccache)
 
 
+set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/quill/win/lib/cmake" ${CMAKE_PREFIX_PATH})
+
+find_package( quill REQUIRED )
+
+
 if(CCACHE_PROGRAM)
     message(STATUS "ccache is available: ${CCACHE_PROGRAM}")
     set(CMAKE_C_COMPILER_LAUNCHER ${CCACHE_PROGRAM})
@@ -23,28 +28,56 @@ else()
     message(WARNING "ccache is not installed or not found in PATH.")
 endif()
 
-file(GLOB_RECURSE HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
-file(GLOB_RECURSE SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
-file(GLOB_RECURSE UIS ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
+file(GLOB_RECURSE HEADERS   ${CMAKE_CURRENT_SOURCE_DIR}/*.h)
+file(GLOB_RECURSE SOURCES   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp)
+file(GLOB_RECURSE UIS       ${CMAKE_CURRENT_SOURCE_DIR}/*.ui)
+
+# exclude_dir içindeki dosyaları hariç tut
+foreach(file ${HEADERS})
+  # message(INFO "file: ${file}")
+
+  string(FIND "${file}" "/build/" pos)
+  if (NOT ${pos} EQUAL -1)
+    list(REMOVE_ITEM HEADERS "${file}")
+  endif()
+endforeach()
+
+foreach(file ${SOURCES})
+  string(FIND "${file}" "/build/" pos)
+  if (NOT ${pos} EQUAL -1)
+    list(REMOVE_ITEM HEADERS "${file}")
+  endif()
+endforeach()
+
+foreach(file ${UIS})
+  string(FIND "${file}" "/build/" pos)
+  if (NOT ${pos} EQUAL -1)
+    list(REMOVE_ITEM HEADERS "${file}")
+  endif()
+endforeach()
 
 # set(CMAKE_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Telegram/lib/cmake/TgBot" ${CMAKE_PREFIX_PATH})
 
-# find_package(TgBot)
+# find_package(TgBot REQUIRED)
+
+# find_package(CURL REQUIRED)
+# find_package(Boost REQUIRED COMPONENTS system)
+find_package(OpenSSL REQUIRED)
 
 
-# include(FetchContent)
-# FetchContent_Declare(TgBot
-#     SYSTEM
-#     GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp
-#     # GIT_TAG a609330e4c6374f741d3b369269f7848255e1954 # v0.14.1
-#     GIT_TAG 1b10d2fb99252027ae65fe782308a27a01adbc19 # v1.9
-#     GIT_SHALLOW TRUE
-#     # SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/tgbot-cpp-1.9
-# )
-# FetchContent_MakeAvailable(TgBot)
+include(FetchContent)
+FetchContent_Declare(TgBot
+    SYSTEM
+    GIT_REPOSITORY https://github.com/reo7sp/tgbot-cpp
+    # GIT_TAG a609330e4c6374f741d3b369269f7848255e1954 # v0.14.1
+    GIT_TAG 1b10d2fb99252027ae65fe782308a27a01adbc19 # v1.9
+    GIT_SHALLOW TRUE
+    # SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/tgbot-cpp-1.9
+)
+FetchContent_MakeAvailable(TgBot)
 
 
-include_directories("${CMAKE_SOURCE_DIR}")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}")
 
 set(app_icon_resource_windows "${CMAKE_CURRENT_SOURCE_DIR}/icon/appico.rc")
 
@@ -80,14 +113,25 @@ else()
     endif()
 endif()
 
-target_link_libraries(BBOverFloaw PRIVATE Qt${QT_VERSION_MAJOR}::Widgets
+target_link_libraries(BBOverFloaw PUBLIC Qt${QT_VERSION_MAJOR}::Widgets
     Qt${QT_VERSION_MAJOR}::Network
     Qt${QT_VERSION_MAJOR}::WebSockets
     Qt${QT_VERSION_MAJOR}::Gui
     Qt${QT_VERSION_MAJOR}::Multimedia
     Qt${QT_VERSION_MAJOR}::Test
-# TgBot
+    OpenSSL::SSL OpenSSL::Crypto
+    TgBot
 )
+
+target_link_libraries(BBOverFloaw PUBLIC  quill::quill )
+target_include_directories(BBOverFloaw PUBLIC ${CMAKE_SOURCE_DIR}/quill/win/include)
+
+# target_include_directories(BBOverFloaw PRIVATE ${CURL_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
+# target_link_libraries(BBOverFloaw PRIVATE ${CURL_LIBRARIES} ${Boost_LIBRARIES})
+
+# target_link_libraries(BBOverFloaw PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/Telegram/lib/libTgBot.a)
+
+# target_include_directories(BBOverFloaw PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/Telegram/include )
 
 set_target_properties(BBOverFloaw PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
