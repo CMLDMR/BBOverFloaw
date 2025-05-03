@@ -15,7 +15,7 @@ int main(int argc, char *argv[])
 
     LOG_DEBUG("{}" , "." );
 
-    // TelegramManager::instance();
+    TelegramManager::instance();
 
     MainWindow w;
     w.show();

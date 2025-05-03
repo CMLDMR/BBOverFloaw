@@ -20,7 +20,7 @@ Series::Series(const QString &_mPair, QObject *parent)
     : QObject{parent},mPair(_mPair)
 {
 
-    mImage = new QImage( 650 , 55 , QImage::Format_RGB888);
+    mImage = new QImage( 665 , 51 , QImage::Format_RGB888);
     mImage->fill(Qt::white);
 
     mThread = new QThread();
@@ -440,19 +440,6 @@ double Series::getM1WeekRSI() const
 
 void Series::SocketWorker()
 {
-    //    qDebug() << "Start Series";
-
-    // if( ! mSeriList.size() ) {
-    //     qDebug() << __LINE__ << __FILE__ << "mSeriList Empty";
-    //     return;
-    // }
-
-
-    // if( ! mSeriList.last()->kLineContainer().size() ) {
-    //     qDebug() << __LINE__ << __FILE__ << "KLineCOntainer Empty";
-    //     return;
-    // }
-
     const int loadingY = 0;
     const int loadingHeight = 5;
 
@@ -460,60 +447,46 @@ void Series::SocketWorker()
     mPainter = new QPainter();
     mPainter->begin(mImage);
     auto tempFont = mPainter->font();
-    mPainter->setFont(QFont("Tahoma",16));
+    mPainter->setFont(QFont("Tahoma",12));
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->drawText(20,30,this->pair()+" Loading...");
 
-    // qDebug() << __LINE__<< __FILE__;
-    // bu 15 saniye mumbar tamamlanmadı
-    // mSeriList.append(new Seri(mPair,"15ms"));
-
-
     mSeriList.append(new Seri(mPair,"1m")); qDebug() << __LINE__<< __FILE__;
     if( ! mSeriList.last()->kLineContainer().size() ) {
-        qDebug() << __LINE__ << __FILE__ << "KLineCOntainer Empty";
         return;
     }
 
     mClose = mSeriList.last()->kLineContainer().last().closePrice();
-    // qDebug() << __LINE__ << __FILE__;
     mPainter->fillRect(0,loadingY,mImage->width()/7,loadingHeight,Qt::darkGreen);
-    // qDebug() << __LINE__<< __FILE__;
     emit dataUpdated(false);
     mSeriList.append(new Seri(mPair,"3m"));
-    // qDebug() << __LINE__<< __FILE__;
 
     mSeriList.append(new Seri(mPair,"5m"));
     mClose = mSeriList.last()->close();
     mOpen = mSeriList.last()->open();
     mPainter->fillRect(0,loadingY,2*mImage->width()/7,loadingHeight,Qt::darkGreen);
     emit dataUpdated(false);
-    // qDebug() << __LINE__<< __FILE__;
     mSeriList.append(new Seri(mPair,"15m"));
     mPainter->fillRect(0,loadingY,3*mImage->width()/7,loadingHeight,Qt::darkGreen);
     emit dataUpdated(false);
-    // qDebug() << __LINE__<< __FILE__;
-       mSeriList.append(new Seri(mPair,"30m"));
-       emit dataUpdated(false);
+    mSeriList.append(new Seri(mPair,"30m"));
+    emit dataUpdated(false);
 
     mSeriList.append(new Seri(mPair,"1h"));
     emit dataUpdated(false);
-    // qDebug() << __LINE__<< __FILE__;
     mPainter->fillRect(0,loadingY,4*mImage->width()/7,loadingHeight,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"2h"));
-    // mSeriList.append(new Seri(mPair,"3h"));
 
     mSeriList.append(new Seri(mPair,"4h"));
     emit dataUpdated(false);
-    // qDebug() << __LINE__<< __FILE__;
+
     mSeriList.append(new Seri(mPair,"6h"));
-        mSeriList.append(new Seri(mPair,"8h"));
-        mSeriList.append(new Seri(mPair,"12h"));
+    mSeriList.append(new Seri(mPair,"8h"));
+    mSeriList.append(new Seri(mPair,"12h"));
     emit dataUpdated(false);
 
     mPainter->fillRect(0,loadingY,5*mImage->width()/7,loadingHeight,Qt::darkGreen);
     mSeriList.append(new Seri(mPair,"1d"));
-    //    emit dataUpdated(false);
     mPainter->fillRect(0,loadingY,6*mImage->width()/7,loadingHeight,Qt::darkGreen);
 
     mSeriList.append(new Seri(mPair,"3d"));
@@ -617,7 +590,9 @@ void Series::prePareImage(QPainter *painter)
     mImage->fill(Qt::white);
     painter->begin(mImage);
 
-    painter->setFont(QFont("Tahoma",10,2));
+    painter->setFont(QFont("Tahoma",10));
+
+    int tempXOffsett = 0;
 
 
     {// Pair name
@@ -626,21 +601,26 @@ void Series::prePareImage(QPainter *painter)
 
         auto fontMetric = painter->fontMetrics();
         auto rect = fontMetric.boundingRect(this->pair().mid(0,this->pair().size()-4));
-        painter->fillRect(2,0,rect.width()+6,rect.height()+2,Qt::gray);
-        painter->drawText(5,13 ,this->pair().mid(0,this->pair().size()-4));
+        painter->fillRect( tempXOffsett , 0 , rect.width()+6 , rect.height() , Qt::gray );
+        painter->drawText( tempXOffsett + 2 , 15 ,this->pair().mid(0,this->pair().size()-4) );
+        tempXOffsett += tempXOffsett + rect.width();
         painter->restore();
     }
 
     {// Last Price
         painter->save();
-
         auto fontMetric = painter->fontMetrics();
+        auto font = painter->font();
+        font.setPointSize( 9 );
+        painter->setFont( font );
+
         auto rect = fontMetric.boundingRect(QString::number(this->close()));
-        painter->fillRect(2,17,rect.width()+6,rect.height()+2,this->close() > this->open() ? Qt::darkRed : Qt::darkGreen);
+
+        painter->fillRect( tempXOffsett + 6 , 0 , rect.width() + 4 , rect.height() , this->close() > this->open() ? Qt::darkRed : Qt::darkGreen);
         mOpen = this->close();
 
-        painter->setPen(QPen(Qt::white));
-        painter->drawText(2, 30 ,QString::number(this->close()));
+        painter->setPen( QPen( Qt::white ) );
+        painter->drawText( tempXOffsett + 8 , 15 ,QString::number( this->close() ) );
 
         painter->restore();
 
@@ -653,7 +633,7 @@ void Series::prePareImage(QPainter *painter)
     //    this->calcAllBollingerValues();
 
     {// intervals
-        int xPos = 110;
+        int xPos = 133;
         const int indNameWidth = xPos-3;
         mUpperGreenCount = 0;
         mDownGreenCount = 0;
@@ -690,6 +670,11 @@ void Series::prePareImage(QPainter *painter)
 
             auto rect = QRectF(0,0,0,15);
             auto pen = painter->pen();
+            auto font = painter->font();
+            font.setPointSize( 7 );
+            painter->setFont( font );
+
+
             painter->setPen(QPen(Qt::black));
 
             painter->fillRect(xPos-1,0,cellWidth,rect.height()*2+2 , color );
@@ -699,7 +684,7 @@ void Series::prePareImage(QPainter *painter)
 
             painter->setPen(pen);
 
-            int yPos = rect.height()+18;
+            int yPos = rect.height()+17;
 
             // { // Bollinger Percent 2.38
             //     painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
@@ -1057,7 +1042,7 @@ void Series::prePareImage(QPainter *painter)
                 QColor color;
                 const auto hue = ( percent - 10 )/100*120;
                 color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
-                painter->fillRect(QRectF(xPos-1,yPos+4,cellWidth,rect.height()) , color );
+                painter->fillRect( QRectF( xPos - 1 , yPos , cellWidth , rect.height() + 3 ) , color );
 
                 if( seri->interval() == "1m" ){
                     m1MinunteRSI = percent;
@@ -1069,11 +1054,19 @@ void Series::prePareImage(QPainter *painter)
 
                 if( seri->interval() == "5m" ){
                     m5MinunteRSI = percent;
+                    // if( smaValue < 30 || smaValue > 70 ) {
+                    //     TelegramManager::instance()->sendMessage( "BOT" , seri->pair().toStdString() + " - " + seri->interval().toStdString() + " " + Global::getFixedPrecision( smaValue ).toStdString());
+                    // }
                 }
 
 
                 if( seri->interval() == "15m" ){
                     m15MinunteRSI = percent;
+                    // const std::int64_t timestamp = QDateTime::currentSecsSinceEpoch();
+                    // if( (smaValue < 30 || smaValue > 70) &&  std::abs( m_1hRsiLastMessageTime - timestamp ) > 60*15 ) {
+                    //     m_1hRsiLastMessageTime = timestamp;
+                    //     TelegramManager::instance()->sendMessage( "RSI 14" , seri->pair().toStdString() + " - " + seri->interval().toStdString() + " " + Global::getFixedPrecision( smaValue ).toStdString());
+                    // }
                 }
 
                 if( seri->interval() == "30m" ){
@@ -1082,6 +1075,16 @@ void Series::prePareImage(QPainter *painter)
 
                 if( seri->interval() == "1h" ){
                     m1HourRSI = percent;
+                    const std::int64_t timestamp = QDateTime::currentSecsSinceEpoch();
+                    if( (smaValue < 30 || smaValue > 70) &&  std::abs( m_1hRsiLastMessageTime - timestamp ) > 60*15 ) {
+                        m_1hRsiLastMessageTime = timestamp;
+                        const auto rsi1hRSI = Global::getFixedPrecision( m1HourRSI ).toStdString();
+                        const auto rsi30mRSI = Global::getFixedPrecision( m30MinunteRSI ).toStdString();
+                        const auto rsi15mRSI = Global::getFixedPrecision( m15MinunteRSI ).toStdString();
+                        const auto rsi5mRSI = Global::getFixedPrecision( m5MinunteRSI ).toStdString();
+                        const auto rsi1mRSI = Global::getFixedPrecision( m1MinunteRSI ).toStdString();
+                        TelegramManager::instance()->sendMessage( "RSI 14" , seri->pair().toStdString() + " - 1h:" + rsi1hRSI + " " + " - 30m:" + rsi30mRSI + " - 15m:" + rsi15mRSI + " - 5m:" + rsi5mRSI + " - 1m:" + rsi1mRSI );
+                    }
                 }
 
                 if( seri->interval() == "4h" ){
@@ -1105,24 +1108,27 @@ void Series::prePareImage(QPainter *painter)
                 if( totalRSI != maboveTotalHourRSI ) {
                     maboveTotalHourRSI = totalRSI;
                 }
-
-
-                if( seri->interval() == "1m" ){
-                    const auto hue = ( maboveTotalHourRSI/114 - 10 )/100*120;
-                    color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
-                    painter->fillRect(QRectF(0,yPos+4, maboveTotalHourRSI/114 ,rect.height()) , color );
-
-                    painter->drawText(5, yPos+15 ,QString("RSI 14 %1").arg(Global::getFixedPrecision( maboveTotalHourRSI/114 )));
-
+                const auto averageRsi = maboveTotalHourRSI/114;
+                const std::int64_t timestamp = QDateTime::currentSecsSinceEpoch();
+                if( ( averageRsi < 30 || averageRsi > 70) &&  std::abs( m_totalRsiLastMessageTime - timestamp ) > 60*15 ) {
+                    m_totalRsiLastMessageTime = timestamp;
+                    TelegramManager::instance()->sendMessage( "Avearage RSI" , seri->pair().toStdString() + " - " + QString("14 %1").arg(Global::getFixedPrecision( averageRsi )).toStdString() );
                 }
 
-                painter->drawText(xPos, yPos+15 ,Global::getFixedPrecision( percent ) );
+                if( seri->interval() == "1m" ){
+                    const auto hue = ( averageRsi - 10 )/100 * 120;
+                    color.setHsv( hue < 0 ? 0 : ( hue > 120 ? 120 : hue ) , 255 , 255 );
+                    painter->fillRect(QRectF( 0 , yPos , averageRsi , rect.height() + 4 ) , color );
+
+                    painter->drawText(5, yPos+15 ,QString("RSI 14 %1").arg(Global::getFixedPrecision( averageRsi )));
+                }
+                painter->drawText( xPos , yPos+15 , Global::getFixedPrecision( percent ) );
                 yPos += 15;
             }
 
 
             if(0){ // RSI Bollinger Band 2.38
-                painter->fillRect(1,yPos + 3,indNameWidth,16,QColor(235,235,235));
+                painter->fillRect( 1 , yPos + 3 , indNameWidth , 16 , QColor(235,235,235) );
 
                 std::vector<double> openList;
                 std::vector<double> closeList;

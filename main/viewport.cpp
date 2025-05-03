@@ -73,18 +73,18 @@ ViewPort::ViewPort( QWidget *parent )
 
 
     addItem("BTCUSDT");
-    addItem("ETHUSDT");
-    addItem("SOLUSDT");
-    addItem("XRPUSDT");
-    addItem("BCHUSDT");
-    addItem("LTCUSDT");
-    addItem("ETCUSDT");
-    addItem("LINKUSDT");
-    addItem("ADAUSDT");
-    addItem("DASHUSDT");
-    addItem("XMRUSDT");
-    addItem("ZECUSDT");
-    addItem("BNBUSDT");
+    // addItem("ETHUSDT");
+    // addItem("SOLUSDT");
+    // addItem("XRPUSDT");
+    // addItem("BCHUSDT");
+    // addItem("LTCUSDT");
+    // addItem("ETCUSDT");
+    // addItem("LINKUSDT");
+    // addItem("ADAUSDT");
+    // addItem("DASHUSDT");
+    // addItem("XMRUSDT");
+    // addItem("ZECUSDT");
+    // addItem("BNBUSDT");
 
 
 

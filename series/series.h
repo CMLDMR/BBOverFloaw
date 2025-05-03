@@ -260,6 +260,9 @@ private:
     bool m_enableBBD1dayAlarm { false };
 
 
+    std::int64_t m_1hRsiLastMessageTime;
+    std::int64_t m_totalRsiLastMessageTime;
+
 
 
 };

@@ -13,7 +13,7 @@ TelegramManager::TelegramManager(QObject *parent)
     : QObject{parent}
 {
     m_telegramBot = new TgBot::Bot( token );
-    // this->sendMessage("Bot","Telegram Bot Started");
+    this->sendMessage("Bot","Telegram Bot Started");
 }
 
 TelegramManager *TelegramManager::instance()
