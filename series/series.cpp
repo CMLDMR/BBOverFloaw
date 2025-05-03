@@ -9,6 +9,8 @@
 #include "TelegramManager.h"
 
 #include <QMutex>
+#include <QFile>
+#include <QDir>
 #include <QMutexLocker>
 #include <iostream>
 
@@ -1076,14 +1078,27 @@ void Series::prePareImage(QPainter *painter)
                 if( seri->interval() == "1h" ){
                     m1HourRSI = percent;
                     const std::int64_t timestamp = QDateTime::currentSecsSinceEpoch();
-                    if( (smaValue < 30 || smaValue > 70) &&  std::abs( m_1hRsiLastMessageTime - timestamp ) > 60*15 ) {
+                    if( ( smaValue < 30 || smaValue > 70) &&  std::abs( m_1hRsiLastMessageTime - timestamp ) > 60*15 ) {
                         m_1hRsiLastMessageTime = timestamp;
                         const auto rsi1hRSI = Global::getFixedPrecision( m1HourRSI ).toStdString();
                         const auto rsi30mRSI = Global::getFixedPrecision( m30MinunteRSI ).toStdString();
                         const auto rsi15mRSI = Global::getFixedPrecision( m15MinunteRSI ).toStdString();
                         const auto rsi5mRSI = Global::getFixedPrecision( m5MinunteRSI ).toStdString();
                         const auto rsi1mRSI = Global::getFixedPrecision( m1MinunteRSI ).toStdString();
-                        TelegramManager::instance()->sendMessage( "RSI 14" , seri->pair().toStdString() + " - 1h:" + rsi1hRSI + " " + " - 30m:" + rsi30mRSI + " - 15m:" + rsi15mRSI + " - 5m:" + rsi5mRSI + " - 1m:" + rsi1mRSI );
+                        TelegramManager::instance()->sendMessage( seri->pair().toStdString() + " RSI 14" , std::format("{}",seri->close()) + "1h:" + rsi1hRSI + " " + " - 30m:" + rsi30mRSI + " - 15m:" + rsi15mRSI + " - 5m:" + rsi5mRSI + " - 1m:" + rsi1mRSI );
+
+                        QDir dir;
+                        if( ! dir.exists( this->pair() ) ) {
+                            dir.mkdir( this->pair() );
+                        }
+
+                        const auto imageName = QString("%1/%2").arg(this->pair()).arg(QDateTime::currentMSecsSinceEpoch() % 250 ) + ".jpeg";
+                        if( QFile::exists( imageName ) ) {
+                            QFile::remove( imageName );
+                        }
+                        if( this->mImage->save( imageName ) ) {
+                            TelegramManager::instance()->sendPhoto( imageName.toStdString() );
+                        }
                     }
                 }
 
@@ -1110,9 +1125,22 @@ void Series::prePareImage(QPainter *painter)
                 }
                 const auto averageRsi = maboveTotalHourRSI/114;
                 const std::int64_t timestamp = QDateTime::currentSecsSinceEpoch();
-                if( ( averageRsi < 30 || averageRsi > 70) &&  std::abs( m_totalRsiLastMessageTime - timestamp ) > 60*15 ) {
+                if( averageRsi > 5 && ( averageRsi < 30 || averageRsi > 70) &&  std::abs( m_totalRsiLastMessageTime - timestamp ) > 60*15 ) {
                     m_totalRsiLastMessageTime = timestamp;
-                    TelegramManager::instance()->sendMessage( "Avearage RSI" , seri->pair().toStdString() + " - " + QString("14 %1").arg(Global::getFixedPrecision( averageRsi )).toStdString() );
+                    // TelegramManager::instance()->sendMessage( seri->pair().toStdString() + " AVG RSI" , std::format("{}",seri->close()) + " - " + QString("14 %1").arg(Global::getFixedPrecision( averageRsi )).toStdString() );
+
+                    QDir dir;
+                    if( ! dir.exists( this->pair() ) ) {
+                        dir.mkdir( this->pair() );
+                    }
+                    const auto imageName = QString("%1/%2").arg(this->pair()).arg(QDateTime::currentMSecsSinceEpoch() % 250 ) + ".jpeg";
+                    if( QFile::exists( imageName ) ) {
+                        QFile::remove( imageName );
+                    }
+                    if( this->mImage->save( imageName ) ) {
+                        TelegramManager::instance()->sendPhoto( imageName.toStdString() );
+                    }
+
                 }
 
                 if( seri->interval() == "1m" ){

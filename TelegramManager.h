@@ -2,6 +2,7 @@
 #define TELEGRAMMANAGER_H
 
 #include <QObject>
+#include <queue>
 
 // This chat
 //  ├ id: -4667449481
@@ -27,6 +28,9 @@ namespace TgBot {
 class Bot;
 }
 
+class QThread;
+class QTimer;
+
 class TelegramManager : public QObject
 {
     Q_OBJECT
@@ -36,8 +40,16 @@ public:
 
 public Q_SLOTS:
     void sendMessage( const std::string &from , const std::string &message );
+    void sendPhoto(const std::string &photoPath , const std::string &photoMimeType = "image/jpeg");
+    void initTgBot();
+    void checkMessageToSend();
 
 Q_SIGNALS:
+
+
+private Q_SLOTS:
+    void sendMessagetoTg( const std::string &from , const std::string &message );
+    void sendPhototoTg(const std::string &photoPath , const std::string &photoMimeType = "image/jpeg");
 
 private:
     static TelegramManager* m_instance;
@@ -46,6 +58,14 @@ private:
     TgBot::Bot*  m_telegramBot;
     const std::int64_t chatId { -4602894823 };
     const std::string token{ "8133638457:AAGGzBbJ6FDdvF5JwgDFJg154e0eKpgSKTE" };
+
+private:
+    QThread* m_thread;
+    QTimer *m_timer;
+
+    std::queue<std::tuple<std::string,std::string>> m_messageQue;
+    std::queue<std::tuple<std::string,std::string>> m_photoQue;
+
 };
 
 #endif // TELEGRAMMANAGER_H
