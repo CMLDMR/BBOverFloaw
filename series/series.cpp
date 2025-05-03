@@ -453,7 +453,7 @@ void Series::SocketWorker()
     mPainter->drawRect(0,0,mImage->rect().width()-1,mImage->height()-1);
     mPainter->drawText(20,30,this->pair()+" Loading...");
 
-    mSeriList.append(new Seri(mPair,"1m")); qDebug() << __LINE__<< __FILE__;
+    mSeriList.append(new Seri(mPair,"1m"));
     if( ! mSeriList.last()->kLineContainer().size() ) {
         return;
     }
@@ -668,6 +668,10 @@ void Series::prePareImage(QPainter *painter)
 
 
         for( const auto &seri : this->seriList() ){
+
+            if( seri->pair() != m_Pair ) {
+                m_Pair = seri->pair();
+            }
 
             if( seri->interval() != "1w" ){
                 mAllBarPercentSum += seri->percentLastBar();

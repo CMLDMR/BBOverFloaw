@@ -56,7 +56,7 @@ private:
     explicit TelegramManager(QObject *parent = nullptr);
 
     TgBot::Bot*  m_telegramBot;
-    const std::int64_t chatId { -4602894823 };
+    const std::int64_t chatId { -1002657073408 };
     const std::string token{ "8133638457:AAGGzBbJ6FDdvF5JwgDFJg154e0eKpgSKTE" };
 
 private:

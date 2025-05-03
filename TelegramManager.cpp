@@ -15,6 +15,7 @@ TelegramManager::TelegramManager(QObject *parent)
     : QObject{parent}
 {
     m_thread = new QThread( this );
+    this->moveToThread( m_thread );
     connect( m_thread , &QThread::started , this , &TelegramManager::initTgBot );
     m_thread->start();
 }
@@ -55,6 +56,15 @@ void TelegramManager::sendPhototoTg(const std::string &photoPath, const std::str
 void TelegramManager::initTgBot()
 {
     m_telegramBot = new TgBot::Bot( token );
+
+    m_telegramBot->getEvents().onAnyMessage([=, this](TgBot::Message::Ptr message) {
+        LOG_DEBUG("Gelen Mesaj: {}" , message->text );
+        LOG_DEBUG("Chat ID: {}" , message->chat->id );
+
+        // std::cout << "Chat ID: " << message->chat->id << std::endl;
+
+        m_telegramBot->getApi().sendMessage(message->chat->id, "Mesajınızı aldım!");
+    });
     m_timer = new QTimer( this );
     m_timer->setInterval( 5000 );
     connect( m_timer , &QTimer::timeout, this , &TelegramManager::checkMessageToSend );
