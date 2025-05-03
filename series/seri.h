@@ -72,6 +72,10 @@ public:
 
     qint64 duration() const;
 
+    int totalCandleSize() const;
+
+    bool isLoaded() const;
+
 signals:
     void updated();
 
@@ -80,6 +84,7 @@ private:
     QString mInterval;
     qint64 mDuration;
     QVector<Binance::Public::KLine> mKLineContainer;
+    const int m_totalCandleSize{ 200 };
 
 
 };

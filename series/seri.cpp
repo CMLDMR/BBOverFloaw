@@ -1,5 +1,6 @@
 #include "seri.h"
 #include "binance/restapi/restapi.h"
+#include "Logger.h"
 
 namespace Series {
 
@@ -7,11 +8,10 @@ Seri::Seri(const QString &pair, const QString &interval, QObject *parent)
     : QObject{parent},mPair(pair),mInterval(interval)
 {
 
-    // if( interval != "15ms" ) {
-        mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,200);
-    // }
-        if( mKLineContainer.size() )
-            qDebug() << mPair << mInterval << " Completed" << mKLineContainer.constLast().closeTime();
+    mKLineContainer = Binance::Public::RestAPI::RestAPI::instance()->getCandles(mPair,mInterval,m_totalCandleSize);
+    if( mKLineContainer.size() ) {
+        LOG_DEBUG("Completed {} interval:{} size:{}" , mPair.toStdString() , mInterval.toStdString() , mKLineContainer.size() );
+    }
 
     const qint64 baseDuration = 60000;
     // if( interval == "15ms" ) mDuration = baseDuration/4;
@@ -239,6 +239,16 @@ Seri::iterator Seri::end()
 qint64 Seri::duration() const
 {
     return mDuration;
+}
+
+int Seri::totalCandleSize() const
+{
+    return m_totalCandleSize;
+}
+
+bool Seri::isLoaded() const
+{
+    return mKLineContainer.size() >= m_totalCandleSize;
 }
 
 Binance::Public::KLine &Seri::iterator::operator*() const
