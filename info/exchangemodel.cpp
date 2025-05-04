@@ -30,7 +30,7 @@ ExchangeModel::ExchangeModel(QObject *parent)
 
     mManager = new QNetworkAccessManager(parent);
 
-    QObject::connect(mManager,&QNetworkAccessManager::finished,[=](QNetworkReply* reply ){
+    QObject::connect(mManager,&QNetworkAccessManager::finished,[=, this](QNetworkReply* reply ){
 
         if( mRequestType == exchangeInfo ){
 
@@ -39,7 +39,7 @@ ExchangeModel::ExchangeModel(QObject *parent)
 
             beginResetModel();
             mPriceList.clear();
-            for( const auto &item : array ){
+            for( const auto &item : std::as_const(array) ){
                 Ticker obj = item.toObject();
                 mPriceList.append(obj);
             }
@@ -49,14 +49,11 @@ ExchangeModel::ExchangeModel(QObject *parent)
         setQuotaFilterKey("USDT");
     });
 
-
-
     for( const auto &item : Binance::Public::RestAPI::RestAPI::instance()->symbolList() ){
         if( !mFullList.contains(item) ){
             mFullList.append(item);
         }
     }
-
 
     setQuotaFilterKey("USDT");
     updatePricetoPercent();
@@ -77,7 +74,7 @@ QVariant ExchangeModel::headerData(int section, Qt::Orientation orientation, int
     if (role == Qt::DisplayRole)
     {
         if (orientation == Qt::Horizontal) {
-            switch (section)
+            switch ( section )
             {
             case 0:
                 return ("Pair");

@@ -25,9 +25,7 @@ public:
     ~ExchangeInfo();
 
     ExchangeModel *model() const;
-
     void append( const QString &selectedCoin );
-
 
 signals:
     void selectedPair( const QString &pairName );
@@ -36,11 +34,7 @@ signals:
 private:
     Ui::ExchangeInfo *ui;
     ExchangeModel* mModel;
-
-
     TableViewDelegateWritable* mTableViewDelegate;
-
-
 };
 
 }

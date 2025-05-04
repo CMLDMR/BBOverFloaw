@@ -69,7 +69,7 @@ MainWindow::MainWindow(QWidget *parent)
 
             });
 
-            mTimer->start(500);
+            mTimer->start(2000);
 
 //            for( int i = 0 ; i < Session::SessionManager::instance()->pairListSize() ; i++ ){
 //                QThread::currentThread()->wait(500);
